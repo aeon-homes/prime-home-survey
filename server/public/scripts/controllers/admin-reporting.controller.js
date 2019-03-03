@@ -41,7 +41,7 @@ myApp.controller('AdminReportingController', ['AdminService', '$mdDialog', '$tim
     self.yearToGet = thisYear;
     
     self.propertiesToGet = [];
-    self.selectAllProperties = true;
+    self.selectAllProperties = false;
 
     self.propertyList = AdminService.propertyList; // list of unique properties in .list
 

@@ -23,17 +23,17 @@
     <div id="admin-reporting-controls-container" layout="row" layout-padding layout-margin layout-align="start start">
       <md-input-container>
         <md-select placeholder="Choose Year" ng-model="arc.yearToGet">
-          <md-option ng-repeat="year in arc.yearsArray">{{year}}</md-option>
+          <md-option ng-value="year" ng-repeat="year in arc.yearsArray">{{year}}</md-option>
         </md-select>
       </md-input-container>
 
       <div id="admin-reporting-year-control" layout="column" layout-align="start start" layout-margin>
-        <md-input-container>
+        <md-input-container ng-disabled="arc.selectAllProperties">
           <label>Choose Property</label>
-          <form ng-submit="$event.preventDefault()">
+          <form ng-submit="$event.preventDefault()" ng-disabled="arc.selectAllProperties">
             <md-autocomplete md-selected-item="arc.typedProperty" md-selected-item-change="arc.addProperty(arc.typedProperty);" md-search-text-change="arc.searchTextChange(arc.searchText)"
               md-search-text="arc.searchText" md-selected-item-change="arc.selectedItemChange(property)" md-items="property in arc.propertyList.list | filter: arc.searchText"
-              md-item-text="item" md-min-length="0">
+              md-item-text="item" md-min-length="0" ng-disabled="arc.selectAllProperties">
               <md-item-template>
                 <span md-highlight-text="arc.searchText" md-highlight-flags="^i">{{property}}</span>
               </md-item-template>
@@ -50,7 +50,7 @@
       <md-input-container>
         <label>Choose Calculation</label>
         <md-select ng-model="arc.calculation">
-          <md-option ng-repeat="calc in arc.calcList">{{calc}}</md-option>
+          <md-option ng-value="calc" ng-repeat="calc in arc.calcList">{{calc}}</md-option>
         </md-select>
       </md-input-container>
 
