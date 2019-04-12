@@ -146,7 +146,7 @@ md-list {
 }
 
 .header-survey-container {
-    border-bottom: #d8e6c9 solid 3px;
+    border-bottom: #B2DFDB solid 3px;
 }
 
 .self-identify-input {
@@ -191,7 +191,7 @@ table.md-table td.md-cell {
 }
 
 #admin-reporting-propselect-container {
-    border: 2px solid green;
+    border: 2px solid teal;
     border-radius: 10px;
 }
 
@@ -237,7 +237,7 @@ table.md-table td.md-cell {
 }
 
 #admin-reporting-bottom-row{
-    border-top: 2px green;
+    border-top: 2px teal;
 }
 
 #admin-reporting-hr{
