@@ -1,5 +1,5 @@
 {
-  "name": "express_router_lecture_angular",
+  "name": "aeon_home_survey",
   "version": "1.0.0",
   "description": "",
   "main": "server/server.js",
@@ -7,28 +7,28 @@
     "test": "nodemon server/server.js",
     "start": "node server/server.js"
   },
-  "author": "Scott Bromander, Kris Szafranski",
+  "author": "Adam Biessener",
   "license": "ISC",
   "dependencies": {
-    "angular": "^1.7.7",
-    "angular-animate": "^1.7.7",
-    "angular-aria": "^1.7.7",
-    "angular-material": "^1.1.13",
+    "angular": "^1.7.8",
+    "angular-animate": "^1.7.8",
+    "angular-aria": "^1.7.8",
+    "angular-material": "^1.1.18",
     "angular-material-data-table": "^0.10.10",
-    "angular-messages": "^1.7.7",
-    "angular-route": "^1.7.7",
-    "bcrypt": "^3.0.4",
+    "angular-messages": "^1.7.8",
+    "angular-route": "^1.7.8",
+    "bcrypt": "^3.0.5",
     "body-parser": "^1.18.3",
-    "chart.js": "^2.7.3",
+    "chart.js": "^2.8.0",
     "dotenv": "^4.0.0",
     "express": "^4.16.4",
-    "express-session": "^1.15.6",
-    "jquery": "^2.1.4",
+    "express-session": "^1.16.1",
+    "jquery": "^3.4",
     "material-design-icons": "^3.0.1",
     "nodemailer": "^4.7.0",
     "passport": "^0.2.2",
     "passport-local": "^1.0.0",
     "path": "^0.11.14",
-    "pg": "^7.8.1"
+    "pg": "^7.9.0"
   }
 }
