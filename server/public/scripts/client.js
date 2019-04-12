@@ -172,8 +172,8 @@ myApp.config(function ($routeProvider, $locationProvider, $mdThemingProvider) {
     });
 
   $mdThemingProvider.theme('default')
-    .primaryPalette('green')
-    .accentPalette('light-green')
+    .primaryPalette('teal')
+    .accentPalette('teal')
 
 
 });

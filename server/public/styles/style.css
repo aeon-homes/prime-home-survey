@@ -18,7 +18,7 @@ body {
 
 .material-icons.md-48 {
     font-size: 28px;
-    color: green;
+    color: #26A69A;
     margin: 20px;
 }
 
@@ -38,7 +38,7 @@ body {
 }
 
 .survey-language-langbtn-container>.md-raised {
-    background-color: #c8e6c9;
+    background-color: #B2DFDB;
 }
 
 .survey-language-button {
@@ -62,7 +62,7 @@ body {
 }
 
 .cancelbtn-container>.md-raised {
-    background-color: #d8e6c9;
+    background-color: #B2DFDB;
 }
 
 #logout-button {
@@ -72,7 +72,7 @@ body {
 
 #instructionsButton {
     padding: 5px 10px;
-    background-color: #d8e6c9;
+    background-color: #B2DFDB;
     font-size: 120%;
 }
 
