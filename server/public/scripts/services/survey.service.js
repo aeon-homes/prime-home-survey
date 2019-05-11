@@ -1,19 +1,32 @@
 myApp.service('SurveyService', function ($http, $location, $mdDialog) {
 
+    class HouseholdMember {
+        constructor(name, dateOfBirth, gender, race, hispanic, disabled) {
+            this.name = name;
+            this.dateOfBirth = dateOfBirth;
+            this.gender = gender;
+            this.race = race;
+            this.hispanic = hispanic;
+            this.disabled = disabled;
+        }
+    }
+
     //--------------------------------------
     //-------------VARIABLES----------------
     //--------------------------------------
 
-    const NUM_SURVEY_QUESTIONS = 27; // used as a magic number for building the answers array
+    var NUM_SURVEY_QUESTIONS = 33; // used as a magic number for building the answers array
 
     var self = this;
 
-    let now = new Date();
+    var now = new Date();
     self.thisYear = now.getFullYear();
 
     self.surveyObject = {}; // holds the translated answers from the db
     self.surveyProperty = ""; // holds the user-selected property
     self.surveyUnit = ""; // holds the user-selected unit
+    self.household = false;
+    self.surveyHouseholdMembers = [new HouseholdMember()];
 
     self.surveyAnswers = { // holds the user's responses
         list: []
@@ -41,8 +54,6 @@ myApp.service('SurveyService', function ($http, $location, $mdDialog) {
                 'unit': unit
             }
         }).then(function (response) {
-            // console.log('response', response);
-
             if (response.data == "authorized") {
                 // legit: clear the survey object and go to /survey-q1
                 self.wipeSurveyClean();
@@ -78,7 +89,7 @@ myApp.service('SurveyService', function ($http, $location, $mdDialog) {
     self.getSurvey = function (language) {
         self.surveyLanguage.language = language;
 
-        $http.get('/survey/language', {
+        return $http.get('/survey/language', {
             params: {
                 'language': language
             }
@@ -89,14 +100,25 @@ myApp.service('SurveyService', function ($http, $location, $mdDialog) {
             for (var i = 0; i < response.data.translations.length; i++) {
                 self.surveyObject[response.data.translations[i].type] = response.data.translations[i][language];
             }
+        });
+    };
 
-        }) //end http.get
-    }; //end of self.getSurvey
+
+    self.getHousehold = function (property) {
+        return $http.get('/survey/household', {
+            params: { property: property }
+        }).then (function (response) {
+            self.household = response.data;
+        });
+    };
 
 
     // sends the user's language, property, unit, and survey answers to the db to be stored
     // displays error dialogs if a unit has already responded or a server error happens, or takes the user to the thanks page if successful
     self.submitSurvey = function () {
+        if (self.household) {
+            populateHouseholdMembers()
+        }
 
         $http.post('/survey', self.surveyAnswers, {
             params: {
@@ -125,11 +147,10 @@ myApp.service('SurveyService', function ($http, $location, $mdDialog) {
                     .textContent('There was an error submitting the survey. Please ask your Aeon staff member for assistance.')
                     .ariaLabel('Survey Submit Error Alert')
                     .ok('OK')
-                    // .targetEvent(event)
                 );
             }
-        })
-    }
+        });
+    };
 
 
     // clears out all responses and rebuilds the answers array with null objects
@@ -137,6 +158,13 @@ myApp.service('SurveyService', function ($http, $location, $mdDialog) {
         self.surveyAnswers.list = [];
         for (var i = 0; i < NUM_SURVEY_QUESTIONS; i++) {
             self.surveyAnswers.list.push({});
+        }
+    };
+
+    self.populateHouseholdMembers = function () {
+        self.surveyObject.householdMembers = [];
+        for (let member in self.surveyHouseholdMembers) {
+            self.surveyObject.householdMembers.push(member);
         }
     }
 
@@ -146,9 +174,9 @@ myApp.service('SurveyService', function ($http, $location, $mdDialog) {
     //--------------------------------------
 
     self.wipeSurveyClean(); // start out with a fresh survey
-    self.getSurvey('english'); // Load english as language on load
+    
     
 
 
 
-}); //end of myApp.service
+});

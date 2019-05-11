@@ -1,4 +1,4 @@
-myApp.controller('LoginController', function ($http, $location, UserService, $mdToast, AdminService) {
+myApp.controller('LoginController', function ($window, $http, $location, UserService, $mdToast, AdminService) {
 
   //--------------------------------------
   //-------------VARIABLES----------------
@@ -11,7 +11,6 @@ myApp.controller('LoginController', function ($http, $location, UserService, $md
     password: ''
   };
 
-  
   //--------------------------------------
   //-------------FUNCTIONS----------------
   //--------------------------------------
@@ -115,7 +114,6 @@ myApp.controller('LoginController', function ($http, $location, UserService, $md
   //--------------------------------------
 
   // none
-
 
 
 });

@@ -38,6 +38,12 @@ CREATE TABLE occupancy
     occupied BOOLEAN,
     year INT NOT NULL
 );
+CREATE TABLE properties
+(
+    id SERIAL PRIMARY KEY,
+    name TEXT,
+    household BOOLEAN
+);
 CREATE TABLE responses
 (
     id SERIAL PRIMARY KEY,
@@ -70,7 +76,13 @@ CREATE TABLE responses
     answer24 INT,
     answer25 TEXT,
     answer26 INT,
-    answer27 INT
+    answer27 INT,
+    answer28 TEXT,
+    answer29 INT,
+    answer30 BOOLEAN,
+    answer31 TEXT,
+    answer32 BOOLEAN,
+    answer33 BOOLEAN
 );
 
 CREATE TABLE occupancy_users
@@ -79,6 +91,21 @@ CREATE TABLE occupancy_users
     user_id INT REFERENCES users,
     PRIMARY KEY(occupancy_property, user_id)
 );
+
+CREATE TABLE household
+(
+    id SERIAL PRIMARY KEY,
+    property TEXT NOT NULL,
+    unit TEXT NOT NULL,
+    response_id INT REFERENCES response(id),
+    name TEXT,
+    date_of_birth DATE,
+    gender TEXT,
+    race TEXT,
+    hispanic_or_latino BOOLEAN,
+    disabled BOOLEAN,
+);
+
 
 INSERT INTO translations (type, english, spanish, somali, hmong) VALUES
 ('directions1', 'For each question, touch the button that best describes your experience during the last 12 months. Touch NEXT to go to the next page. Touch GO BACK to go back a page. Press CANCEL to cancel the survey', 'En cada pregunta, pulse el botón que describe mejor su experiencia en los últimos 12 meses.
@@ -148,7 +175,9 @@ rau koj tus nai saib vaj tse ces koj tau txais $10. Ua tsaug!'),
 ('logout', 'Logout', 'Cerrar la session','Ka Bax','Tua Tawm Mus'),
 ('writeanswer', 'Write your answer here.', 'Escriba su respuesta aquí.','Halkan ku qor jawaabtaada.','Sau koj lo lus teb rau ntawm no.'),
 ('surecancel', 'Are you sure you want to cancel? This cannot be undone.', '¿Está seguro de que quiere cancelar? No podrá recuperar la información.','Ma iska hubtaa in aad joojiso? Arrintan kama noqon kartid.', 'Koj puas xav muab tso tseg tiag? Qhov no rov thim ua dua tsis tau lawm.'),
-('suresubmit', 'Are you sure you want to submit?', '¿Está seguro de que quiere completar y enviar? Ya no podrá regresar.','Ma iska hubtaa in aad rabto inaad dirto? Arrintan kama noqon kartid.', 'Koj puas xav muab xa mus tiag? Qhov no rov thim ua dua tsis tau lawm.');
+('suresubmit', 'Are you sure you want to submit?', '¿Está seguro de que quiere completar y enviar? Ya no podrá regresar.','Ma iska hubtaa in aad rabto inaad dirto? Arrintan kama noqon kartid.', 'Koj puas xav muab xa mus tiag? Qhov no rov thim ua dua tsis tau lawm.'),
+('list_members', 'Please list the members of your household:', 'spanishList', 'hmongList', 'somaliList'),
+('add_household_member', 'Add another household member', 'spanishadd', 'hmongadd', 'somaliadd');
 
 INSERT INTO questions
     (question_number,
@@ -347,5 +376,53 @@ VALUES
         'Su ingreso del hogar es:',
         'Nej tsev neeg khwv tau nyiaj:',
         'Demographics',
+        2017),
+    (28,
+        'Name of head of household:',
+        'Da''da:',
+        'Edad:',
+        'Hnub nyoog',
+        'Household',
+        2017),
+    (29,
+        'How many people are in your household and live in your apartment?',
+        'Da''da:',
+        'Edad:',
+        'Hnub nyoog',
+        'Household',
+        2017),
+    (30,
+        'Does any member of your household speak English as a second language or not speak English?',
+        'Da''da:',
+        'Edad:',
+        'Hnub nyoog',
+        'Household',
+        2017),
+    (31,
+        'If yes, primary language is:',
+        'Da''da:',
+        'Edad:',
+        'Hnub nyoog',
+        'Household',
+        2017),
+    (32,
+        'Is any household member an active member or veteran of the U. S. military?',
+        'Da''da:',
+        'Edad:',
+        'Hnub nyoog',
+        'Household',
+        2017),
+    (33,
+        'Have you or your household experienced homelessness in the past?',
+        'Da''da:',
+        'Edad:',
+        'Hnub nyoog',
+        'Household',
+        2017),
+    (34,
+        'What is the amount of your household’s annual income?',
+        'Da''da:',
+        'Edad:',
+        'Hnub nyoog',
+        'Household',
         2017);
-

@@ -4,15 +4,38 @@ myApp.controller('SurveyController', function (AdminService, SurveyService, User
   //-------------VARIABLES----------------
   //--------------------------------------
 
+  class HouseholdMember {
+    constructor(name, dateOfBirth, gender, race, hispanic, disabled) {
+        this.name = name;
+        this.dateOfBirth = dateOfBirth;
+        this.gender = gender;
+        this.race = race;
+        this.hispanic = hispanic;
+        this.disabled = disabled;
+    }
+}
 
   var self = this;
 
   self.propertyChosen = ""; // the user-selected property
   self.propertyList = AdminService.propertyList; // holds the list of properties pulled from the database
   self.surveyAnswers = SurveyService.surveyAnswers; // holds the user's answers
+  self.surveyHouseholdMembers = SurveyService.surveyHouseholdMembers;
   self.surveyLanguage = SurveyService.surveyLanguage; // the user-selected language
   self.surveyObject = SurveyService.surveyObject; // holds the translated questions for display
+  self.household = SurveyService.household;
+  console.log(self.household);
 
+  if (angular.equals(self.surveyObject, {})) {  // Load english as language on load
+    SurveyService.getSurvey('english').then(
+      function(res) {
+        self.surveyObject = SurveyService.surveyObject;
+      },
+      function(err) {
+        console.error(err);
+      }
+    )
+  }
 
 
 
@@ -43,8 +66,8 @@ myApp.controller('SurveyController', function (AdminService, SurveyService, User
 
 
   // passes the user-selected language to the service so that surveyObject can be built with the translated questions
-  self.getSurvey = function (language) {
-    SurveyService.getSurvey(language);
+  self.getSurvey = function (language, property) {
+    SurveyService.getSurvey(language, property);
   }
 
 
@@ -102,6 +125,13 @@ myApp.controller('SurveyController', function (AdminService, SurveyService, User
     }, function () {});
   }
 
+  self.addHouseholdMember = function() {
+    self.surveyHouseholdMembers.push(new HouseholdMember())
+  }
+
+  self.removeHouseholdMember = function(index) {
+    self.surveyHouseholdMembers.splice(index, 1)
+  }
 
   //--------------------------------------
   //-------------RUNTIME CODE-------------
@@ -111,7 +141,15 @@ myApp.controller('SurveyController', function (AdminService, SurveyService, User
   // passes the user-selected property and unit to the service to be checked against the db for whether or not it's a valid property and unit that has not yet responded to the survey
   self.beginSurvey = function (property, unit) {
     SurveyService.beginSurvey(property, unit);
-  }
+    SurveyService.getHousehold(property).then(
+      function(res) {
+        self.household = SurveyService.household;
+      },
+      function(err) {
+        console.log(err);
+      }
+    );
+  };
 
   self.UserService = UserService;
 
@@ -125,7 +163,5 @@ myApp.controller('SurveyController', function (AdminService, SurveyService, User
   $scope.$on("$destroy", function () {
     window.removeEventListener('beforeunload', unloadWarning);
   });
-
-
 
 });

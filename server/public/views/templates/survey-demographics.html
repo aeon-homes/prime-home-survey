@@ -1,7 +1,4 @@
 <header ng-include="'/views/partials/header-survey.html'"></header>
-<!-- <div id="bg" alt="">
-    <img src="../../assets/aeon-logo-background-800px-opacity30.png" alt="Aeon Tree Img" height="42" width="42">
-</div> -->
 
 <div layout="column" class="aeon-logo-bg">
     <div layout="row" layout-align="center">
@@ -11,6 +8,7 @@
             <i class="material-icons md-48">looks_3</i>
             <i class="material-icons md-48">looks_4</i>
             <i class="material-icons md-48">looks_5</i>
+            <i ng-if="sc.household" class="material-icons md-48 inactive">looks_6</i>
         </div>
     </div>
     <div layout="row" layout-align="center">
@@ -77,7 +75,8 @@
 
         <div>
             <md-button id="goBackButton" class="md-raised" ng-click='sc.go("/survey-q4")'>{{sc.surveyObject.goback}}</md-button>
-            <md-button class="md-raised md-primary" ng-click='sc.submitSurvey()'>{{sc.surveyObject.submit}}</md-button>
+            <md-button ng-if="!sc.household" class="md-raised md-primary" ng-click='sc.submitSurvey()'>{{sc.surveyObject.submit}}</md-button>
+            <md-button ng-if="sc.household" class="md-raised md-primary" ng-click='sc.go("/survey-household")'>{{sc.surveyObject.next}}</md-button>
         </div>
     </div>
 

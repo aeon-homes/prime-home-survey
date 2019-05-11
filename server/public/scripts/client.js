@@ -43,6 +43,15 @@ myApp.config(function ($routeProvider, $locationProvider, $mdThemingProvider) {
         }
       }
     })
+    .when('/survey-household', {
+      templateUrl: '/views/templates/survey-household.html',
+      controller: 'SurveyController as sc',
+      resolve: {
+        getUser: function (UserService) {
+          return UserService.getUser('Resident');
+        }
+      }
+    })
     .when('/survey-language', {
       templateUrl: '/views/templates/survey-language.html',
       controller: 'SurveyController as sc',

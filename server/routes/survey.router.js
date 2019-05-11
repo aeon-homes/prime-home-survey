@@ -4,6 +4,20 @@ var passport = require('passport');
 var path = require('path');
 var pool = require('../modules/pool.js');
 
+const TEXT_QUESTIONS = [21, 22, 25, 28, 30];
+const BOOLEAN_QUESTIONS = [30, 32, 33];
+const SUPPORTED_LANGUAGES = [
+    "english",
+    "spanish",
+    "somali",
+    "hmong"
+]
+const ROLES = {
+    RESIDENT: "Resident",
+    ADMINISTRATOR: "Administrator",
+    SITE_MANAGER: "Site Manager"
+}
+
 // DEBUG - generate random survey data
 
 /*
@@ -198,67 +212,85 @@ router.get('/begin', function (req, res) {
 
 });
 
-router.get('/language', function (req, res) {
-    var language = req.query.language;
-    var translation;
+router.get('/household', (req, res) => {
+    const householdSql = "SELECT household FROM properties WHERE name=$1 LIMIT 1;";
+    console.log(req.query.property);
 
-    switch (language) {
-        case 'english':
-            language = "SELECT question_number, english FROM questions WHERE question_number BETWEEN 1 AND 27;";
-            translation = 'SELECT type, english FROM translations;';
-            break;
-        case 'somali':
-            language = "SELECT question_number, somali FROM questions WHERE question_number BETWEEN 1 AND 27;"
-            translation = 'SELECT type, somali FROM translations;';
-            break;
-        case 'spanish':
-            language = "SELECT question_number, spanish FROM questions WHERE question_number BETWEEN 1 AND 27;"
-            translation = 'SELECT type, spanish FROM translations;';
-            break;
-        case 'hmong':
-            language = "SELECT question_number, hmong FROM questions WHERE question_number BETWEEN 1 AND 27;"
-            translation = 'SELECT type, hmong FROM translations;';
-            break;
-    }
+    let household = false;
 
     if (req.isAuthenticated()) {
-        var surveyObject = {};
-        if (req.user.role == 'Resident') {
-            // query db, get language selected
-            pool.connect(function (err, client, done) {
-                if (err) {
-                    console.log('error connecting to db', err);
-                    res.sendStatus(500);
-                } else {
-                    //query
-                    client.query(language, function (err, data) {
-                        if (err) {
-                            done();
-                            console.log('query error', err);
-                        } else {
-                            surveyObject.questions = data.rows;
-                            client.query(translation, function (err, data) {
-                                done();
-                                if (err) {
-                                    console.log('query error', err);
-                                } else {
-                                    // send response data back to client
-                                    surveyObject.translations = data.rows;
-                                    res.send(surveyObject);
-                                }
-                            });
+        pool.connect(function (err, client, done) {
+            if (err) {
+                console.log('error connecting to db', err);
+                res.sendStatus(500);
+            } else {
+                client.query(householdSql, [req.query.property], function (err, data) {
+                    done();
+                    if (err) {
+                        console.log('query error household', err);
+                        res.sendStatus(500);
+                    } else {
+                        console.log('household query: ' + data.rows[0].household)
+                        if (data.rows[0].household === true) {
+                            household = true;
                         }
-                    });
-                }
-            });
-        } else {
-            //not resident role
-            res.sendStatus(403);
-        }
+                        res.send(household);
+                    }
+                });
+            }
+        });
     } else {
-        // not authenticated
-        res.sendStatus(403);
+        res.sendStatus(403)
     }
+});
+
+router.get('/language', function (req, res) {
+    if (!validateSurveyLanguage(req.query.language)) {
+        res.sendStatus(400)
+        return
+    }
+
+    if (!validateAuthorization(req, ROLES.RESIDENT)) {
+        res.sendStatus(403)
+        return
+    }
+
+    const languageSql = `SELECT question_number, ${req.query.language} FROM questions;`;
+    const translationSql = `SELECT type, ${req.query.language} FROM translations;`;
+
+    const surveyObject = {};
+
+    pool.connect(function (err, client, done) {
+        if (err) {
+            console.log('error connecting to db', err);
+            res.sendStatus(500);
+            return
+        }
+        
+        client.query(languageSql, function (err, data) {
+            if (err) {
+                done();
+                console.log('query error language', err);
+                res.sendStatus(500)
+                return
+            }
+
+            surveyObject.questions = data.rows;
+        })
+
+        client.query(translationSql, function (err, data) {
+            if (err) {
+                done();
+                console.log('query error translation', err);
+                res.sendStatus(500)
+                return
+            }
+            done();
+
+            surveyObject.translations = data.rows;
+            res.send(surveyObject);
+        })
+    });
 });
 
 // fetches list of questions out of the db. 'year' param defaults to this year if not specified, which it generally shouldn't be
@@ -347,23 +379,10 @@ router.post('/', function (req, res) {
         if (req.user.role == 'Resident') {
             var thisYear = new Date();
             thisYear = thisYear.getFullYear();
+            var sanitizedAnswers = sanitizeSurveyResponse(req.body.list);
+            var sqlValues = [req.query.property, req.query.language, thisYear].concat(sanitizedAnswers).concat([req.body.household]);
 
-            queryString = "INSERT INTO responses (property, language, year, answer1, answer2, answer3, answer4, answer5, answer6, answer7, answer8, answer9, answer10, answer11, answer12, answer13, answer14, answer15, answer16, answer17, answer18, answer19, answer20, answer21, answer22, answer23, answer24, answer25, answer26, answer27) VALUES ($1, $2, $3, "
-
-            for (var i = 0; i < req.body.list.length; i++) {
-                if (req.body.list[i].answer == undefined) {
-                    // no answer
-                    queryString += "null, ";
-                } else if ((i === 20) || (i === 21) || (i === 24)) {
-                    // text answer
-                    queryString += "'" + req.body.list[i].answer + "', ";
-                } else {
-                    // int answer
-                    queryString += req.body.list[i].answer + ", ";
-                }
-            }
-
-            queryString = queryString.slice(0, -2) + ");";
+            queryString = "INSERT INTO responses (property, language, year, answer1, answer2, answer3, answer4, answer5, answer6, answer7, answer8, answer9, answer10, answer11, answer12, answer13, answer14, answer15, answer16, answer17, answer18, answer19, answer20, answer21, answer22, answer23, answer24, answer25, answer26, answer27, answer28, answer29, answer30, answer31, answer32, answer33, household) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36, $37);";
 
             pool.connect(function (err, client, done) {
                 if (err) {
@@ -384,7 +403,7 @@ router.post('/', function (req, res) {
                                     res.send('responded');
                                 } else {
                                     // unit exists and hasn't responded. first, enter the survey data
-                                    client.query(queryString, [req.query.property, req.query.language, thisYear], function (err, data) {
+                                    client.query(queryString, sqlValues, function (err, data) {
                                         if (err) {
                                             done();
                                             console.log('insert query error', err, queryString);
@@ -421,5 +440,16 @@ router.post('/', function (req, res) {
     }
 });
 
+function sanitizeSurveyResponse(surveyAnswers) {
+    return surveyAnswers.map(value => value.answer ? value.answer : null);
+}
+
+function validateSurveyLanguage(language) {
+    return SUPPORTED_LANGUAGES.includes(language)
+}
+
+function validateAuthorization(req, role) {
+    return req.isAuthenticated() && req.user.role == role
+}
 
 module.exports = router;
