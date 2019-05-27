@@ -3,9 +3,22 @@ body {
     z-index: 0;
 }
 
+.survey-question-section {
+    padding-bottom: 25px;
+    font-size: 14pt;
+}
+
+.survey-question-paragraph {
+    max-width: 557px;
+}
+
+.household-row-question {
+    padding-bottom: 15px !important;
+}
+
 .aeon-logo-bg {
-    background: url(../assets/aeon-logo-640x700-op30.png) no-repeat 50% 0%;
-    min-height: 640px;
+    /* background: url(../assets/aeon-logo-640x700-op30.png) no-repeat 50% 0%;
+    min-height: 640px; */
 }
 
 .material-icons.md-dark {
@@ -64,6 +77,11 @@ body {
 .cancelbtn-container>.md-raised {
     background-color: #B2DFDB;
 }
+
+.removebtn {
+    background-color: #B2DFDB !important;
+}
+
 
 #logout-button {
     padding: 5px 10px;

@@ -4,34 +4,31 @@ myApp.controller('SurveyController', function (AdminService, SurveyService, User
   //-------------VARIABLES----------------
   //--------------------------------------
 
-  class HouseholdMember {
-    constructor(name, dateOfBirth, gender, race, hispanic, disabled) {
-        this.name = name;
-        this.dateOfBirth = dateOfBirth;
-        this.gender = gender;
-        this.race = race;
-        this.hispanic = hispanic;
-        this.disabled = disabled;
-    }
-}
-
   var self = this;
+
+  self.RACE = {
+    WHITE: 'white',
+    BLACK: 'black',
+    ISLANDER: 'islander',
+    ASIAN: 'asian',
+    NATIVE: 'native',
+    OTHER: 'other'
+  }
 
   self.propertyChosen = ""; // the user-selected property
   self.propertyList = AdminService.propertyList; // holds the list of properties pulled from the database
   self.surveyAnswers = SurveyService.surveyAnswers; // holds the user's answers
-  self.surveyHouseholdMembers = SurveyService.surveyHouseholdMembers;
   self.surveyLanguage = SurveyService.surveyLanguage; // the user-selected language
   self.surveyObject = SurveyService.surveyObject; // holds the translated questions for display
   self.household = SurveyService.household;
   console.log(self.household);
 
-  if (angular.equals(self.surveyObject, {})) {  // Load english as language on load
+  if (angular.equals(self.surveyObject, {})) { // Load english as language on load
     SurveyService.getSurvey('english').then(
-      function(res) {
+      function (res) {
         self.surveyObject = SurveyService.surveyObject;
       },
-      function(err) {
+      function (err) {
         console.error(err);
       }
     )
@@ -74,7 +71,9 @@ myApp.controller('SurveyController', function (AdminService, SurveyService, User
   // called primarily from prev/next buttons on DOM, sends user to the passed address and resets their scroll to the top of the page
   self.go = function (hash) {
     $location.path(hash);
-    window.setTimeout(function() {window.scrollTo(0,0);}, 0);
+    window.setTimeout(function () {
+      window.scrollTo(0, 0);
+    }, 0);
   }
 
 
@@ -125,13 +124,27 @@ myApp.controller('SurveyController', function (AdminService, SurveyService, User
     }, function () {});
   }
 
-  self.addHouseholdMember = function() {
-    self.surveyHouseholdMembers.push(new HouseholdMember())
+  self.addHouseholdMember = function () {
+    self.surveyAnswers.householdMembers.push(new HouseholdMember())
   }
 
-  self.removeHouseholdMember = function(index) {
-    self.surveyHouseholdMembers.splice(index, 1)
+  self.removeHouseholdMember = function (index) {
+    self.surveyAnswers.householdMembers.splice(index, 1)
   }
+
+  self.setHouseholdMemberGender = function (index, genderValue) {
+    self.surveyAnswers.householdMembers[index].gender = genderValue
+  }
+
+  self.setHouseholdMemberRace = function (index, raceValue) {
+    self.surveyAnswers.householdMembers[index].race[raceValue] = !self.surveyAnswers.householdMembers[index].race[raceValue]
+  }
+
+  self.setHouseholdMemberRaceSelfIdentify = function (index, selfIdentify) {
+    self.surveyAnswers.householdMembers[index].race.selfIdentify = selfIdentify
+  }
+
+  
 
   //--------------------------------------
   //-------------RUNTIME CODE-------------
@@ -142,10 +155,10 @@ myApp.controller('SurveyController', function (AdminService, SurveyService, User
   self.beginSurvey = function (property, unit) {
     SurveyService.beginSurvey(property, unit);
     SurveyService.getHousehold(property).then(
-      function(res) {
+      function (res) {
         self.household = SurveyService.household;
       },
-      function(err) {
+      function (err) {
         console.log(err);
       }
     );

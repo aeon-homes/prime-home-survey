@@ -13,7 +13,7 @@
             </div>
         </div>
         <div layout="row" layout-align="center">
-            <section class="survey-question" flex-gt-xs="80" flex-offsetgt-xs="10">
+            <section class="survey-question-section" flex-gt-xs="80" flex-offsetgt-xs="10">
                 <p>28. {{sc.surveyObject[28]}}</p>
                 <md-input-container class="md-block">
                     <label>{{sc.surveyObject.writeanswer}}</label>
@@ -22,7 +22,7 @@
             </section>
         </div>
         <div layout="row" layout-align="center">
-            <section class="survey-question" flex-gt-xs="80" flex-offsetgt-xs="10">
+            <section class="survey-question-section" flex-gt-xs="80" flex-offsetgt-xs="10">
                 <p>29. {{sc.surveyObject[29]}}</p>
                 <md-input-container class="md-block">
                     <label>{{sc.surveyObject.enter_number}}</label>
@@ -31,7 +31,7 @@
             </section>
         </div>
         <div layout="row" layout-align="center">
-            <section class="survey-question" flex-gt-xs="80" flex-offsetgt-xs="10">
+            <section class="survey-question-section" flex-gt-xs="80" flex-offsetgt-xs="10">
                 <p>30. {{sc.surveyObject[30]}}</p>
                 <md-button class="md-raised" ng-click="sc.respond(30,true)"
                     ng-class="{ 'md-accent': sc.surveyAnswers.list[29].answer == true}">{{sc.surveyObject.yes}}
@@ -42,7 +42,7 @@
             </section>
         </div>
         <div layout="row" layout-align="center">
-            <section class="survey-question" flex-gt-xs="80" flex-offsetgt-xs="10">
+            <section class="survey-question-section" flex-gt-xs="80" flex-offsetgt-xs="10">
                 <p>31. {{sc.surveyObject[31]}}</p>
                 <md-input-container class="md-block">
                     <label>{{sc.surveyObject.writeanswer}}</label>
@@ -51,20 +51,21 @@
             </section>
         </div>
         <div layout="row" layout-align="center">
-            <section class="survey-question" flex-gt-xs="80" flex-offsetgt-xs="10">
+            <section class="survey-question-section" flex-gt-xs="80" flex-offsetgt-xs="10">
                 <p>32. {{sc.surveyObject[32]}}</p>
                 <md-button class="md-raised" ng-click="sc.respond(32,1)"
                     ng-class="{ 'md-accent': sc.surveyAnswers.list[31].answer == 1}">{{sc.surveyObject.military_active}}
                 </md-button>
                 <md-button class="md-raised" ng-click="sc.respond(32,2)"
-                    ng-class="{ 'md-accent': sc.surveyAnswers.list[31].answer == 2}">{{sc.surveyObject.military_veteran}}
+                    ng-class="{ 'md-accent': sc.surveyAnswers.list[31].answer == 2}">
+                    {{sc.surveyObject.military_veteran}}
                 </md-button>
                 <md-button class="md-raised" ng-click="sc.respond(32,3)"
                     ng-class="{ 'md-accent': sc.surveyAnswers.list[31].answer == 3}">{{sc.surveyObject.no}}</md-button>
             </section>
         </div>
         <div layout="row" layout-align="center">
-            <section class="survey-question" flex-gt-xs="80" flex-offsetgt-xs="10">
+            <section class="survey-question-section" flex-gt-xs="80" flex-offsetgt-xs="10">
                 <p>33. {{sc.surveyObject[33]}}</p>
                 <md-button class="md-raised" ng-click="sc.respond(33,true)"
                     ng-class="{ 'md-accent': sc.surveyAnswers.list[32].answer == true}">{{sc.surveyObject.yes}}
@@ -75,7 +76,7 @@
             </section>
         </div>
         <div layout="row" layout-align="center">
-            <section class="survey-question" flex-gt-xs="80" flex-offsetgt-xs="10">
+            <section class="survey-question-section" flex-gt-xs="80" flex-offsetgt-xs="10">
                 <p>34. {{sc.surveyObject[34]}}</p>
                 <md-input-container class="md-block">
                     <label>{{sc.surveyObject.enter_number}}</label>
@@ -83,23 +84,95 @@
                 </md-input-container>
             </section>
         </div>
-        <div>
-            <h2>{{sc.surveyObject.list_members}}</h2>
-            name, age, other shit whatever
-            {{sc.surveyHouseholdMembers}}
+        <div layout="row" layout-align="center">
+            <section class="survey-question-section" flex-gt-xs="80" flex-offsetgt-xs="10">
+                <h2>{{sc.surveyObject.list_members}}</h2>
+                <div class="householdRow" ng-repeat="member in sc.surveyAnswers.householdMembers">
+                    <div id="{{'householdRow' + $index + name}}" class="household-row-question">
+                        <md-input-container class="md-block">
+                            <label>{{sc.surveyObject.name}}</label>
+                            <input id="{{'householdRow' + $index + nameInput}}" type="text"
+                                ng-model="sc.surveyAnswers.householdMembers[$index].name">
+                        </md-input-container>
+                    </div>
+                    <div id="{{'householdRow' + $index + dateOfBirth}}" class="household-row-question">
+                        <span class="householdQuestionLabel">{{sc.surveyObject.date_of_birth}}</span>
+                        <md-datepicker ng-model="sc.surveyAnswers.householdMembers[$index].dateOfBirth"></md-datepicker>
+                    </div>
+                    <div id="{{'householdRow' + $index + gender}}" class="household-row-question">
+                        <span class="householdQuestionLabel">{{sc.surveyObject[25]}}</span>
+                        <md-button class="md-raised" ng-click="sc.setHouseholdMemberGender($index, 'female')"
+                            ng-class="{ 'md-accent': sc.surveyAnswers.householdMembers[$index].gender == 'female'}">
+                            {{sc.surveyObject.gender1}}
+                        </md-button>
+                        <md-button class="md-raised" ng-click="sc.setHouseholdMemberGender($index, 'male')"
+                            ng-class="{ 'md-accent': sc.surveyAnswers.householdMembers[$index].gender == 'male'}">
+                            {{sc.surveyObject.gender2}}
+                        </md-button>
+                        <md-input-container class="self-identify-input">
+                            <label>{{sc.surveyObject.gender3}}</label>
+                            <input type="text" ng-model="sc.surveyAnswers.householdMembers[$index].genderSelfIdentify"
+                                ng-change="sc.setHouseholdMemberGender($index, sc.surveyAnswers.householdMembers[$index].genderSelfIdentify)">
+                        </md-input-container>
+                    </div>
+                    <div id="{{'householdRow' + $index + race}}" class="household-row-question">
+                        <span class="householdQuestionLabel">{{sc.surveyObject.race_check_all}}</span>
+                        <md-button class="md-raised" ng-click="sc.setHouseholdMemberRace($index, sc.RACE.WHITE)"
+                            ng-class="{ 'md-accent': sc.surveyAnswers.householdMembers[$index].race.white === true }">
+                            {{sc.surveyObject.race_white}}
+                        </md-button>
+                        <md-button class="md-raised" ng-click="sc.setHouseholdMemberRace($index, sc.RACE.BLACK)"
+                            ng-class="{ 'md-accent': sc.surveyAnswers.householdMembers[$index].race.black === true }">
+                            {{sc.surveyObject.race_black}}
+                        </md-button>
+                        <md-button class="md-raised" ng-click="sc.setHouseholdMemberRace($index, sc.RACE.ISLANDER)"
+                            ng-class="{ 'md-accent': sc.surveyAnswers.householdMembers[$index].race.islander === true }">
+                            {{sc.surveyObject.race_islander}}
+                        </md-button>
+                        <md-button class="md-raised" ng-click="sc.setHouseholdMemberRace($index, sc.RACE.ASIAN)"
+                            ng-class="{ 'md-accent': sc.surveyAnswers.householdMembers[$index].race.asian === true }">
+                            {{sc.surveyObject.race_asian}}
+                        </md-button>
+                        <md-button class="md-raised" ng-click="sc.setHouseholdMemberRace($index, sc.RACE.NATIVE)"
+                            ng-class="{ 'md-accent': sc.surveyAnswers.householdMembers[$index].race.native === true }">
+                            {{sc.surveyObject.race_native}}
+                        </md-button>
+                        <md-input-container class="self-identify-input">
+                            <label>{{sc.surveyObject.race_other}}</label>
+                            <input type="text" ng-model="sc.surveyAnswers.householdMembers[$index].race.selfIdentify">
+                        </md-input-container>
+                    </div>
+                    <div id="{{'householdRow' + $index + hispanic}}" class="household-row-question">
+                        <span class="householdQuestionLabel">{{sc.surveyObject.race_hispanic}}</span>
+                        <md-button class="md-raised" ng-click="sc.surveyAnswers.householdMembers[$index].hispanic = true"
+                            ng-class="{ 'md-accent': sc.surveyAnswers.householdMembers[$index].hispanic === true}">
+                            {{sc.surveyObject.yes}}
+                        </md-button>
+                        <md-button class="md-raised" ng-click="sc.surveyAnswers.householdMembers[$index].hispanic = false"
+                            ng-class="{ 'md-accent': sc.surveyAnswers.householdMembers[$index].hispanic === false}">
+                            {{sc.surveyObject.no}}
+                        </md-button>
+                    </div>
+                    <div id="{{'householdRow' + $index + disabled}}" class="household-row-question">
+                        <span class="householdQuestionLabel">{{sc.surveyObject.disabled}}</span>
+                        <md-button class="md-raised" ng-click="sc.surveyAnswers.householdMembers[$index].disabled = true"
+                            ng-class="{ 'md-accent': sc.surveyAnswers.householdMembers[$index].disabled === true}">
+                            {{sc.surveyObject.yes}}
+                        </md-button>
+                        <md-button class="md-raised" ng-click="sc.surveyAnswers.householdMembers[$index].disabled = false"
+                            ng-class="{ 'md-accent': sc.surveyAnswers.householdMembers[$index].disabled === false}">
+                            {{sc.surveyObject.no}}
+                        </md-button>
+                    </div>
 
-            <div class="householdRow" ng-repeat="member in sc.surveyHouseholdMembers" id="{{'householdRow' + $index}}">
-                <md-input-container class="md-block">
-                        <label>{{sc.surveyObject.name}}</label>
-                        <input id="{{'householdRow' + $index + name}}" type="text" ng-model="sc.surveyHouseholdMembers[$index].name">
-                </md-input-container>
-                <md-button class="md-raised" ng-click="sc.removeHouseholdMember($index)"
-                    ng-class="md-accent">{{sc.surveyObject.remove}}
-                </md-button>
-            </div>
+                    <md-button class="md-raised removebtn" ng-click="sc.removeHouseholdMember($index)">
+                        {{sc.surveyObject.remove_household_member}}
+                    </md-button>
+                    <hr style="height:2px">
+                </div>
 
-            <md-button class="md-raised md-primary" ng-click="sc.addHouseholdMember()">{{sc.surveyObject.add_household_member}}</md-button>
-
+                <md-button class="md-raised md-primary" ng-click="sc.addHouseholdMember()">
+                    {{sc.surveyObject.add_household_member}}</md-button>
 
         </div>
         <div layout="row" layout-align="center" layout-padding layout-margin>
@@ -114,6 +187,7 @@
                 <md-button class="md-raised md-primary" ng-click='sc.submitSurvey()'>{{sc.surveyObject.submit}}
                 </md-button>
             </div>
+            </section>
         </div>
 
     </div>

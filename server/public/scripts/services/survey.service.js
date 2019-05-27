@@ -1,16 +1,5 @@
 myApp.service('SurveyService', function ($http, $location, $mdDialog) {
 
-    class HouseholdMember {
-        constructor(name, dateOfBirth, gender, race, hispanic, disabled) {
-            this.name = name;
-            this.dateOfBirth = dateOfBirth;
-            this.gender = gender;
-            this.race = race;
-            this.hispanic = hispanic;
-            this.disabled = disabled;
-        }
-    }
-
     //--------------------------------------
     //-------------VARIABLES----------------
     //--------------------------------------
@@ -26,10 +15,10 @@ myApp.service('SurveyService', function ($http, $location, $mdDialog) {
     self.surveyProperty = ""; // holds the user-selected property
     self.surveyUnit = ""; // holds the user-selected unit
     self.household = false;
-    self.surveyHouseholdMembers = [new HouseholdMember()];
 
     self.surveyAnswers = { // holds the user's responses
-        list: []
+        list: [],
+        householdMembers: [new HouseholdMember()]
     };
 
     self.surveyLanguage = { // holds the user-selected language, default English
@@ -116,10 +105,6 @@ myApp.service('SurveyService', function ($http, $location, $mdDialog) {
     // sends the user's language, property, unit, and survey answers to the db to be stored
     // displays error dialogs if a unit has already responded or a server error happens, or takes the user to the thanks page if successful
     self.submitSurvey = function () {
-        if (self.household) {
-            populateHouseholdMembers()
-        }
-
         $http.post('/survey', self.surveyAnswers, {
             params: {
                 'language': self.surveyLanguage.language,
@@ -164,9 +149,10 @@ myApp.service('SurveyService', function ($http, $location, $mdDialog) {
     self.populateHouseholdMembers = function () {
         self.surveyObject.householdMembers = [];
         for (let member in self.surveyHouseholdMembers) {
+            member.dateOfBirth = member.dateOfBirth.substring(0,10)
             self.surveyObject.householdMembers.push(member);
         }
-    }
+    };
 
 
     //--------------------------------------

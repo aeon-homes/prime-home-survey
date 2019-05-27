@@ -230,7 +230,7 @@ router.get('/household', (req, res) => {
                         console.log('query error household', err);
                         res.sendStatus(500);
                     } else {
-                        console.log('household query: ' + data.rows[0].household)
+                        console.log('household query: ' + data.rows[0].household);
                         if (data.rows[0].household === true) {
                             household = true;
                         }
@@ -240,19 +240,19 @@ router.get('/household', (req, res) => {
             }
         });
     } else {
-        res.sendStatus(403)
+        res.sendStatus(403);
     }
 });
 
 router.get('/language', function (req, res) {
     if (!validateSurveyLanguage(req.query.language)) {
-        res.sendStatus(400)
-        return
+        res.sendStatus(400);
+        return;
     }
 
     if (!validateAuthorization(req, ROLES.RESIDENT)) {
-        res.sendStatus(403)
-        return
+        res.sendStatus(403);
+        return;
     }
 
     const languageSql = `SELECT question_number, ${req.query.language} FROM questions;`;
@@ -264,32 +264,32 @@ router.get('/language', function (req, res) {
         if (err) {
             console.log('error connecting to db', err);
             res.sendStatus(500);
-            return
+            return;
         }
-        
+
         client.query(languageSql, function (err, data) {
             if (err) {
                 done();
                 console.log('query error language', err);
-                res.sendStatus(500)
-                return
+                res.sendStatus(500);
+                return;
             }
 
             surveyObject.questions = data.rows;
-        })
+        });
 
         client.query(translationSql, function (err, data) {
             if (err) {
                 done();
                 console.log('query error translation', err);
-                res.sendStatus(500)
-                return
+                res.sendStatus(500);
+                return;
             }
             done();
 
             surveyObject.translations = data.rows;
             res.send(surveyObject);
-        })
+        });
     });
 });
 
@@ -343,7 +343,7 @@ router.post('/questions/:year?', function (req, res) {
                 hmong: req.body.hmong,
                 theme: req.body.theme,
                 // year: year,
-            }
+            };
 
             var queryString = "UPDATE questions SET english=$1, somali=$2, spanish=$3, hmong=$4, theme=$5 WHERE id=$6;";
 
@@ -375,81 +375,130 @@ router.post('/questions/:year?', function (req, res) {
 
 // takes a completed survey and posts it to the database. also updates the unit to having responded in the `occupancy` table.
 router.post('/', function (req, res) {
-    if (req.isAuthenticated()) {
-        if (req.user.role == 'Resident') {
-            var thisYear = new Date();
-            thisYear = thisYear.getFullYear();
-            var sanitizedAnswers = sanitizeSurveyResponse(req.body.list);
-            var sqlValues = [req.query.property, req.query.language, thisYear].concat(sanitizedAnswers).concat([req.body.household]);
+    if (!validateAuthorization(req, ROLES.RESIDENT)) {
+        res.sendStatus(403);
+        return;
+    }
 
-            queryString = "INSERT INTO responses (property, language, year, answer1, answer2, answer3, answer4, answer5, answer6, answer7, answer8, answer9, answer10, answer11, answer12, answer13, answer14, answer15, answer16, answer17, answer18, answer19, answer20, answer21, answer22, answer23, answer24, answer25, answer26, answer27, answer28, answer29, answer30, answer31, answer32, answer33, household) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36, $37);";
+    const thisYear = new Date().getFullYear();
+    const sanitizedAnswers = sanitizeSurveyResponse(req.body.list);
+    const sqlValues = [req.query.property, req.query.language, thisYear].concat(sanitizedAnswers).concat([req.body.household]);
 
-            pool.connect(function (err, client, done) {
+    const insertQueryString = "INSERT INTO responses (property, language, year, answer1, answer2, answer3, answer4, answer5, answer6, answer7, answer8, answer9, answer10, answer11, answer12, answer13, answer14, answer15, answer16, answer17, answer18, answer19, answer20, answer21, answer22, answer23, answer24, answer25, answer26, answer27, answer28, answer29, answer30, answer31, answer32, answer33, answer34, household) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36, $37, $38) RETURNING id;";
+
+    pool.connect(function (err, client, done) {
+        if (err) {
+            console.log('error connecting to db', err);
+            res.sendStatus(500);
+            return;
+        }
+
+        // double-check that the unit hasn't responded yet 
+        client.query('SELECT * FROM occupancy WHERE property=$1 AND unit=$2 AND year=$3', [req.query.property, req.query.unit, req.query.year], function (err, selectData) {
+            if (err) {
+                done();
+                console.log('unit check query error', err);
+                res.sendStatus(500);
+                return;
+            }
+
+            if (!selectData.rows[0]) {
+                done();
+                res.send('unit not found');
+                return;
+            }
+
+            if (selectData.rows[0].responded) {
+                done();
+                res.send('responded');
+                return;
+            }
+
+            // unit exists and hasn't responded
+            client.query(insertQueryString, sqlValues, function (err, insertData) {
                 if (err) {
-                    console.log('error connecting to db', err);
+                    done();
+                    console.log('insert query error', err, insertQueryString);
                     res.sendStatus(500);
-                } else
-                    // double-check that the unit hasn't responded yet 
-                    client.query('SELECT * FROM occupancy WHERE property=$1 AND unit=$2 AND year=$3', [req.query.property, req.query.unit, req.query.year], function (err, data) {
+                    return;
+                }
+
+                let householdQueryString = "INSERT INTO household (property, year, response_id, name, date_of_birth, gender, race_white, race_black, race_islander, race_asian, race_native, race_self_identify, hispanic_or_latino, disabled) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);";
+
+                const responseId = insertData.rows[0].id;
+
+                for (let memberIndex = 0; memberIndex < req.body.householdMembers.length; memberIndex++) {
+                    let householdValues = generateHouseholdMemberSqlValues(req.body.householdMembers[memberIndex], req.query.property, req.query.year, responseId);
+                    client.query(householdQueryString, householdValues, (err, data) => {
                         if (err) {
                             done();
-                            console.log('unit check query error', err);
+                            console.log("insert household query error:", err);
                             res.sendStatus(500);
-                        } else {
-                            if (data.rows[0]) {
-                                // unit is found
-                                if (data.rows[0].responded) {
-                                    done();
-                                    res.send('responded');
-                                } else {
-                                    // unit exists and hasn't responded. first, enter the survey data
-                                    client.query(queryString, sqlValues, function (err, data) {
-                                        if (err) {
-                                            done();
-                                            console.log('insert query error', err, queryString);
-                                            res.sendStatus(500);
-                                        } else {
-                                            client.query('UPDATE occupancy SET responded=true WHERE property=$1 AND unit=$2;', [req.query.property, req.query.unit], function (err, data) {
-                                                done();
-                                                if (err) {
-                                                    console.log('query error', err);
-                                                    res.sendStatus(500);
-                                                } else {
-                                                    res.sendStatus(201);
-                                                }
-                                            });
-                                        }
-                                    });
-
-                                }
-                            } else {
-                                // unit not found
-                                done();
-                                res.send('unit not found');
-                            }
+                            return;
                         }
                     });
+                }
+
+                client.query('UPDATE occupancy SET responded=true WHERE property=$1 AND unit=$2;', [req.query.property, req.query.unit], function (err, data) {
+                    if (err) {
+                        done();
+                        console.log('query error', err);
+                        res.sendStatus(500);
+                        return;
+                    }
+
+                    res.sendStatus(201);
+                });
             });
-        } else {
-            //not resident role
-            res.sendStatus(403);
-        }
-    } else {
-        // not authenticated
-        res.sendStatus(403);
-    }
+        });
+    });
+
 });
 
 function sanitizeSurveyResponse(surveyAnswers) {
-    return surveyAnswers.map(value => value.answer ? value.answer : null);
+    return surveyAnswers.map(value => {
+        if (typeof value.answer == undefined) {
+            return null;
+        } else {
+            return value.answer;
+        }
+    });
+
 }
 
 function validateSurveyLanguage(language) {
-    return SUPPORTED_LANGUAGES.includes(language)
+    return SUPPORTED_LANGUAGES.includes(language);
 }
 
 function validateAuthorization(req, role) {
-    return req.isAuthenticated() && req.user.role == role
+    return req.isAuthenticated() && req.user.role == role;
+}
+
+function generateHouseholdMemberSqlValues(member, property, year, responseId) {
+    return [
+        property,
+        year,
+        responseId,
+        member.name ? member.name : null,
+        member.dateOfBirth ? member.dateOfBirth : null,
+        member.gender ? member.gender : null,
+        mapBooleanAnswer(member.race.white),
+        mapBooleanAnswer(member.race.black),
+        mapBooleanAnswer(member.race.islander),
+        mapBooleanAnswer(member.race.asian),
+        mapBooleanAnswer(member.race.native),
+        member.race.selfIdentify ? member.race.selfIdentify : null,
+        mapBooleanAnswer(member.hispanic),
+        mapBooleanAnswer(member.disabled),
+    ];
+}
+
+function mapBooleanAnswer(answer) {
+    if (answer === "") {
+        return null;
+    } else {
+        return answer;
+    }
 }
 
 module.exports = router;
