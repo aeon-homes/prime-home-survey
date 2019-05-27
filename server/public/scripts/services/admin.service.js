@@ -619,7 +619,7 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
             self.selectedEditProperty.list = response.data;
         });
 
-    }
+    };
 
     // get the selected property on the admin site manager properties edit page
     self.getSelectedSiteProperty = function (selectedProperty, year) {
@@ -727,6 +727,23 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
             self.getUsers();
         });
     };
+
+    self.toggleHousehold = function (name, newValue) {
+        $http({
+            method: 'PUT',
+            url: '/admin/updateHousehold',
+            data: {
+                name: name,
+                value: newValue
+            }
+        }).then((response) => {
+            if (self.selectedEditProperty.list[0]) {
+                self.getSelectedEditProperty(self.selectedEditProperty.list[0].property, self.selectedEditProperty.list[0].year);
+            } else if (self.selectedSiteManagerProperty.list[0]) {
+                self.getSelectedSiteProperty(self.selectedSiteManagerProperty.list[0].property, self.selectedSiteManagerProperty.list[0].year);
+            }
+        })
+    }
 
 
     // PUT request to update the occupied status of a unit 

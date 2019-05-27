@@ -213,7 +213,7 @@ router.get('/selectedProperty', function (req, res) {
                     res.sendStatus(500);
                 } else {
                     //query
-                    client.query('SELECT * FROM occupancy WHERE property=$1 AND year=$2;', [req.query.selectedProperty, req.query.year], function (err, data) {
+                    client.query('SELECT * FROM occupancy INNER JOIN properties ON properties.name = occupancy.property WHERE property=$1 AND year=$2;', [req.query.selectedProperty, req.query.year], function (err, data) {
                         done();
                         if (err) {
                             console.log('query error', err);
@@ -309,6 +309,37 @@ router.get('/responses', function (req, res) {
         res.sendStatus(403);
     }
 
+});
+
+router.put('/updateHousehold', (req, res) => {
+    if (!req.isAuthenticated() || !(req.user.role == 'Administrator' || req.user.role == 'Site Manager')) {
+        res.sendStatus(403);
+        return;
+    }
+
+    const queryString = "INSERT INTO properties (name, household) VALUES ($1, $2) ON CONFLICT (name) DO UPDATE SET household=$2;";
+    const queryValues = [req.body.name, req.body.value];
+
+    pool.connect(function (err, client, done) {
+        if (err) {
+            console.log('db connect error', err);
+            done();
+            res.sendStatus(500);
+            return;
+        }
+
+        client.query(queryString, queryValues, (err, data) => {
+            done();
+
+            if (err) {
+                console.log("updateHousehold query error", err);
+                res.sendStatus(500);
+                return;
+            }
+
+            res.sendStatus(200);
+        });
+    });
 });
 
 module.exports = router;

@@ -70,15 +70,15 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
       self.validInput = true;
       $scope.$apply();
       self.userInput = readerEvent.target.result;
-    }
+    };
     reader.readAsText(fileEvent.target.files[0]);
-  }
+  };
 
 
   // authorizes or de-authorizes a user for a particular property
   self.manageAuth = function (user, property, route) {
     AdminService.manageAuth(user.id, property, route);
-  }
+  };
 
   // Toggle Sidenav
   self.openLeftMenu = function () {
@@ -99,9 +99,7 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
       CsvService.uploadCsv(self.userInput, self.yearToAdd);
       self.validInput = false;
     }, function () { });
-
-  }
-
+  };
 
 
   //--------------UPDATE QUESTIONS---------------
@@ -127,7 +125,7 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
     $mdDialog.show(confirm).then(function () {
       CsvService.updateQuestion(question, year);
     }, function () { });
-  }
+  };
 
   //--------------------------------------
   //-------------RUNTIME CODE-------------

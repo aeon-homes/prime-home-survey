@@ -59,6 +59,9 @@
             <div layout="row" ng-if="apc.selectedEditProperty.list[0]">
                 <div flex class="md-whiteframe-4dp" layout-padding layout-margin>
                     <h3 class="md-headline">{{apc.selectedEditProperty.list[0].property}} ({{apc.selectedEditProperty.list[0].year}})</h3>
+                    <span class="admin-property-household">Household Demographics:</span>
+                    <md-button class="md-raised" ng-click="apc.toggleHousehold(true)" ng-class="{ 'md-accent': apc.selectedEditProperty.list[0].household}">Enabled</md-button>
+                    <md-button class="md-raised" ng-click="apc.toggleHousehold(false)" ng-class="{ 'md-accent': !apc.selectedEditProperty.list[0].household}">Disabled</md-button>
                     <md-table-container>
                         <table md-table multiple ng-model="apc.selectedProperty">
                             <thead md-head md-order="apc.orderByColumn">

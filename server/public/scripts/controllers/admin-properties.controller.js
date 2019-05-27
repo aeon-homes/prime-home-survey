@@ -36,7 +36,7 @@ myApp.controller('AdminPropertiesController', ['AdminService', 'UserService', '$
     // Called from a checkbox on the /admin-properties page. Sends unit occupied status update to the admin service
     self.updateOccupied = function (property) {
         AdminService.updateOccupied(property);
-    }
+    };
 
     // Toggle Sidenav
     self.openLeftMenu = function () {
@@ -46,7 +46,14 @@ myApp.controller('AdminPropertiesController', ['AdminService', 'UserService', '$
     // Send the selected property and year to the AdminService to GET the selected year
     self.getSelectedEditProperty = function (selectedProperty, year) {
         AdminService.getSelectedEditProperty(selectedProperty, year);
-    }
+    };
+
+    self.toggleHousehold = function(newValue) {
+        if (self.selectedEditProperty.list[0].household != newValue) {
+            AdminService.toggleHousehold(self.selectedEditProperty.list[0].property, newValue);
+        }
+      };
+        
 
     //--------------------------------------
     //-------------RUNTIME CODE-------------
