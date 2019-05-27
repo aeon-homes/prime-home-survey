@@ -6,6 +6,8 @@ myApp.controller('SurveyController', function (AdminService, SurveyService, User
 
   var self = this;
 
+  self.queryParams = $location.search();
+
   self.RACE = {
     WHITE: 'white',
     BLACK: 'black',
@@ -15,13 +17,14 @@ myApp.controller('SurveyController', function (AdminService, SurveyService, User
     OTHER: 'other'
   }
 
-  self.propertyChosen = ""; // the user-selected property
+  self.propertyChosen = self.queryParams.property ? self.queryParams.property : ""; // the user-selected property
+  self.unitChosen = self.queryParams.unit ? self.queryParams.unit : "";
+
   self.propertyList = AdminService.propertyList; // holds the list of properties pulled from the database
   self.surveyAnswers = SurveyService.surveyAnswers; // holds the user's answers
   self.surveyLanguage = SurveyService.surveyLanguage; // the user-selected language
   self.surveyObject = SurveyService.surveyObject; // holds the translated questions for display
   self.household = SurveyService.household;
-  console.log(self.household);
 
   if (angular.equals(self.surveyObject, {})) { // Load english as language on load
     SurveyService.getSurvey('english').then(

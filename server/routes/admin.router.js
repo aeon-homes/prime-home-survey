@@ -281,7 +281,6 @@ router.get('/responses', function (req, res) {
                         } else {
                             // data.rows[0].count is a string of how many responses we have
                             let responses = data.rows[0].count;
-                            // console.log('responses', responses);
                             client.query(secondQueryString, [true, ...params], function (err, data) {
                                 done();
                                 if (err) {

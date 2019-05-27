@@ -11,9 +11,8 @@ myApp.controller('VerifyController', function ($http, $location, UserService, $m
   //--------------------------------------
 
   // checks the token route param against the database, and flips the user to active if it finds a matching token
-  $http.get('/register/verify/' + $routeParams.token).then(function(response){
-    console.log('response', response);
-    
+  // DEPRECATED
+  $http.get('/register/verify/' + $routeParams.token).then(function(response){    
     if (response.status === 200) {
       self.message = "Email verified. Please log in."
       self.showLogin = true;

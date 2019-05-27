@@ -6,10 +6,15 @@ myApp.controller('LoginController', function ($window, $http, $location, UserSer
 
   var vm = this;
 
+  vm.queryParams = $location.search();
+
   vm.user = {
-    username: '',
-    password: ''
+    username: vm.queryParams.user ? vm.queryParams.user : '',
+    password: '',
+    property: vm.queryParams.property ? vm.queryParams.property : '',
+    unit: vm.queryParams.unit ? vm.queryParams.unit : ''
   };
+
 
   //--------------------------------------
   //-------------FUNCTIONS----------------
@@ -32,7 +37,7 @@ myApp.controller('LoginController', function ($window, $http, $location, UserSer
           } else if (vm.user.role == 'Site Manager') {
             $location.path('/site-manager'); // http://localhost:5000/#/site-manager
           } else if (vm.user.role === 'Resident') {
-            $location.path('/survey-language'); // http://localhost:5000/#/survey-language
+            $location.url(`/survey-language?property=${vm.user.property}&unit=${vm.user.unit}`); // http://localhost:5000/#/survey-language
           } else {
             $mdToast.show(
               $mdToast.simple()
@@ -71,7 +76,7 @@ myApp.controller('LoginController', function ($window, $http, $location, UserSer
         );//end of $mdToast
       });
     }
-  }
+  };
 
 
   // displays a toast if the user cancels their registration
@@ -112,8 +117,5 @@ myApp.controller('LoginController', function ($window, $http, $location, UserSer
   //--------------------------------------
   //-------------RUNTIME CODE-------------
   //--------------------------------------
-
-  // none
-
 
 });
