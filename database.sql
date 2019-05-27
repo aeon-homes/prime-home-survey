@@ -99,7 +99,7 @@ CREATE TABLE household
     id SERIAL PRIMARY KEY,
     property TEXT NOT NULL,
     year INT,
-    response_id INT REFERENCES response(id),
+    response_id INT REFERENCES responses(id),
     name TEXT,
     date_of_birth DATE,
     gender TEXT,
@@ -202,10 +202,6 @@ rau koj tus nai saib vaj tse ces koj tau txais $10. Ua tsaug!'),
 ('race_other','Other:','soraceother','spraceother','hraceother'),
 ('race_hispanic','Hispanic or Latino','sohisp','sphisp','hhisp'),
 ('disabled','Disabled','sodisabled','spdisabled','hdisabled');
-
-
-
-;
 
 INSERT INTO questions
     (question_number,

@@ -213,7 +213,7 @@ router.get('/selectedProperty', function (req, res) {
                     res.sendStatus(500);
                 } else {
                     //query
-                    client.query('SELECT * FROM occupancy INNER JOIN properties ON properties.name = occupancy.property WHERE property=$1 AND year=$2;', [req.query.selectedProperty, req.query.year], function (err, data) {
+                    client.query('SELECT occupancy.*, properties.household FROM occupancy LEFT JOIN properties ON properties.name = occupancy.property WHERE property=$1 AND year=$2;', [req.query.selectedProperty, req.query.year], function (err, data) {
                         done();
                         if (err) {
                             console.log('query error', err);
