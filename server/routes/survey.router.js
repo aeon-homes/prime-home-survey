@@ -11,12 +11,16 @@ const SUPPORTED_LANGUAGES = [
     "spanish",
     "somali",
     "hmong"
-]
+];
+
 const ROLES = {
     RESIDENT: "Resident",
     ADMINISTRATOR: "Administrator",
     SITE_MANAGER: "Site Manager"
-}
+};
+
+const SURVEY_DOMAIN = "https://aeon-home-survey.herokuapp.com";
+const RESIDENT_USERNAME = "test-resident@aeon.org";
 
 // DEBUG - generate random survey data
 
@@ -452,8 +456,110 @@ router.post('/', function (req, res) {
             });
         });
     });
-
 });
+
+router.post("/status", (req, res) => {
+    if (!validateSurveyStatusRequest(req.body)) {
+        res.status(400).send({
+            error_message: "Invalid POST body."
+        });
+        return;
+    }
+
+    processStatusRequest(req.body.property_name, req.body.unit_code, req.body.year).then((result) => {
+        res.send(result);
+    }).catch((error) => {
+        console.log(`/status POST error: ${error}`);
+        res.status(500).send({
+            error_message: "Unable to process request."
+        });
+    });
+});
+
+router.get("/status", (req, res) => {
+    if (!validateSurveyStatusRequest({
+            property_name: req.query.property,
+            unit_code: req.query.unit
+        })) {
+        res.status(400).send({
+            error_message: "Missing required query parameters (property, unit)."
+        });
+        
+        return;
+    }
+
+    processStatusRequest(req.query.property, req.query.unit, req.query.year).then((result) => {
+        res.send(result);
+    }).catch((error) => {
+        console.log(`/status POST error: ${error}`);
+        res.status(500).send({
+            error_message: "Unable to process request."
+        });
+    });
+});
+
+function validateSurveyStatusRequest(requestData) {
+    if (!requestData || !requestData.property_name || !requestData.unit_code) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function processStatusRequest(property, unit, year) {
+    return new Promise((resolve, reject) => {
+        year = year ? year : new Date().getFullYear();
+
+        let result = {
+            property_name: property,
+            unit_code: unit,
+            year: year
+        };
+
+        pool.connect(function (err, client, done) {
+            if (err) {
+                done();
+                console.log('processStatusRequest db connect error', err);
+                reject("db connect error");
+            } else {
+                client.query("SELECT * FROM occupancy WHERE property=$1 AND unit=$2 AND year=$3;", [property, unit, year], (err, data) => {
+                    done();
+
+                    if (err) {
+                        console.log('processStatusRequest db connect error', err);
+                        reject("db query error");
+                    } else {
+                        result.status = mapStatusResult(data.rows);
+
+                        if (result.status === "new") {
+                            result.url = generateSurveyUrl(result.property_name, result.unit_code);
+                        }
+                    }
+
+                    resolve(result);
+                });
+            }
+        });
+    });
+}
+
+function mapStatusResult(dbResult) {
+    let status = "no_match";
+
+    if (dbResult[0]) {
+        if (dbResult[0].responded) {
+            status = "completed";
+        } else {
+            status = "new";
+        }
+    }
+
+    return status;
+}
+
+function generateSurveyUrl(property, unit) {
+    return encodeURI(`${SURVEY_DOMAIN}/#/home?property=${property}&unit=${unit}&user=${RESIDENT_USERNAME}`);
+}
 
 function sanitizeSurveyResponse(surveyAnswers) {
     return surveyAnswers.map(value => {
