@@ -20,7 +20,7 @@ const ROLES = {
 };
 
 const SURVEY_DOMAIN = "https://aeon-home-survey.herokuapp.com";
-const RESIDENT_USERNAME = "test-resident@aeon.org";
+const RESIDENT_USERNAME = "resident-test@aeon.org";
 
 // DEBUG - generate random survey data
 
@@ -484,7 +484,7 @@ router.get("/status", (req, res) => {
         res.status(400).send({
             error_message: "Missing required query parameters (property, unit)."
         });
-        
+
         return;
     }
 
