@@ -19,8 +19,10 @@ const ROLES = {
     SITE_MANAGER: "Site Manager"
 };
 
-const SURVEY_DOMAIN = "https://aeon-home-survey.herokuapp.com";
-const RESIDENT_USERNAME = "resident-test@aeon.org";
+const SURVEY_DOMAIN = process.env.SURVEY_DOMAIN ? process.env.SURVEY_DOMAIN : "https://aeon-home-survey.herokuapp.com";
+const RESIDENT_USERNAME = process.env.RESIDENT_USERNAME ? process.env.RESIDENT_USERNAME : "resident-test@aeon.org";
+const RESIDENT_PASSWORD = process.env.RESIDENT_PASSWORD ? process.env.RESIDENT_PASSWORD : "surveyhomeaeon";
+
 
 // DEBUG - generate random survey data
 
@@ -558,7 +560,7 @@ function mapStatusResult(dbResult) {
 }
 
 function generateSurveyUrl(property, unit) {
-    return encodeURI(`${SURVEY_DOMAIN}/#/home?property=${property}&unit=${unit}&user=${RESIDENT_USERNAME}`);
+    return encodeURI(`${SURVEY_DOMAIN}/#/home?property=${property}&unit=${unit}&user=${RESIDENT_USERNAME}&password=${RESIDENT_PASSWORD}`);
 }
 
 function sanitizeSurveyResponse(surveyAnswers) {

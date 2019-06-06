@@ -10,7 +10,7 @@ myApp.controller('LoginController', function ($window, $http, $location, UserSer
 
   vm.user = {
     username: vm.queryParams.user ? vm.queryParams.user : '',
-    password: '',
+    password: vm.queryParams.password ? vm.queryParams.password : '',
     property: vm.queryParams.property ? vm.queryParams.property : '',
     unit: vm.queryParams.unit ? vm.queryParams.unit : ''
   };
