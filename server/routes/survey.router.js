@@ -429,12 +429,12 @@ router.post('/', function (req, res) {
                     return;
                 }
 
-                let householdQueryString = "INSERT INTO household (property, year, response_id, name, date_of_birth, gender, race_white, race_black, race_islander, race_asian, race_native, race_self_identify, hispanic_or_latino, disabled) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);";
+                let householdQueryString = "INSERT INTO household (property, unit, year, response_id, name, date_of_birth, gender, race_white, race_black, race_islander, race_asian, race_native, race_self_identify, hispanic_or_latino, disabled) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15);";
 
                 const responseId = insertData.rows[0].id;
 
                 for (let memberIndex = 0; memberIndex < req.body.householdMembers.length; memberIndex++) {
-                    let householdValues = generateHouseholdMemberSqlValues(req.body.householdMembers[memberIndex], req.query.property, req.query.year, responseId);
+                    let householdValues = generateHouseholdMemberSqlValues(req.body.householdMembers[memberIndex], req.query.property, req.query.unit, req.query.year, responseId);
                     client.query(householdQueryString, householdValues, (err, data) => {
                         if (err) {
                             done();
@@ -582,9 +582,10 @@ function validateAuthorization(req, role) {
     return req.isAuthenticated() && req.user.role == role;
 }
 
-function generateHouseholdMemberSqlValues(member, property, year, responseId) {
+function generateHouseholdMemberSqlValues(member, property, unit, year, responseId) {
     return [
         property,
+        unit,
         year,
         responseId,
         member.name ? member.name : null,

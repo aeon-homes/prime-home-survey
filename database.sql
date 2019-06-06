@@ -98,6 +98,7 @@ CREATE TABLE household
 (
     id SERIAL PRIMARY KEY,
     property TEXT NOT NULL,
+    unit TEXT NOT NULL,
     year INT,
     response_id INT REFERENCES responses(id),
     name TEXT,
