@@ -34,6 +34,7 @@ CREATE TABLE occupancy
     property TEXT NOT NULL,
     unit TEXT NOT NULL,
     responded BOOLEAN,
+    paper_response BOOLEAN,
     paid BOOLEAN,
     occupied BOOLEAN,
     year INT NOT NULL
