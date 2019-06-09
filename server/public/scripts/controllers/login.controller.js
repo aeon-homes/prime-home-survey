@@ -23,8 +23,7 @@ myApp.controller('LoginController', function ($window, $http, $location, UserSer
   
   // logs the user in, then redirects to the appropriate page if they have a role assigned
   vm.login = function () {
-    if (vm.user.username === '' || vm.user.password === '') {
-    } else {
+    if (vm.user.username && vm.user.password) {
       $http.post('/', vm.user).then(function (response) {
         if (response.data.username) {
           if (response.data.role){
@@ -118,4 +117,7 @@ myApp.controller('LoginController', function ($window, $http, $location, UserSer
   //-------------RUNTIME CODE-------------
   //--------------------------------------
 
+  if (vm.user.username && vm.user.password) {
+    vm.login();
+  }
 });
