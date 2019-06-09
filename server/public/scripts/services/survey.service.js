@@ -4,7 +4,7 @@ myApp.service('SurveyService', function ($http, $location, $mdDialog) {
     //-------------VARIABLES----------------
     //--------------------------------------
 
-    var NUM_SURVEY_QUESTIONS = 33; // used as a magic number for building the answers array
+    var NUM_SURVEY_QUESTIONS = 34; // used as a magic number for building the answers array
 
     var self = this;
 

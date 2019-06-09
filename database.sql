@@ -83,8 +83,7 @@ CREATE TABLE responses
     answer31 TEXT,
     answer32 TEXT,
     answer33 BOOLEAN,
-    answer34 TEXT,
-    household BOOLEAN
+    answer34 TEXT
 );
 
 CREATE TABLE occupancy_users
@@ -100,7 +99,6 @@ CREATE TABLE household
     property TEXT NOT NULL,
     unit TEXT NOT NULL,
     year INT,
-    response_id INT REFERENCES responses(id),
     name TEXT,
     date_of_birth DATE,
     gender TEXT,

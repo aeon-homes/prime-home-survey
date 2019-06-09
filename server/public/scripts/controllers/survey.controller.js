@@ -98,7 +98,7 @@ myApp.controller('SurveyController', function (AdminService, SurveyService, User
   // takes hard-coded question_id and answer values from the user/DOM and puts them in surveyAnswers.list
   self.respond = function (question_id, answer) {
 
-    // If question is #25 gender and answer is self-identify, include the input repsonse in surveyAnswers
+    // If question is #25 gender and answer is self-identify, include the input response in surveyAnswers
     if (question_id === 25) {
       if (answer === 3) {
         SurveyService.surveyAnswers.list[question_id - 1].answer = answer + ' (' + self.selfIdentify + ')';

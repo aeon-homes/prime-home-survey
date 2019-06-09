@@ -388,9 +388,9 @@ router.post('/', function (req, res) {
 
     const thisYear = new Date().getFullYear();
     const sanitizedAnswers = sanitizeSurveyResponse(req.body.list);
-    const sqlValues = [req.query.property, req.query.language, thisYear].concat(sanitizedAnswers).concat([req.body.household]);
+    const sqlValues = [req.query.property, req.query.language, thisYear].concat(sanitizedAnswers);
 
-    const insertQueryString = "INSERT INTO responses (property, language, year, answer1, answer2, answer3, answer4, answer5, answer6, answer7, answer8, answer9, answer10, answer11, answer12, answer13, answer14, answer15, answer16, answer17, answer18, answer19, answer20, answer21, answer22, answer23, answer24, answer25, answer26, answer27, answer28, answer29, answer30, answer31, answer32, answer33, answer34, household) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36, $37, $38) RETURNING id;";
+    const insertQueryString = "INSERT INTO responses (property, language, year, answer1, answer2, answer3, answer4, answer5, answer6, answer7, answer8, answer9, answer10, answer11, answer12, answer13, answer14, answer15, answer16, answer17, answer18, answer19, answer20, answer21, answer22, answer23, answer24, answer25, answer26, answer27, answer28, answer29, answer30, answer31, answer32, answer33, answer34) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, $33, $34, $35, $36, $37);";
 
     pool.connect(function (err, client, done) {
         if (err) {
@@ -429,12 +429,12 @@ router.post('/', function (req, res) {
                     return;
                 }
 
-                let householdQueryString = "INSERT INTO household (property, unit, year, response_id, name, date_of_birth, gender, race_white, race_black, race_islander, race_asian, race_native, race_self_identify, hispanic_or_latino, disabled) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15);";
-
-                const responseId = insertData.rows[0].id;
+                let householdQueryString = "INSERT INTO household (property, unit, year, name, date_of_birth, gender, race_white, race_black, race_islander, race_asian, race_native, race_self_identify, hispanic_or_latino, disabled) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);";
+                
+                trimBlankHouseholdMembers(req.body.householdMembers)
 
                 for (let memberIndex = 0; memberIndex < req.body.householdMembers.length; memberIndex++) {
-                    let householdValues = generateHouseholdMemberSqlValues(req.body.householdMembers[memberIndex], req.query.property, req.query.unit, req.query.year, responseId);
+                    let householdValues = generateHouseholdMemberSqlValues(req.body.householdMembers[memberIndex], req.query.property, req.query.unit, req.query.year);
                     client.query(householdQueryString, householdValues, (err, data) => {
                         if (err) {
                             done();
@@ -582,10 +582,34 @@ function validateAuthorization(req, role) {
     return req.isAuthenticated() && req.user.role == role;
 }
 
-function generateHouseholdMemberSqlValues(member, property, unit, year, responseId) {
+function trimBlankHouseholdMembers(members) {
+    let indicesToRemove = [];
+    members.forEach( (member, memberIndex) => {
+        if (
+            !member.name &&
+            !member.dateOfBirth &&
+            !member.gender &&
+            !member.race.white &&
+            !member.race.black &&
+            !member.race.asian &&
+            !member.race.native &&
+            !member.race.islander &&
+            !member.race.selfIdentify &&
+            !member.hispanic &&
+            !member.disabled
+        ) {
+            indicesToRemove.push(memberIndex);
+        }
+    });
+
+    indicesToRemove.reverse().forEach((index) => {
+        members.splice(index, 1);
+    });
+}
+
+function generateHouseholdMemberSqlValues(member, property, year, responseId) {
     return [
         property,
-        unit,
         year,
         responseId,
         member.name ? member.name : null,
