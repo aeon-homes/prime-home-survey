@@ -57,7 +57,19 @@
                 <md-option ng-value="year" ng-repeat="year in ac.yearsArray">{{year}}</md-option>
               </md-select>
             </md-input-container class="md-block">
-            <md-button class="md-raised md-primary" ng-click="ac.exportAllResponses()">Export Data</md-button>
+            <md-button class="md-raised md-primary" ng-click="ac.exportAllResponses()">Export Survey Data</md-button>
+          </section>
+        </div>
+        <div flex class="md-whiteframe-4dp" layout-padding layout-margin>
+          <section id="admin-export-household-container">
+            <h3 class="md-headline">Export Household Data</h3>
+            <md-input-container>
+              <label>Select Year to Export</label>
+              <md-select ng-model="ac.householdYear" style="min-width: 200px;">
+                <md-option ng-value="year" ng-repeat="year in ac.yearsArray">{{year}}</md-option>
+              </md-select>
+            </md-input-container class="md-block">
+            <md-button class="md-raised md-primary" ng-click="ac.exportHouseholdResponses()">Export Household Data</md-button>
           </section>
         </div>
       </div>

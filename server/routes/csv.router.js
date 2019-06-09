@@ -91,39 +91,64 @@ router.post('/upload/:year', function (req, res) {
 
 // exports all responses from the passed-in year. called from admin
 router.get('/export/:year', function (req, res) {
-  if (req.isAuthenticated()) {
-    if (req.user.role == 'Administrator') {
-      // query db, get all responses
-      pool.connect(function (err, client, done) {
-        if (err) {
-          console.log('error connecting to db', err);
-          res.sendStatus(500);
-        } else {
-          var queryString = 'SELECT * FROM responses WHERE year=$1';
-
-          // run the actual query
-          client.query(queryString, [req.params.year], function (err, data) {
-            done();
-            if (err) {
-              console.log('query error', err);
-            } else {
-              // send response data back to client
-              res.send(data.rows);
-            }
-          });
-
-        }
-      });
-
-    } else {
-      // not admin role
-      res.sendStatus(403);
-    }
-  } else {
-    // not authenticated
+  if (!req.isAuthenticated() || (req.user && req.user.role !== 'Administrator')) {
     res.sendStatus(403);
+    return;
   }
 
+  // query db, get all responses
+  pool.connect(function (err, client, done) {
+    if (err) {
+      console.log('error connecting to db', err);
+      res.sendStatus(500);
+      return;
+    }
+
+    var queryString = 'SELECT * FROM responses WHERE year=$1';
+
+    // run the actual query
+    client.query(queryString, [req.params.year], function (err, data) {
+      done();
+      if (err) {
+        console.log('query error', err);
+        res.sendStatus(500);
+        return;
+      }
+
+      // send response data back to client
+      res.send(data.rows);
+
+    });
+  });
 }); // end GET route
+
+router.get('/household/:year', function (req, res) {
+  if (!req.isAuthenticated() || (req.user && req.user.role !== 'Administrator')) {
+    res.sendStatus(403);
+    return;
+  }
+
+  pool.connect(function (err, client, done) {
+    if (err) {
+      console.log('error connecting to db', err);
+      res.sendStatus(500);
+      return;
+    }
+    var queryString = 'SELECT * FROM household WHERE year=$1';
+
+    client.query(queryString, [req.params.year], function (err, data) {
+      done();
+      if (err) {
+        console.log('query error', err);
+        res.sendStatus(500);
+        return;
+      }
+      
+      res.send(data.rows);
+
+    });
+  });
+});
+
 
 module.exports = router;

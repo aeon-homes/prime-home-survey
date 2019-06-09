@@ -4,13 +4,12 @@ myApp.service('CsvService', function ($http, $location, $mdToast) {
   //-------------VARIABLES----------------
   //--------------------------------------
 
-
   var self = this;
 
   self.questions = {};
 
   //--------------------------------------
-  //-------------FUNCTION----------------
+  //-------------FUNCTIONS----------------
   //--------------------------------------
 
   // exports all responses to a csv file and tells the browser to download it
@@ -30,8 +29,27 @@ myApp.service('CsvService', function ($http, $location, $mdToast) {
       link.click();
       document.body.removeChild(link);
       delete link;
-    })
-  }
+    });
+  };
+
+  self.exportHouseholdResponses = function (year) {
+    $http.get('/csv/household/' + year).then(function (response) {
+
+      // format the data into a csv file
+      var exportCsv = Papa.unparse(response.data);
+      exportCsv = "data:text/csv;charset=utf-8," + exportCsv;
+      exportCsv = encodeURI(exportCsv);
+
+      // tell the browser to download it
+      var link = document.createElement("a");
+      link.download = 'household-responses-' + year;
+      link.href = exportCsv;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      delete link;
+    });
+  };
 
 
   // gets all languages of questions from the db (for the updateQuestions view)
@@ -48,8 +66,9 @@ myApp.service('CsvService', function ($http, $location, $mdToast) {
           self.questions.theme.push(theme);
         }
       }
+
       function themeExists(arr, theme) {
-        return arr.some(function(arrVal) {
+        return arr.some(function (arrVal) {
           return theme === arrVal
         })
       }
@@ -85,22 +104,22 @@ myApp.service('CsvService', function ($http, $location, $mdToast) {
   self.uploadCsv = function (file, year) {
     // thanks Papa!
     var parsed = Papa.parse(file);
-    
+
     for (var i = 0; i < parsed.data.length; i++) {
-      
+
       // scrub the data
       for (var j = 0; j < parsed.data[i].length; j++) {
         // search the 'occupied' field for whether it contains the text 'occupied' or not, and set it to true/false based on that
-        if(j===1){
-          if(parsed.data[i][j].search('Occupied') >= 0){
+        if (j === 1) {
+          if (parsed.data[i][j].search('Occupied') >= 0) {
             parsed.data[i][j] = true;
-          } else{
+          } else {
             parsed.data[i][j] = false;
           }
         } else {
           parsed.data[i][j] = parsed.data[i][j].replace(/(?!\w|\s|-)./g, '') // remove all non-alphanumeric characters except whitespace, -, and _
-          .replace(/\s+/g, ' ') // replace all multiple-whitespace patterns with a single space
-          .replace(/^(\s*)([\W\w]*)(\b\s*$)/g, '$2'); // remove all trailing and leading whitespace
+            .replace(/\s+/g, ' ') // replace all multiple-whitespace patterns with a single space
+            .replace(/^(\s*)([\W\w]*)(\b\s*$)/g, '$2'); // remove all trailing and leading whitespace
         }
       }
 

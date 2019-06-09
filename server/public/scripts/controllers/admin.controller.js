@@ -17,6 +17,7 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
 
   self.yearsArray = [];
   self.yearToAdd = self.thisYear;
+  self.householdYear = self.thisYear;
   self.selectedYear = self.thisYear;
   self.validInput = false;
 
@@ -51,6 +52,10 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
   // exports all responses for the chosen year to a csv and starts the download
   self.exportAllResponses = function () {
     CsvService.exportAllResponses(self.yearToAdd);
+  }
+
+  self.exportHouseholdResponses = function () {
+    CsvService.exportHouseholdResponses(self.yearToAdd);
   }
 
   // get all occupancy data for the admin site manager page
