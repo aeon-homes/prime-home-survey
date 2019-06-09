@@ -249,10 +249,11 @@ router.get('/responses', function (req, res) {
                 params = [year];
             } else {
                 var propBlingString = "";
+                var yearBling = "$3;"
 
                 if (typeof properties === 'string') {
                     propBlingString = "$2";
-                    params = [properties];
+                    params = [properties, year];
                 } else {
                     // properties is an array
                     for (var i = 0; i < properties.length; i++) {
@@ -261,17 +262,20 @@ router.get('/responses', function (req, res) {
                     propBlingString = propBlingString.slice(0, -1);
                     params = properties;
                     params.push(year);
+                    yearBling = properties.length + 2;
                 }
 
-                queryString = 'SELECT COUNT(*) FROM occupancy WHERE responded=$1 AND property IN (' + propBlingString + ') AND year=$' + i;
-                secondQueryString = 'SELECT COUNT(*) FROM occupancy WHERE occupied=$1 AND property IN (' + propBlingString + ') AND year=$' + i;
+                queryString = `SELECT COUNT(*) FROM occupancy WHERE responded=$1 AND property IN (${propBlingString}) AND year=${yearBling}`;
+                secondQueryString = `SELECT COUNT(*) FROM occupancy WHERE occupied=$1 AND property IN (${propBlingString}) AND year=${yearBling}`;
 
             }
 
             pool.connect(function (err, client, done) {
                 if (err) {
+                    done();
                     console.log('db connect error', err);
                     res.sendStatus(500);
+                    return;
                 } else {
                     client.query(queryString, [true, ...params], function (err, data) {
                         if (err) {

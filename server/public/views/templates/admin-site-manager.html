@@ -62,7 +62,8 @@
                                 <tr md-row>
                                     <th md-column md-order-by="unit">Unit</th>
                                     <th md-column md-order-by="occupied">Occupied</th>
-                                    <th md-column md-order-by="responded">Responded</th>
+                                    <th md-column md-order-by="responded">Web Response</th>
+                                    <th md-column md-order-by="paperResponse">Paper Response</th>
                                     <th md-column md-order-by="paid">Paid</th>
                                 </tr>
                             </thead>
@@ -76,6 +77,9 @@
                                     <td md-cell>
                                         <span ng-if="property.responded" class="responded-un-highlight">Yes</span>
                                         <span ng-if="!property.responded" ng-class="{'responded-highlight': property.occupied, 'responded-un-highlight': !property.occupied}">No</span>                                        </td>
+                                    <td md-cell>
+                                        <md-checkbox ng-model="property.paperResponse" ng-change="ac.SiteManagerService.updatePaperResponse(property)" aria-label="paid"></md-checkbox>
+                                    </td>
                                     <td md-cell>
                                         <md-checkbox ng-model="property.paid" ng-change="ac.SiteManagerService.updatePaid(property)" aria-label="paid"></md-checkbox>
                                     </td>

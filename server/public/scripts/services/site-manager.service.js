@@ -60,9 +60,23 @@ myApp.service('SiteManagerService', ['$http', '$mdToast', function ($http, $mdTo
             data: property
         }).then(function (response) {
             self.getProperty(response.data[0].property, response.data[0].year);
-        })
+        });
 
-    }
+    };
+
+    self.updatePaperResponse = function (property) {
+        console.log(property)
+        // $http({
+        //     method: 'PUT',
+        //     url: '/site-manager/updatePaperResponse',
+        //     data: property
+        // }).then(function (response) {
+        //     self.getProperty(response.data[0].property, response.data[0].year);
+        // });
+
+    };
+
+
 
     // PUT request to update the occupied status of a unit 
     self.updateOccupied = function (property) {        
