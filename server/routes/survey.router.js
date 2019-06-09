@@ -20,8 +20,8 @@ const ROLES = {
 };
 
 const SURVEY_DOMAIN = process.env.SURVEY_DOMAIN ? process.env.SURVEY_DOMAIN : "https://aeon-home-survey.herokuapp.com";
-const RESIDENT_USERNAME = process.env.RESIDENT_USERNAME ? process.env.RESIDENT_USERNAME : "resident-test@aeon.org";
-const RESIDENT_PASSWORD = process.env.RESIDENT_PASSWORD ? process.env.RESIDENT_PASSWORD : "surveyhomeaeon";
+const RESIDENT_USERNAME = process.env.RESIDENT_USERNAME ? process.env.RESIDENT_USERNAME : "b";
+const RESIDENT_PASSWORD = process.env.RESIDENT_PASSWORD ? process.env.RESIDENT_PASSWORD : "a";
 
 
 // DEBUG - generate random survey data
@@ -461,6 +461,7 @@ router.post('/', function (req, res) {
 });
 
 router.post("/status", (req, res) => {
+    res.setHeader("Access-Control-Allow-Origin", "https://sitemanager.rentcafe.com");
     if (!validateSurveyStatusRequest(req.body)) {
         res.status(400).send({
             error_message: "Invalid POST body."
@@ -479,6 +480,8 @@ router.post("/status", (req, res) => {
 });
 
 router.get("/status", (req, res) => {
+    res.setHeader("Access-Control-Allow-Origin", "https://sitemanager.rentcafe.com");
+
     if (!validateSurveyStatusRequest({
             property_name: req.query.property,
             unit_code: req.query.unit
