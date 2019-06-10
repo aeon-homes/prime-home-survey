@@ -460,6 +460,13 @@ router.post('/', function (req, res) {
     });
 });
 
+router.options("/status", (req, res) => {
+    res.header('Access-Control-Allow-Origin', "https://sitemanager.rentcafe.com");
+    res.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.send(200);
+});
+
 router.post("/status", (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "https://sitemanager.rentcafe.com");
     if (!validateSurveyStatusRequest(req.body)) {
