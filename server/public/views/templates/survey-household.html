@@ -14,6 +14,12 @@
         </div>
         <div layout="row" layout-align="center">
             <section class="survey-question-section" flex-gt-xs="80" flex-offsetgt-xs="10">
+                <hr>
+                <p class="householdDisclaimer">{{sc.surveyObject.household_disclaimer}}</p>
+                <hr>
+        </div>
+        <div layout="row" layout-align="center">
+            <section class="survey-question-section" flex-gt-xs="80" flex-offsetgt-xs="10">
                 <p>28. {{sc.surveyObject[28]}}</p>
                 <md-input-container class="md-block">
                     <label>{{sc.surveyObject.writeanswer}}</label>
@@ -144,22 +150,26 @@
                     </div>
                     <div id="{{'householdRow' + $index + hispanic}}" class="household-row-question">
                         <span class="householdQuestionLabel">{{sc.surveyObject.race_hispanic}}</span>
-                        <md-button class="md-raised" ng-click="sc.surveyAnswers.householdMembers[$index].hispanic = true"
+                        <md-button class="md-raised"
+                            ng-click="sc.surveyAnswers.householdMembers[$index].hispanic = true"
                             ng-class="{ 'md-accent': sc.surveyAnswers.householdMembers[$index].hispanic === true}">
                             {{sc.surveyObject.yes}}
                         </md-button>
-                        <md-button class="md-raised" ng-click="sc.surveyAnswers.householdMembers[$index].hispanic = false"
+                        <md-button class="md-raised"
+                            ng-click="sc.surveyAnswers.householdMembers[$index].hispanic = false"
                             ng-class="{ 'md-accent': sc.surveyAnswers.householdMembers[$index].hispanic === false}">
                             {{sc.surveyObject.no}}
                         </md-button>
                     </div>
                     <div id="{{'householdRow' + $index + disabled}}" class="household-row-question">
                         <span class="householdQuestionLabel">{{sc.surveyObject.disabled}}</span>
-                        <md-button class="md-raised" ng-click="sc.surveyAnswers.householdMembers[$index].disabled = true"
+                        <md-button class="md-raised"
+                            ng-click="sc.surveyAnswers.householdMembers[$index].disabled = true"
                             ng-class="{ 'md-accent': sc.surveyAnswers.householdMembers[$index].disabled === true}">
                             {{sc.surveyObject.yes}}
                         </md-button>
-                        <md-button class="md-raised" ng-click="sc.surveyAnswers.householdMembers[$index].disabled = false"
+                        <md-button class="md-raised"
+                            ng-click="sc.surveyAnswers.householdMembers[$index].disabled = false"
                             ng-class="{ 'md-accent': sc.surveyAnswers.householdMembers[$index].disabled === false}">
                             {{sc.surveyObject.no}}
                         </md-button>

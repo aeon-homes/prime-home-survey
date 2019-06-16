@@ -4,89 +4,63 @@ var passport = require('passport');
 var path = require('path');
 var pool = require('../modules/pool.js');
 
+const OCCUPANCY_ROW_LENGTH = 4;
+const OCCUPANCY_IGNORE_ROWS = 1; // number of rows to ignore at top of imported .csv
+const START_YEAR = 2010; // startpoint for valid year param range
+const END_YEAR = 2100; // endpoint for valid year param range
+
 // Handles CSV upload from admin view
 router.post('/upload/:year', function (req, res) {
-
-  const OCCUPANCY_ROW_LENGTH = 4;
-  const OCCUPANCY_IGNORE_ROWS = 1; // number of rows to ignore at top of imported .csv
-  const START_YEAR = 2010; // startpoint for valid year param range
-  const END_YEAR = 2100; // endpoint for valid year param range
-
-  if ((START_YEAR < req.params.year) && (req.params.year < END_YEAR)) {
-    if (req.isAuthenticated()) {
-      if (req.user.role == 'Administrator') {
-
-        // first, delete the old table
-        pool.connect(function (err, client, done) {
-          if (err) {
-            console.log('connect error', err);
-            res.sendStatus(500);
-          } else {
-            client.query('DELETE FROM occupancy WHERE year=$1', [req.params.year], function (err, data) {
-              if (err) {
-                done();
-                console.log('delete query error', err);
-                res.sendStatus(500);
-              } else {
-                var unitsArray = req.body.data;
-                console.log('unitsArray[3]', unitsArray[3]);
-
-                var queryString = 'INSERT INTO occupancy (property, occupied, unit, year) VALUES (';
-
-                // SQL query looks like:
-                // INSERT INTO occupancy (property, occupied, unit, year) VALUES ($1, $2, $3, $4), ($5,$6,$7,$8), [...];
-
-                var explodedArray = [];
-
-                // assuming header row, push any valid row into the explodedArray and build out the query string
-                for (var i = OCCUPANCY_IGNORE_ROWS; i < unitsArray.length; i++) {
-                  if (unitsArray[i].length === OCCUPANCY_ROW_LENGTH) {
-
-                    // unitsArray[i] is one row of data, something like
-                    // ['1822 Park', 'Occupied No Notice', 03, 2017]
-                    for (var j = 0; j < unitsArray[i].length; j++) {
-                      queryString += '$' + (j + ((i - 1) * 4) + 1) + ',';
-                      explodedArray.push(unitsArray[i][j]);
-                    }
-                    queryString = queryString.slice(0, -1);
-                    queryString += '),(';
-                    if (i == 3) {
-                      console.log('unitsArray[i]', unitsArray[i]);
-                      console.log('queryString', queryString);
-                    }
-
-                  }
-                }
-
-                queryString = queryString.slice(0, -2);
-                queryString += ';';
-
-                // push the whole thing into the occupancy table of the db
-                client.query(queryString, explodedArray, function (err, result) {
-                  done();
-                  if (err) {
-                    console.log('error making csv insert query', err);
-                    res.sendStatus(500);
-                  } else {
-                    res.sendStatus(201);
-                  }
-                });
-              }
-            });
-          }
-        });
-      } else {
-        // not admin role
-        res.sendStatus(403);
-      }
-    } else {
-      // not authenticated
-      res.sendStatus(403);
-    }
-  } else {
-    // bad year param, return error
-    res.status(400).send('bad year parameter')
+  if (!req.isAuthenticated() || req.user.role != 'Administrator') {
+    res.sendStatus(403);
+    return;
   }
+
+  if ((req.params.year < START_YEAR) || (req.params.year > END_YEAR)) {
+    res.status(400).send("Must be a year between 2010 and 2100.");
+    return;
+  }
+
+  validateCsvImportData(req.body);
+
+  // const parsedData = parseImportRequestBody(req.body.data);
+
+  // first, delete the old table
+  pool.connect(function (err, client, done) {
+    if (err) {
+      console.log('csv.router.js /upload/:year POST connect error', err);
+      res.sendStatus(500);
+      return;
+    }
+
+    client.query('DELETE FROM occupancy WHERE year=$1', [req.params.year], function (err, data) {
+      if (err) {
+        done();
+        console.log('csv.router.js /upload/:year POST delete query error', err);
+        res.sendStatus(500);
+        return;
+      }
+
+      var unitsArray = req.body.data;
+      unitsArray.splice(0, OCCUPANCY_IGNORE_ROWS);
+      const queryBlingString = buildCsvImportBlingString(unitsArray);
+      const queryString = buildCsvImportQueryString(unitsArray, queryBlingString);
+      var sqlParams = unitsArray.flat();
+      // sqlParams = booleanizeImportData(sqlParams);
+
+      // push the whole thing into the occupancy table of the db
+      client.query(queryString, sqlParams, function (err, result) {
+        done();
+        if (err) {
+          console.log('error making csv insert query', err);
+          res.sendStatus(500);
+          return;
+        }
+
+        res.sendStatus(201);
+      });
+    });
+  });
 }); // end POST route
 
 // exports all responses from the passed-in year. called from admin
@@ -143,12 +117,47 @@ router.get('/household/:year', function (req, res) {
         res.sendStatus(500);
         return;
       }
-      
+
       res.send(data.rows);
 
     });
   });
 });
 
+
+// result: "($1,$2,$3,$4),($5,$6,$7,$8),($9, $10..."
+function buildCsvImportBlingString(requestBodyData) {
+  let result = "";
+  let rowCounter = 1;
+
+  for (let i = 0; i < requestBodyData.length; i++) {
+    if (requestBodyData[i].length !== OCCUPANCY_ROW_LENGTH) {
+      console.log(`row ${i} data ${requestBodyData[i]}`);
+      throw new Error("Invalid occupancy row length");
+    }
+
+    result += `(\$${rowCounter},`;
+    result += `\$${rowCounter+1},`;
+    result += `\$${rowCounter+2},`;
+    result += `\$${rowCounter+3}),`;
+
+    rowCounter += 4;
+  }
+
+  console.log(result)
+
+  return result.slice(0, -1);
+}
+
+//INSERT INTO occupancy (property, occupied, unit, year) VALUES ($1, $2, $3, $4), ($5,$6,$7,$8), [...]
+function buildCsvImportQueryString(requestBodyData, blingString) {
+  return `INSERT INTO occupancy (property, occupied, unit, year) VALUES ${blingString}`;
+}
+
+function validateCsvImportData(requestBodyData) {
+  if (typeof requestBodyData !== "object" || requestBodyData.length < 1) {
+    throw new Error("Invalid CSV import data");
+  }
+}
 
 module.exports = router;

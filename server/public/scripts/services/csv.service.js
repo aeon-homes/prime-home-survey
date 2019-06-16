@@ -103,7 +103,9 @@ myApp.service('CsvService', function ($http, $location, $mdToast) {
   // called ultimately by the [UPLOAD] button on admin.html. Parses the imported file and sends it up to the server.
   self.uploadCsv = function (file, year) {
     // thanks Papa!
-    var parsed = Papa.parse(file);
+    var parsed = Papa.parse(file, {
+      skipEmptyLines: true,
+    });
 
     for (var i = 0; i < parsed.data.length; i++) {
 
@@ -122,9 +124,6 @@ myApp.service('CsvService', function ($http, $location, $mdToast) {
             .replace(/^(\s*)([\W\w]*)(\b\s*$)/g, '$2'); // remove all trailing and leading whitespace
         }
       }
-
-      // add the passed-in year to the data row
-      parsed.data[i].push(year);
     }
 
     $http.post('/csv/upload/' + year, parsed).then(function (response) {

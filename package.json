@@ -1,6 +1,9 @@
 {
   "name": "aeon_home_survey",
-  "version": "1.0.0",
+  "version": "2.0.0",
+  "engines": {
+    "node": "12.4.0"
+  },
   "description": "",
   "main": "server/server.js",
   "scripts": {
@@ -17,7 +20,7 @@
     "angular-material-data-table": "^0.10.10",
     "angular-messages": "^1.7.8",
     "angular-route": "^1.7.8",
-    "bcrypt": "^3.0.5",
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "chart.js": "^2.8.0",
     "dotenv": "^4.0.0",
