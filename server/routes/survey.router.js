@@ -10,7 +10,8 @@ const SUPPORTED_LANGUAGES = [
     "english",
     "spanish",
     "somali",
-    "hmong"
+    "hmong",
+    "oromo"
 ];
 
 const ROLES = {
