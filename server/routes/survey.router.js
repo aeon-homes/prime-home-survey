@@ -237,9 +237,10 @@ router.get('/household', (req, res) => {
                         console.log('query error household', err);
                         res.sendStatus(500);
                     } else {
-                        console.log('household query: ' + data.rows[0].household);
-                        if (data.rows[0].household === true) {
+                        if (data.rows[0] && data.rows[0].household === true) {
                             household = true;
+                        } else {
+                            household = false;
                         }
                         res.send(household);
                     }
