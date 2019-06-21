@@ -45,7 +45,8 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
       .cancel('Cancel');
 
     $mdDialog.show(confirm).then(function () {
-      AdminService.deleteUser(user.username);
+      console.log(user);
+      AdminService.deleteUser(user);
     }, function () { }); // blank function is to do nothing when 'cancel' is chosen. otherwise md generates console warnings
   }
 

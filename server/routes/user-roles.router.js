@@ -220,15 +220,46 @@ router.put('/role', function (req, res) {
 });
 
 // deletes a user
-router.delete('/:username', function (req, res) {
-    if (req.isAuthenticated()) {
-        if (req.user.role == 'Administrator') {
-            pool.connect(function (err, client, done) {
+router.delete('/:userId', function (req, res) {
+    if (!req.isAuthenticated() || req.user.role !== 'Administrator') {
+        res.sendStatus(403);
+        return;
+    }
+
+    pool.connect(function (err, client, done) {
+        if (err) {
+            console.log('db connect error', err);
+            res.sendStatus(500);
+        } else {
+            client.query('SELECT * FROM occupancy_users WHERE user_id=$1', [req.params.userId], (err, data) => {
                 if (err) {
-                    console.log('db connect error', err);
+                    done();
+                    console.log("delete user query error");
                     res.sendStatus(500);
+                    return;
+                }
+
+                if (data.rows.length > 0) {
+                    client.query('DELETE FROM occupancy_users WHERE user_id=$1', [req.params.userId], (err, data) => {
+                        if (err) {
+                            done();
+                            console.log("delete user query error");
+                            res.sendStatus(500);
+                            return;
+                        }
+
+                        client.query('DELETE FROM users WHERE id=$1', [req.params.userId], function (err, data) {
+                            done();
+                            if (err) {
+                                console.log('query error', err);
+                                res.sendStatus(500);
+                            } else {
+                                res.sendStatus(200);
+                            }
+                        });
+                    });
                 } else {
-                    client.query('DELETE FROM users WHERE username=$1', [req.params.username], function (err, data) {
+                    client.query('DELETE FROM users WHERE id=$1', [req.params.userId], function (err, data) {
                         done();
                         if (err) {
                             console.log('query error', err);
@@ -239,14 +270,9 @@ router.delete('/:username', function (req, res) {
                     });
                 }
             });
-        } else {
-            //not admin
-            res.sendStatus(403);
         }
-    } else {
-        //not logged in
-        res.sendStatus(403);
-    }
+    });
+
 });
 
 

@@ -554,9 +554,11 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
 
 
     // Delete a user from delete button the user section in admin
-    self.deleteUser = function (username) {
-
-        $http.delete('/user-roles/' + username).then(function (response) {
+    self.deleteUser = function (user) {
+        console.log(user.id)
+        console.log(user.username)
+        console.log(user)
+        $http.delete('/user-roles/' + user.id).then(function (response) {
             if (response.status == 200) {
                 $mdToast.show(
                     $mdToast.simple()
