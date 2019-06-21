@@ -49,7 +49,7 @@ myApp.controller('AdminPropertiesController', ['AdminService', 'UserService', '$
     };
 
     self.toggleHousehold = function(newValue) {
-        if (self.selectedEditProperty.list[0].household != newValue) {
+        if (self.selectedEditProperty.list[0].household !== newValue) {
             AdminService.toggleHousehold(self.selectedEditProperty.list[0].property, newValue);
         }
       };
