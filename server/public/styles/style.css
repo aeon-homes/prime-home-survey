@@ -21,6 +21,10 @@ body {
     min-height: 640px; */
 }
 
+.surveyCompleteBadge {
+    max-height: 30vh;
+}
+
 .material-icons.md-dark {
     color: rgba(0, 0, 0, 0.54);
 }

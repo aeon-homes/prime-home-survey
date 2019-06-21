@@ -7,9 +7,16 @@
             <p>{{sc.surveyObject.requestresults}}</p>
         </div>
     </div>
+    <div layout="row" layout-align="center center">
+        <img class="surveyCompleteBadge" ng-hide="{{sc.surveyLanguage.language==='spanish'}}"
+            src="../../assets/HomeScore-Survey-Complete-English.png">
+        <img ng-hide="{{sc.surveyLanguage.language!=='spanish'}}" class="surveyCompleteBadge"
+            src="../../assets/HomeScore-Survey-Complete-Spanish.png">
+    </div>
     <div layout="row" layout-align="center" layout-padding>
         <div class="cancelbtn-container">
-            <md-button class="cancelbtn md-raised" ng-click='sc.cancelSurvey(false)'>{{sc.surveyObject.begin}}</md-button>
+            <md-button class="cancelbtn md-raised" ng-click='sc.cancelSurvey(false)'>{{sc.surveyObject.begin}}
+            </md-button>
         </div>
     </div>
 </div>

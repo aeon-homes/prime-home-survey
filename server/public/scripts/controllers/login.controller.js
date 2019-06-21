@@ -108,7 +108,11 @@ myApp.controller('LoginController', function ($window, $http, $location, UserSer
     );//end of $mdToast
   };//end of vm.showToast
 
-
+  function initialLogin() {
+    setTimeout(() => {
+      vm.login();
+    }, 200);
+  }
 
 
 
@@ -120,4 +124,6 @@ myApp.controller('LoginController', function ($window, $http, $location, UserSer
   if (vm.user.username && vm.user.password) {
     vm.login();
   }
+
+  initialLogin();
 });
