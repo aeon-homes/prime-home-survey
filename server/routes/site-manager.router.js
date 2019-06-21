@@ -70,7 +70,7 @@ router.get('/getProperty', function (req, res) {
 });
 
 router.put('/updatePaid', function (req, res) {
-    if (!req.isAuthenticated() || (req.user && req.user.role !== 'Administrator')) {
+    if (!req.isAuthenticated() || (req.user && req.user.role !== 'Administrator' && req.user.role !== 'Site Manager')) {
         res.sendStatus(403);
         return;
     }
@@ -102,7 +102,7 @@ router.put('/updatePaid', function (req, res) {
 
 
 router.put('/updatePaperResponse', function (req, res) {
-    if (!req.isAuthenticated() || (req.user && req.user.role !== 'Administrator')) {
+    if (!req.isAuthenticated() || (req.user && req.user.role !== 'Administrator' &&req.user.role !== 'Site Manager')) {
         res.sendStatus(403);
         return;
     }
@@ -117,7 +117,7 @@ router.put('/updatePaperResponse', function (req, res) {
         }
 
         client.query('UPDATE occupancy SET paper_response=$1 WHERE id=$2 RETURNING *;', 
-            [req.body.paid, req.body.id],
+            [req.body.paper_response, req.body.id],
             function (errQuery, data) {
                 done();
                 

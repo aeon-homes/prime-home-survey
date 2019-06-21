@@ -58,12 +58,6 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
     CsvService.exportHouseholdResponses(self.yearToAdd);
   }
 
-  // get all occupancy data for the admin site manager page
-  self.getSiteManagerProperties = function () {
-    AdminService.getSiteManagerProperties();
-  }
-
-
   // event handler for 'change' event on file input. reads in the file, and sets the validInput flag to true which shows the upload button
   self.handleFileSelect = function (fileEvent) {
     reader = new FileReader();
