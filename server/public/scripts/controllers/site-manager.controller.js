@@ -47,6 +47,14 @@ myApp.controller('SiteManagerController', ['SiteManagerService', 'UserService', 
         SiteManagerService.getResponseRate([property.property], year);        
     }
 
+    self.updatePaperResponse = function(property, year) {
+        SiteManagerService.updatePaperResponse(property)
+            .then((response) => {
+                self.getProperty(property, year);
+            });
+
+    }
+
     // Called from a checkbox on the /admin-properties page. Sends unit occupied status update to the admin service
     self.updateOccupied = function (property) {        
         SiteManagerService.updateOccupied(property);

@@ -45,7 +45,6 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
       .cancel('Cancel');
 
     $mdDialog.show(confirm).then(function () {
-      console.log(user);
       AdminService.deleteUser(user);
     }, function () { }); // blank function is to do nothing when 'cancel' is chosen. otherwise md generates console warnings
   }
@@ -57,7 +56,14 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
 
   self.exportHouseholdResponses = function () {
     CsvService.exportHouseholdResponses(self.yearToAdd);
-  }
+  };
+
+  self.updatePaperResponse = function(property, year) {
+    SiteManagerService.updatePaperResponse(property, year)
+      .then(response => {
+        AdminService.getResponseRate(property.property, year)
+      });
+  };
 
   // event handler for 'change' event on file input. reads in the file, and sets the validInput flag to true which shows the upload button
   self.handleFileSelect = function (fileEvent) {

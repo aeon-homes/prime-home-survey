@@ -65,12 +65,10 @@ myApp.service('SiteManagerService', ['$http', '$mdToast', function ($http, $mdTo
     };
 
     self.updatePaperResponse = function (property) {
-        $http({
+        return $http({
             method: 'PUT',
             url: '/site-manager/updatePaperResponse',
             data: property
-        }).then(function (response) {
-            self.getProperty(response.data[0].property, response.data[0].year);
         });
     };
 

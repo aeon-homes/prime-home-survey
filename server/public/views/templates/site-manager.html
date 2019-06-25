@@ -58,7 +58,7 @@
                         <td md-cell>
                             {{property.paperResponse}}
                             <md-checkbox ng-model="property.paper_response"
-                                ng-change="smc.SiteManagerService.updatePaperResponse(property)" aria-label="paid">
+                                ng-change="smc.updatePaperResponse(property, smc.selectedYear)" aria-label="paid">
                             </md-checkbox>
                         </td>
                         <td md-cell>

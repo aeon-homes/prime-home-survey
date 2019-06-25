@@ -78,7 +78,7 @@
                                         <span ng-if="property.responded" class="responded-un-highlight">Yes</span>
                                         <span ng-if="!property.responded" ng-class="{'responded-highlight': property.occupied, 'responded-un-highlight': !property.occupied}">No</span>                                        </td>
                                     <td md-cell>
-                                        <md-checkbox ng-model="property.paper_response" ng-change="ac.SiteManagerService.updatePaperResponse(property)" aria-label="paper response"></md-checkbox>
+                                        <md-checkbox ng-model="property.paper_response" ng-change="ac.updatePaperResponse(property, ac.selectedYear)" aria-label="paper response"></md-checkbox>
                                     </td>
                                     <td md-cell>
                                         <md-checkbox ng-model="property.paid" ng-change="ac.SiteManagerService.updatePaid(property)" aria-label="paid"></md-checkbox>

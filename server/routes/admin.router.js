@@ -244,7 +244,7 @@ router.get('/responses', function (req, res) {
             var year = req.query.year;
 
             if (properties == 'all') {
-                queryString = 'SELECT COUNT(*) FROM occupancy WHERE responded=$1 AND year=$2';
+                queryString = 'SELECT COUNT(*) FROM occupancy WHERE responded=$1 AND occupied=true AND year=$2';
                 secondQueryString = 'SELECT COUNT(*) FROM occupancy WHERE occupied=$1 AND year=$2';
                 params = [year];
             } else {
@@ -265,7 +265,7 @@ router.get('/responses', function (req, res) {
                     yearBling = properties.length + 2;
                 }
 
-                queryString = `SELECT COUNT(*) FROM occupancy WHERE responded=$1 AND property IN (${propBlingString}) AND year=${yearBling}`;
+                queryString = `SELECT COUNT(*) FROM occupancy WHERE (responded=$1 OR paper_response=true) AND property IN (${propBlingString}) AND year=${yearBling}`;
                 secondQueryString = `SELECT COUNT(*) FROM occupancy WHERE occupied=$1 AND property IN (${propBlingString}) AND year=${yearBling}`;
 
             }
