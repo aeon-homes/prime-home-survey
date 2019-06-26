@@ -5,7 +5,8 @@ var path = require('path');
 var pool = require('../modules/pool.js');
 
 const OCCUPANCY_ROW_LENGTH = 4;
-const OCCUPANCY_IGNORE_ROWS = 1; // number of rows to ignore at top of imported .csv
+const OCCUPANCY_IGNORE_ROWS = 4; // number of rows to ignore at top of imported .csv
+const OCCUPANCY_IGNORE_ENDING_ROWS = 1;
 const START_YEAR = 2010; // startpoint for valid year param range
 const END_YEAR = 2100; // endpoint for valid year param range
 
@@ -43,10 +44,11 @@ router.post('/upload/:year', function (req, res) {
 
       var unitsArray = req.body.data;
       unitsArray.splice(0, OCCUPANCY_IGNORE_ROWS);
+      unitsArray.splice(unitsArray.length-OCCUPANCY_IGNORE_ENDING_ROWS, OCCUPANCY_IGNORE_ENDING_ROWS);
+      // unitsArray = sanitizeUnitsArray(unitsArray);
       const queryBlingString = buildCsvImportBlingString(unitsArray);
       const queryString = buildCsvImportQueryString(unitsArray, queryBlingString);
       var sqlParams = unitsArray.flat();
-      // sqlParams = booleanizeImportData(sqlParams);
 
       // push the whole thing into the occupancy table of the db
       client.query(queryString, sqlParams, function (err, result) {
@@ -131,11 +133,6 @@ function buildCsvImportBlingString(requestBodyData) {
   let rowCounter = 1;
 
   for (let i = 0; i < requestBodyData.length; i++) {
-    if (requestBodyData[i].length !== OCCUPANCY_ROW_LENGTH) {
-      console.log(`row ${i} data ${requestBodyData[i]}`);
-      throw new Error("Invalid occupancy row length");
-    }
-
     result += `(\$${rowCounter},`;
     result += `\$${rowCounter+1},`;
     result += `\$${rowCounter+2},`;
@@ -143,8 +140,6 @@ function buildCsvImportBlingString(requestBodyData) {
 
     rowCounter += 4;
   }
-
-  console.log(result)
 
   return result.slice(0, -1);
 }
