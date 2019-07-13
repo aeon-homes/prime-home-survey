@@ -35,7 +35,6 @@ router.get('/:role?', function (req, res) {
     // send back user object from database
   } else {
     // failure best handled on the server. do redirect here.
-    console.log('user route not logged in');
     // should probably be res.sendStatus(403) and handled client-side, esp if this is an AJAX request (which is likely with AngularJS)
     res.send(false);
   }

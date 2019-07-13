@@ -179,6 +179,8 @@ router.get('/data/:number', function (req, res) {
 */
 
 router.get('/begin', function (req, res) {
+    logIphoneUserAgent(req.header("user-agent"), "survey begin");
+
     if (req.isAuthenticated()) {
         if (req.user.role == 'Resident') {
             // is this property/unit combo legit?
@@ -220,8 +222,9 @@ router.get('/begin', function (req, res) {
 });
 
 router.get('/household', (req, res) => {
+    logIphoneUserAgent(req.header("user-agent"), "get household");
+
     const householdSql = "SELECT household FROM properties WHERE name=$1 LIMIT 1;";
-    console.log(req.query.property);
 
     let household = false;
 
@@ -262,6 +265,8 @@ router.get('/language', function (req, res) {
         res.sendStatus(403);
         return;
     }
+
+    logIphoneUserAgent(req.header("user-agent"), "get language " + req.query.language);
 
     const languageSql = `SELECT question_number, ${req.query.language} FROM questions;`;
     const translationSql = `SELECT type, ${req.query.language} FROM translations;`;
@@ -383,6 +388,7 @@ router.post('/questions/:year?', function (req, res) {
 
 // takes a completed survey and posts it to the database. also updates the unit to having responded in the `occupancy` table.
 router.post('/', function (req, res) {
+    logIphoneUserAgent(req.header("user-agent"), "survey submit");
     if (!validateAuthorization(req, ROLES.RESIDENT)) {
         res.sendStatus(403);
         return;
@@ -643,6 +649,13 @@ function mapBooleanAnswer(answer) {
         return null;
     } else {
         return answer;
+    }
+}
+
+function logIphoneUserAgent(header, operation) {
+    if (header.includes("iPhone")) {
+        console.log('iPhone user-agent operation: ' + operation);
+        console.log('iPhone user-agent header: ' + header)
     }
 }
 
