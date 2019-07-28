@@ -238,80 +238,74 @@ router.get('/selectedProperty', function (req, res) {
 router.get('/responses', function (req, res) {
     // req.params.properties is either a string ('all') or an array of properties
 
-    if (req.isAuthenticated()) {
-        if (req.user.role == 'Administrator' || req.user.role == 'Site Manager') {
-            var properties = req.query.properties;
-            var year = req.query.year;
+    if (!req.isAuthenticated() || (req.user.role !== 'Administrator' && req.user.role !== 'Site Manager')) {
+        res.sendStatus(403);
+        return;
+    }
 
-            if (properties == 'all') {
-                queryString = 'SELECT COUNT(*) FROM occupancy WHERE responded=$1 AND occupied=true AND year=$2';
-                secondQueryString = 'SELECT COUNT(*) FROM occupancy WHERE occupied=$1 AND year=$2';
-                params = [year];
-            } else {
-                var propBlingString = "";
-                var yearBling = "$3;"
+    var properties = req.query.properties;
+    var year = req.query.year || new Date().getFullYear();
 
-                if (typeof properties === 'string') {
-                    propBlingString = "$2";
-                    params = [properties, year];
-                } else {
-                    // properties is an array
-                    for (var i = 0; i < properties.length; i++) {
-                        propBlingString += "$" + (i + 2) + ",";
-                    }
-                    propBlingString = propBlingString.slice(0, -1);
-                    params = properties;
-                    params.push(year);
-                    yearBling = properties.length + 2;
-                }
+    if (!properties) {
+        queryString = 'SELECT COUNT(*) FROM occupancy WHERE responded=$1 OR paper_response=true AND occupied=true AND year=$2';
+        secondQueryString = 'SELECT COUNT(*) FROM occupancy WHERE occupied=$1 AND year=$2';
+        params = [year];
+    } else {
+        var propBlingString = "";
+        var yearBling = "$3;";
 
-                queryString = `SELECT COUNT(*) FROM occupancy WHERE (responded=$1 OR paper_response=true) AND occupied=true AND property IN (${propBlingString}) AND year=${yearBling}`;
-                secondQueryString = `SELECT COUNT(*) FROM occupancy WHERE occupied=$1 AND property IN (${propBlingString}) AND year=${yearBling}`;
-
+        if (typeof properties === 'string') {
+            propBlingString = "$2";
+            params = [properties, year];
+        } else {
+            // properties is an array
+            for (var i = 0; i < properties.length; i++) {
+                propBlingString += "$" + (i + 2) + ",";
             }
+            propBlingString = propBlingString.slice(0, -1);
+            params = properties;
+            params.push(year);
+            yearBling = properties.length + 2;
+        }
 
-            pool.connect(function (err, client, done) {
+        queryString = `SELECT COUNT(*) FROM occupancy WHERE (responded=$1 OR paper_response=true) AND occupied=true AND property IN (${propBlingString}) AND year=${yearBling}`;
+        secondQueryString = `SELECT COUNT(*) FROM occupancy WHERE occupied=$1 AND property IN (${propBlingString}) AND year=${yearBling}`;
+
+    }
+
+    pool.connect(function (err, client, done) {
+        if (err) {
+            done();
+            console.log('db connect error', err);
+            res.sendStatus(500);
+            return;
+        } else {
+            client.query(queryString, [true, ...params], function (err, data) {
                 if (err) {
                     done();
-                    console.log('db connect error', err);
+                    console.log('data count query error', err);
                     res.sendStatus(500);
-                    return;
                 } else {
-                    client.query(queryString, [true, ...params], function (err, data) {
+                    // data.rows[0].count is a string of how many responses we have
+                    let responses = data.rows[0].count;
+                    client.query(secondQueryString, [true, ...params], function (err, data) {
+                        done();
                         if (err) {
-                            done();
-                            console.log('data count query error', err);
+                            console.log('data count2 query error', err);
                             res.sendStatus(500);
+                        } else if (data.rows[0].count > 0) {
+                            // data.rows[0].count is a string of how many occupied units we have
+                            let occupied = data.rows[0].count;
+                            let responseRate = responses / occupied;
+                            res.send(responseRate.toString());
                         } else {
-                            // data.rows[0].count is a string of how many responses we have
-                            let responses = data.rows[0].count;
-                            client.query(secondQueryString, [true, ...params], function (err, data) {
-                                done();
-                                if (err) {
-                                    console.log('data count2 query error', err);
-                                    res.sendStatus(500);
-                                } else if (data.rows[0].count > 0) {
-                                    // data.rows[0].count is a string of how many occupied units we have
-                                    let occupied = data.rows[0].count;
-                                    let responseRate = responses / occupied;
-                                    res.send(responseRate.toString());
-                                } else {
-                                    res.send('no occupied units found');
-                                }
-                            });
+                            res.send('no occupied units found');
                         }
                     });
                 }
             });
-        } else {
-            //not admin role
-            res.sendStatus(403);
         }
-    } else {
-        //not authorized
-        res.sendStatus(403);
-    }
-
+    });
 });
 
 router.put('/updateHousehold', (req, res) => {

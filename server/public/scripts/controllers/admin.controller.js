@@ -164,5 +164,5 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
 
   self.responseRate = AdminService.responseRate;
 
-  AdminService.getResponseRate(['all'], self.thisYear);
+  AdminService.getResponseRate();
 }]);

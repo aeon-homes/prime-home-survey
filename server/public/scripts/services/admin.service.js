@@ -590,7 +590,8 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
         });
     }
 
-    // takes an array of properties, or the string 'all', and returns the response rate for that dataset
+    // properties: array of names or NULL for all
+    // year: integer or blank for current year
     self.getResponseRate = function (properties, year) {
         $http.get('/admin/responses', {
                 params: {
