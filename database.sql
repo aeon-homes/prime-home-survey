@@ -112,7 +112,7 @@ CREATE TABLE household
     race_asian BOOLEAN,
     race_self_identify TEXT,
     hispanic_or_latino BOOLEAN,
-    disabled BOOLEAN,
+    disabled BOOLEAN
 );
 
 

@@ -13,6 +13,7 @@ myApp.service('SurveyService', function ($http, $location, $mdDialog) {
 
     self.surveyObject = {}; // holds the translated answers from the db
     self.surveyProperty = ""; // holds the user-selected property
+    self.propertyUnits = { list: [] }
     self.surveyUnit = ""; // holds the user-selected unit
     self.household = false;
 
@@ -26,7 +27,6 @@ myApp.service('SurveyService', function ($http, $location, $mdDialog) {
     };
 
 
-    
     //--------------------------------------
     //-------------FUNCTIONS----------------
     //--------------------------------------
@@ -53,21 +53,21 @@ myApp.service('SurveyService', function ($http, $location, $mdDialog) {
                 // not legit: pop a toast
                 $mdDialog.show(
                     $mdDialog.alert()
-                    .clickOutsideToClose(true)
-                    .title('Already Responded')
-                    .textContent('This unit has already responded. Please try again.')
-                    .ariaLabel('Survey Begin Error Alert')
-                    .ok('OK')
+                        .clickOutsideToClose(true)
+                        .title('Already Responded')
+                        .textContent('This unit has already responded. Please try again.')
+                        .ariaLabel('Survey Begin Error Alert')
+                        .ok('OK')
                 );
             } else if (response.data == 'unit not found') {
                 // not legit: pop a toast
                 $mdDialog.show(
                     $mdDialog.alert()
-                    .clickOutsideToClose(true)
-                    .title('Unit Not Found')
-                    .textContent('This is not a valid unit. Please try again.')
-                    .ariaLabel('Error Unit Not Found')
-                    .ok('OK')
+                        .clickOutsideToClose(true)
+                        .title('Unit Not Found')
+                        .textContent('This is not a valid unit. Please try again.')
+                        .ariaLabel('Error Unit Not Found')
+                        .ok('OK')
                 );
             }
         });
@@ -96,7 +96,7 @@ myApp.service('SurveyService', function ($http, $location, $mdDialog) {
     self.getHousehold = function (property) {
         return $http.get('/survey/household', {
             params: { property: property }
-        }).then (function (response) {
+        }).then(function (response) {
             self.household = response.data;
         });
     };
@@ -118,20 +118,20 @@ myApp.service('SurveyService', function ($http, $location, $mdDialog) {
             } else if (response.data == 'responded') {
                 $mdDialog.show(
                     $mdDialog.alert()
-                    .clickOutsideToClose(true)
-                    .title('Already Responded')
-                    .textContent('This unit has already responded. Please try again.')
-                    .ariaLabel('Survey Begin Error Alert')
-                    .ok('OK')
+                        .clickOutsideToClose(true)
+                        .title('Already Responded')
+                        .textContent('This unit has already responded. Please try again.')
+                        .ariaLabel('Survey Begin Error Alert')
+                        .ok('OK')
                 );
             } else {
                 $mdDialog.show(
                     $mdDialog.alert()
-                    .clickOutsideToClose(true)
-                    .title('Survey Error')
-                    .textContent('There was an error submitting the survey. Please ask your Aeon staff member for assistance.')
-                    .ariaLabel('Survey Submit Error Alert')
-                    .ok('OK')
+                        .clickOutsideToClose(true)
+                        .title('Survey Error')
+                        .textContent('There was an error submitting the survey. Please ask your Aeon staff member for assistance.')
+                        .ariaLabel('Survey Submit Error Alert')
+                        .ok('OK')
                 );
             }
         });
@@ -149,10 +149,21 @@ myApp.service('SurveyService', function ($http, $location, $mdDialog) {
     self.populateHouseholdMembers = function () {
         self.surveyObject.householdMembers = [];
         for (let member in self.surveyHouseholdMembers) {
-            member.dateOfBirth = member.dateOfBirth.substring(0,10)
+            member.dateOfBirth = member.dateOfBirth.substring(0, 10)
             self.surveyObject.householdMembers.push(member);
         }
-    };
+    }
+
+    self.getPropertyUnits = (property) => {
+        $http.get('/properties/units', {
+            params: { 
+                property, 
+                year: self.thisYear
+            }
+        }).then((response) => {
+            self.propertyUnits.list = response.data.units
+        })
+    }
 
 
     //--------------------------------------
@@ -160,9 +171,5 @@ myApp.service('SurveyService', function ($http, $location, $mdDialog) {
     //--------------------------------------
 
     self.wipeSurveyClean(); // start out with a fresh survey
-    
-    
-
-
 
 });

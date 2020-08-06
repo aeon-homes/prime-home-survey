@@ -5,14 +5,16 @@
 <div id="survey-language-unit-prop-container" layout="row" layout-align="space-around center">
     <md-input-container layout="column" layout-align="end center">
         <label>Property</label>
-        <md-select id="survey-language-property-select" ng-model="sc.propertyChosen">
+        <md-select id="survey-language-property-select" ng-model="sc.propertyChosen" ng-change="sc.getPropertyUnits(sc.propertyChosen)">
             <md-option ng-repeat="property in sc.propertyList.list" ng-value="property">{{property}}</md-option>
         </md-select>
     </md-input-container>
 
     <md-input-container layout="column" layout-align="end center">
         <label>Unit #</label>
-        <input ng-model="sc.unitChosen" type="text">
+        <md-select id="survey-language-unit-select" ng-model="sc.unitChosen">
+            <md-option ng-repeat="unit in sc.propertyUnits.list" ng-value="unit">{{unit}}</md-option>
+        </md-select>
     </md-input-container>
 </div>
 

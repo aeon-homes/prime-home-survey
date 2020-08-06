@@ -16,6 +16,7 @@ var surveyRouter = require('./routes/survey.router');
 var userRolesRouter = require('./routes/user-roles.router');
 var siteManagerRouter = require('./routes/site-manager.router');
 var adminRouter = require('./routes/admin.router');
+var propertiesRouter = require('./routes/properties.router')
 
 
 var port = process.env.PORT || 5000;
@@ -35,13 +36,14 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Routes
-app.use('/register', registerRouter);
-app.use('/user', userRouter);
-app.use('/csv', csvRouter);
-app.use('/survey', surveyRouter);
-app.use('/user-roles', userRolesRouter);
-app.use('/site-manager', siteManagerRouter);
-app.use('/admin', adminRouter);
+app.use('/register', registerRouter)
+app.use('/user', userRouter)
+app.use('/csv', csvRouter)
+app.use('/survey', surveyRouter)
+app.use('/user-roles', userRolesRouter)
+app.use('/site-manager', siteManagerRouter)
+app.use('/admin', adminRouter)
+app.use('/properties', propertiesRouter)
 
 
 // Catch all bucket, must be last!

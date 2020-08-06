@@ -1,4 +1,4 @@
-myApp.controller('SurveyController', function (AdminService, SurveyService, UserService, $location, $window, $mdDialog, $scope) {
+myApp.controller('SurveyController', function (AdminService, SurveyService, UserService, $location, $window, $mdDialog, $scope, $http) {
 
   //--------------------------------------
   //-------------VARIABLES----------------
@@ -21,6 +21,7 @@ myApp.controller('SurveyController', function (AdminService, SurveyService, User
   self.unitChosen = self.queryParams.unit ? self.queryParams.unit : "";
 
   self.propertyList = AdminService.propertyList; // holds the list of properties pulled from the database
+  self.propertyUnits = SurveyService.propertyUnits;
   self.surveyAnswers = SurveyService.surveyAnswers; // holds the user's answers
   self.surveyLanguage = SurveyService.surveyLanguage; // the user-selected language
   self.surveyObject = SurveyService.surveyObject; // holds the translated questions for display
@@ -68,6 +69,10 @@ myApp.controller('SurveyController', function (AdminService, SurveyService, User
   // passes the user-selected language to the service so that surveyObject can be built with the translated questions
   self.getSurvey = function (language, property) {
     SurveyService.getSurvey(language, property);
+  }
+
+  self.getPropertyUnits = (propertyName) => {
+    SurveyService.getPropertyUnits(propertyName);
   }
 
 
@@ -162,7 +167,7 @@ myApp.controller('SurveyController', function (AdminService, SurveyService, User
         self.household = SurveyService.household;
       },
       function (err) {
-        console.log(err);
+        console.error(err);
       }
     );
   };
