@@ -1,0 +1,26 @@
+<header ng-include="'/views/partials/header-logout-button.html'"></header>
+
+<div layout="column" id="survey-language-top-spacer"></div>
+
+<div class="survey-property-input-container" layout="row" layout-align="space-around center">
+    <md-input-container layout="column" layout-align="end center">
+        <label>Property</label>
+        <md-select id="survey-language-property-select" ng-model="sc.propertyChosen" ng-change="sc.getPropertyUnits(sc.propertyChosen)">
+            <md-option ng-repeat="property in sc.propertyList.list" ng-value="property">{{property}}</md-option>
+        </md-select>
+    </md-input-container>
+</div>
+
+<div id="survey-property-unit-container" class="survey-property-input-container" layout="row" layout-align="space-around center" ng-hide="!sc.propertyChosen">
+    <md-input-container layout="column" layout-align="end center">
+        <label>Unit #</label>
+        <md-select id="survey-language-unit-select" ng-model="sc.unitChosen">
+            <md-option ng-repeat="unit in sc.propertyUnits.list" ng-value="unit">{{unit}}</md-option>
+        </md-select>
+    </md-input-container>
+</div>
+
+<div layout="row" layout-align="center center" id="survey-begin-container">
+    <md-button class="md-raised md" ng-click='sc.go("/survey-language")'>{{sc.surveyObject.goback}}</md-button>
+    <md-button class=" md-raised md-primary" ng-click='sc.beginSurvey(sc.propertyChosen, sc.unitChosen)'>{{sc.surveyObject.begin}}</md-button>
+</div>

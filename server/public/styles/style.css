@@ -8,6 +8,10 @@ body {
     font-size: 14pt;
 }
 
+.input-select-highlight {
+    background-color: #26A69A;
+}
+
 .survey-question-paragraph {
     max-width: 557px;
 }
@@ -64,14 +68,18 @@ body {
     font-size: 2.1em;
 }
 
-#survey-language-unit-prop-container {
+.survey-property-input-container {
     height: 15vh;
 }
 
-#survey-language-unit-prop-container>* {
+.survey-property-input-container>* {
     height: 40%;
     width: 45%;
     font-size: 1.4em;
+}
+
+#survey-property-unit-container {
+    margin-bottom: 2rem;
 }
 
 #survey-language-property-select {

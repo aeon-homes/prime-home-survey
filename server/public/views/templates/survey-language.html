@@ -2,22 +2,6 @@
 
 <div layout="column" id="survey-language-top-spacer"></div>
 
-<div id="survey-language-unit-prop-container" layout="row" layout-align="space-around center">
-    <md-input-container layout="column" layout-align="end center">
-        <label>Property</label>
-        <md-select id="survey-language-property-select" ng-model="sc.propertyChosen" ng-change="sc.getPropertyUnits(sc.propertyChosen)">
-            <md-option ng-repeat="property in sc.propertyList.list" ng-value="property">{{property}}</md-option>
-        </md-select>
-    </md-input-container>
-
-    <md-input-container layout="column" layout-align="end center">
-        <label>Unit #</label>
-        <md-select id="survey-language-unit-select" ng-model="sc.unitChosen">
-            <md-option ng-repeat="unit in sc.propertyUnits.list" ng-value="unit">{{unit}}</md-option>
-        </md-select>
-    </md-input-container>
-</div>
-
 <div layout="row" layout-align="space-around">
     <div layout="column" class="survey-language-langbtn-container" layout-align="space-around center">
         <md-button class="survey-language-button md-raised " ng-class="{'md-primary':sc.surveyLanguage.language=='english'}" ng-click='sc.getSurvey("english", sc.propertyChosen)'>English</md-button>
@@ -32,5 +16,5 @@
 </div>
 
 <div layout="row" layout-align="center center" id="survey-begin-container">
-    <md-button class=" md-raised md-primary" ng-click='sc.beginSurvey(sc.propertyChosen, sc.unitChosen)'>{{sc.surveyObject.begin}}</md-button>
+    <md-button class=" md-raised md-primary" ng-click='sc.go("/survey-property")'>{{sc.surveyObject.continue}}</md-button>
 </div>
