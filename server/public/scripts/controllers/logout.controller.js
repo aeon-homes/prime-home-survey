@@ -7,8 +7,6 @@ myApp.controller('LogoutController', function (UserService) {
     var self = this;
 
     self.UserService = UserService;
-  
-    self.farts = 'lol';
     
     //--------------------------------------
     //-------------FUNCTIONS----------------

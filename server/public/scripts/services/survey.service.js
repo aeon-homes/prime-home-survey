@@ -35,7 +35,7 @@ myApp.service('SurveyService', function ($http, $location, $mdDialog) {
     // displays error dialogs on error states
     // if unit & property are ok, stores those values, wipes the answers array, and sends the user to the survey
     self.beginSurvey = function (property, unit) {
-        // is the property/unit combo legit?        
+        // is the property/unit combo legit?
         $http.get('/survey/begin', {
             params: {
                 'year': self.thisYear,

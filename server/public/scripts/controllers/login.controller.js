@@ -25,6 +25,8 @@ myApp.controller('LoginController', function ($window, $http, $location, UserSer
   vm.login = function () {
     if (vm.user.username && vm.user.password) {
       $http.post('/', vm.user).then(function (response) {
+        console.log('login post')
+        console.log(response)
         if (response.data.username) {
           if (response.data.role){
             vm.user.role = response.data.role;
@@ -36,7 +38,10 @@ myApp.controller('LoginController', function ($window, $http, $location, UserSer
           } else if (vm.user.role == 'Site Manager') {
             $location.path('/site-manager'); // http://localhost:5000/#/site-manager
           } else if (vm.user.role === 'Resident') {
-            $location.url(`/survey-language?property=${vm.user.property}&unit=${vm.user.unit}`); // http://localhost:5000/#/survey-language
+            console.log(vm.user.property)
+            const params = vm.user.property ? `?property=${vm.user.property}&unit=${vm.user.unit}` : ''
+            console.log(params)
+            $window.location.assign(`/#/survey-language${params}`); // http://localhost:5000/#/survey-language
           } else {
             $mdToast.show(
               $mdToast.simple()

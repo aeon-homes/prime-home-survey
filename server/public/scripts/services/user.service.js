@@ -1,4 +1,4 @@
-myApp.service('UserService', function($http, $location){
+myApp.service('UserService', function($http, $window){
 
   //--------------------------------------
   //-------------VARIABLES----------------
@@ -23,17 +23,17 @@ myApp.service('UserService', function($http, $location){
             self.userObject.userName = response.data.username;
         } else {
             // user has no session, bounce them back to the login page
-            $location.path("/home");
+            $window.location.assign("/#/home");
         }
-    },function(response){
-      $location.path("/home");
+    }, function(response){
+      $window.location.assign("/#/home");
     });
   }
 
   // logs the user out and returns them to the login page
   self.logout = function(){
     $http.get('/user/logout').then(function(response) {
-      $location.path("/home");
+      $window.location.assign("/#/home");
     });
   }
 
