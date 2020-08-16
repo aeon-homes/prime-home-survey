@@ -8,9 +8,12 @@
   "main": "server/server.js",
   "scripts": {
     "test": "nodemon server/server.js",
-    "start": "node server/server.js"
+    "start": "node server/server.js",
+    "lint": "eslint server",
+    "fix": "eslint server --fix"
   },
   "author": "Adam Biessener",
+  "repository": "https://github.com/aeon-homes/prime-home-survey",
   "license": "ISC",
   "dependencies": {
     "angular": "^1.8.0",
@@ -33,5 +36,13 @@
     "passport-local": "^1.0.0",
     "path": "^0.11.14",
     "pg": "^7.10.0"
+  },
+  "devDependencies": {
+    "eslint": "^7.2.0",
+    "eslint-config-airbnb": "^18.2.0",
+    "eslint-plugin-import": "^2.21.2",
+    "eslint-plugin-jsx-a11y": "^6.3.0",
+    "eslint-plugin-react": "^7.20.0",
+    "eslint-plugin-react-hooks": "^4.0.0"
   }
 }

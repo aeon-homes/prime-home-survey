@@ -1,134 +1,126 @@
-myApp.controller('LoginController', function ($window, $http, $location, UserService, $mdToast, AdminService) {
+// eslint-disable-next-line no-undef
+myApp.controller('LoginController', function ($window, $http, $location, $mdToast) {
+  // --------------------------------------
+  // -------------VARIABLES----------------
+  // --------------------------------------
 
-  //--------------------------------------
-  //-------------VARIABLES----------------
-  //--------------------------------------
+  const vm = this
 
-  var vm = this;
-
-  vm.queryParams = $location.search();
+  vm.queryParams = $location.search()
 
   vm.user = {
     username: vm.queryParams.user ? vm.queryParams.user : '',
     password: vm.queryParams.password ? vm.queryParams.password : '',
     property: vm.queryParams.property ? vm.queryParams.property : '',
-    unit: vm.queryParams.unit ? vm.queryParams.unit : ''
-  };
+    unit: vm.queryParams.unit ? vm.queryParams.unit : '',
+  }
 
+  // --------------------------------------
+  // -------------FUNCTIONS----------------
+  // --------------------------------------
 
-  //--------------------------------------
-  //-------------FUNCTIONS----------------
-  //--------------------------------------
-
-  
   // logs the user in, then redirects to the appropriate page if they have a role assigned
-  vm.login = function () {
+  vm.login = () => {
     if (vm.user.username && vm.user.password) {
-      $http.post('/', vm.user).then(function (response) {
-        console.log('login post')
-        console.log(response)
+      $http.post('/', vm.user).then((response) => {
         if (response.data.username) {
-          if (response.data.role){
-            vm.user.role = response.data.role;
+          if (response.data.role) {
+            vm.user.role = response.data.role
           }
           // location works with SPA (ng-route)
-          //cascading ifs for each user role using else ifs
-          if (vm.user.role == 'Administrator') {
-            $location.path('/admin-reporting'); // http://localhost:5000/#/admin
-          } else if (vm.user.role == 'Site Manager') {
-            $location.path('/site-manager'); // http://localhost:5000/#/site-manager
+          if (vm.user.role === 'Administrator') {
+            $location.path('/admin-reporting') // http://localhost:5000/#/admin
+          } else if (vm.user.role === 'Site Manager') {
+            $location.path('/site-manager') // http://localhost:5000/#/site-manager
           } else if (vm.user.role === 'Resident') {
-            console.log(vm.user.property)
             const params = vm.user.property ? `?property=${vm.user.property}&unit=${vm.user.unit}` : ''
-            console.log(params)
-            $window.location.assign(`/#/survey-language${params}`); // http://localhost:5000/#/survey-language
+            $window.location.assign(`/#/survey-language${params}`) // http://localhost:5000/#/survey-language
           } else {
             $mdToast.show(
               $mdToast.simple()
-                .textContent("Unauthorized - Please contact an administrator to authorize you as a Site Manager or Administrator.")
-                .position('top right')
-            );//end of $mdToast
-              }
+                .textContent('Unauthorized - Please contact an administrator to authorize you as a Site Manager or Administrator.')
+                .position('top right'),
+            )
+          }
         }
-      }).catch(function (response) {
+      }).catch((response) => {
+        console.error(response)
         $mdToast.show(
           $mdToast.simple()
-            .textContent("Unauthorized - Invalid username/password, or your account may not have been authorized by an administrator yet.")
-            .position('top right')
-        );//end of $mdToast
-      });
+            .textContent('Unauthorized - Invalid username/password, or your account may not have been authorized by an administrator yet.')
+            .position('top right'),
+        )
+      })
     }
-  };
+  }
 
-
-  // registers the user with the provided name/password. note user is not active and can't do anything until they confirm their email and get a role assigned by an admin
-  vm.registerUser = function () {
+  // registers the user with the provided name/password. note user is not active and can't do anything until they get a role assigned by an admin
+  vm.registerUser = () => {
     if (vm.user.username === '' || vm.user.password === '') {
+      $mdToast.show(
+        $mdToast.simple()
+          .textContent('Please enter a username and password.')
+          .position('top right'),
+      )
     } else {
-      $http.post('/register', vm.user).then(function (response) {
-        $location.path('/home');
+      $http.post('/register', vm.user).then((_) => {
+        $location.path('/home')
         $mdToast.show(
           $mdToast.simple()
-            .textContent("Registration Successful! Please alert an Aeon administrator so you can be granted permissions.")
-            .position('top right')
-        );//end of $mdToast
-      }).catch(function (response) {
+            .textContent('Registration Successful! Please alert an Aeon administrator so you can be granted permissions.')
+            .position('top right'),
+        )
+      }).catch((_) => {
         $mdToast.show(
           $mdToast.simple()
-            .textContent("Please enter a valid email address.")
-            .position('top right')
-        );//end of $mdToast
-      });
+            .textContent('Please enter a valid email address.')
+            .position('top right'),
+        )
+      })
     }
-  };
-
+  }
 
   // displays a toast if the user cancels their registration
-  vm.cancelToast = function (ev) {
+  vm.cancelToast = (_) => {
     $mdToast.show(
       $mdToast.simple()
-        .textContent("Registration Canceled.")
-        .position('top right')
-    );//end of $mdToast
-  };//end of vm.showToast
-
+        .textContent('Registration Canceled.')
+        .position('top right'),
+    )
+  }
 
   // displays a toast prompting the user to enter a new name/pass.
   // do we still need this?
-  vm.registerToast = function (ev) {
+  vm.registerToast = (_) => {
     $mdToast.show(
       $mdToast.simple()
-        .textContent("Enter a new username and password")
-        .position('top right')
-    );//end of $mdToast
-  };//end of vm.showToast
-
+        .textContent('Enter a new username and password')
+        .position('top right'),
+    )
+  }
 
   // displays a notification toast if the registration is successful
-  vm.successToast = function (ev) {
+  vm.successToast = (_) => {
     $mdToast.show(
       $mdToast.simple()
-        .textContent("Registration Successful! Enter username and password to login.")
-        .position('top right')
-    );//end of $mdToast
-  };//end of vm.showToast
+        .textContent('Registration Successful! Enter username and password to login.')
+        .position('top right'),
+    )
+  }
 
   function initialLogin() {
     setTimeout(() => {
-      vm.login();
-    }, 200);
+      vm.login()
+    }, 200)
   }
 
-
-
-  
-  //--------------------------------------
-  //-------------RUNTIME CODE-------------
-  //--------------------------------------
+  // --------------------------------------
+  // -------------RUNTIME CODE-------------
+  // --------------------------------------
 
   if (vm.user.username && vm.user.password) {
-    vm.login();
+    vm.login()
   }
 
-  initialLogin();
-});
+  initialLogin()
+})

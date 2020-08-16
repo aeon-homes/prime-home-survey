@@ -1,39 +1,39 @@
-var express = require('express');
-var app = express();
-var bodyParser = require('body-parser');
+const express = require('express')
 
-require('dotenv').config();
+const app = express()
+const bodyParser = require('body-parser')
 
-var passport = require('./strategies/sql.localstrategy');
-var sessionConfig = require('./modules/session.config');
+require('dotenv').config()
+
+const passport = require('./strategies/sql.localstrategy')
+const sessionConfig = require('./modules/session.config')
 
 // Route includes
-var indexRouter = require('./routes/index.router');
-var userRouter = require('./routes/user.router');
-var registerRouter = require('./routes/register.router');
-var csvRouter = require('./routes/csv.router');
-var surveyRouter = require('./routes/survey.router');
-var userRolesRouter = require('./routes/user-roles.router');
-var siteManagerRouter = require('./routes/site-manager.router');
-var adminRouter = require('./routes/admin.router');
-var propertiesRouter = require('./routes/properties.router')
+const indexRouter = require('./routes/index.router')
+const userRouter = require('./routes/user.router')
+const registerRouter = require('./routes/register.router')
+const csvRouter = require('./routes/csv.router')
+const surveyRouter = require('./routes/survey.router')
+const userRolesRouter = require('./routes/user-roles.router')
+const siteManagerRouter = require('./routes/site-manager.router')
+const adminRouter = require('./routes/admin.router')
+const propertiesRouter = require('./routes/properties.router')
 
-
-var port = process.env.PORT || 5000;
+const port = process.env.PORT || 5000
 
 // Body parser middleware
-app.use(bodyParser.json({limit: '50mb'}));
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+app.use(bodyParser.json({ limit: '50mb' }))
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }))
 
 // Serve back static files
-app.use(express.static('./server/public'));
+app.use(express.static('./server/public'))
 
 // Passport Session Configuration
-app.use(sessionConfig);
+app.use(sessionConfig)
 
 // Start up passport sessions
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(passport.initialize())
+app.use(passport.session())
 
 // Routes
 app.use('/register', registerRouter)
@@ -45,11 +45,10 @@ app.use('/site-manager', siteManagerRouter)
 app.use('/admin', adminRouter)
 app.use('/properties', propertiesRouter)
 
-
 // Catch all bucket, must be last!
-app.use('/', indexRouter);
+app.use('/', indexRouter)
 
 // Listen //
-app.listen(port, function () {
-    console.log('Listening on port:', port);
-});
+app.listen(port, () => {
+  console.info('Listening on port:', port)
+})

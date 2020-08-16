@@ -1,9 +1,9 @@
-var config = {
-    user: '',
-    password: '',
-    host: '',
-    port: 5432,
-    database: '',
-}
+const config = {
+  user: '',
+  password: '',
+  host: '',
+  port: 5432,
+  database: '',
+};
 
-module.exports = config;
+module.exports = config

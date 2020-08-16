@@ -1,101 +1,85 @@
-var passport = require('passport');
-var localStrategy = require('passport-local').Strategy;
-var encryptLib = require('../modules/encryption');
-var pool = require('../modules/pool.js');
+const passport = require('passport')
+const LocalStrategy = require('passport-local').Strategy
+const encryptLib = require('../modules/encryption')
+const pool = require('../modules/pool.js')
 
-passport.serializeUser(function (user, done) {
-  done(null, user.id);
-});
+passport.serializeUser((user, done) => {
+  done(null, user.id)
+})
 
-passport.deserializeUser(function (id, done) {
-  // console.log('called deserializeUser - pg');
-
-  pool.connect(function (err, client, release) {
+passport.deserializeUser((id, done) => {
+  pool.connect((err, client, release) => {
     if (err) {
-      console.log('connection err ', err);
-      release();
-      done(err);
+      console.error('connection err ', err)
+      release()
+      done(err)
     }
 
-    var user = {};
+    let user = {}
 
-    client.query("SELECT * FROM users WHERE id = $1", [id], function (err, result) {
-      release();
+    // eslint-disable-next-line consistent-return
+    client.query('SELECT * FROM users WHERE id = $1', [id], (queryError, result) => {
+      release()
       // Handle Errors
-      if (err) {
-        console.log('query err ', err);
-        done(err);
+      if (queryError) {
+        console.error('query err ', queryError)
+        done(queryError)
       }
 
-      if (result != undefined) {
-        user = result.rows[0];
+      if (result !== undefined) {
+        [user] = result.rows
       }
-      
+
       if (!user) {
-        // user not found
         return done(null, false, {
-          message: 'Incorrect credentials.'
-        });
-      } else {
-        // user found
-        // console.log('User row ', user);
-        done(null, user);
+          message: 'Incorrect credentials.',
+        })
       }
-
-    });
-  });
-});
+      done(null, user)
+    })
+  })
+})
 
 // Does actual work of logging in
-passport.use('local', new localStrategy({
+passport.use('local', new LocalStrategy({
   passReqToCallback: true,
-  usernameField: 'username'
-}, function (req, username, password, done) {
-  pool.connect(function (err, client, release) {
+  usernameField: 'username',
+}, ((req, username, password, done) => {
+  pool.connect((err, client, release) => {
     // assumes the username will be unique, thus returning 1 or 0 results
-    client.query("SELECT * FROM users WHERE username = $1", [username],
-      function (err, result) {
-        release();
-        var user = {};
+    client.query('SELECT * FROM users WHERE username = $1', [username],
+      (queryError, result) => {
+        release()
+        let user = {}
 
         // console.log('here');
 
         // Handle Errors
-        if (err) {
-          console.log('connection err ', err);
-          done(null, user);
+        if (queryError) {
+          console.error('connection err ', queryError)
+          done(null, user)
         }
 
-        if (result.rows[0] != undefined) {
-          user = result.rows[0];
-          // console.log('User obj', user);
-          // Hash and compare
+        if (result.rows[0] !== undefined) {
+          [user] = result.rows
           if (encryptLib.comparePassword(password, user.password)) {
-            // all good!
-            // console.log('passwords match');
             if (user.active) {
-              // console.log('user is active', user);
-              done(null, user);
+              done(null, user)
             } else {
-              console.log('user is inactive', user);
-
               done(null, false, {
-                message: 'You must be confirmed by an administrator before logging in.'
-              });
+                message: 'You must be confirmed by an administrator before logging in.',
+              })
             }
           } else {
-            console.log('password does not match');
             done(null, false, {
-              message: 'Incorrect credentials.'
-            });
+              message: 'Incorrect credentials.',
+            })
           }
         } else {
-          console.log('no user');
-          done(null, false);
+          done(null, false)
         }
+      })
+  })
+})))
 
-      });
-  });
-}));
-
-module.exports = passport;
+module.exports = passport

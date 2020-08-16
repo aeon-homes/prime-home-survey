@@ -1,27 +1,6 @@
+// eslint-disable-next-line no-undef
 myApp.controller('LogoutController', function (UserService) {
-  
-    //--------------------------------------
-    //-------------VARIABLES----------------
-    //--------------------------------------
-  
-    var self = this;
+  const self = this
 
-    self.UserService = UserService;
-    
-    //--------------------------------------
-    //-------------FUNCTIONS----------------
-    //--------------------------------------
-  
-    
-    // none
-    
-    //--------------------------------------
-    //-------------RUNTIME CODE-------------
-    //--------------------------------------
-  
-    // none
-  
-  
-  
-  });
-  
+  self.UserService = UserService
+})

@@ -1,0 +1,20 @@
+{
+    "env": {
+        "es6": true,
+        "browser": true,
+        "jquery": true
+      },
+      "ignorePatterns": ["**/vendor/*.js"],
+
+    "extends": "airbnb",
+    "rules": {
+      "comma-dangle": "off",
+      "func-names": "off",
+      "linebreak-style": "off",
+      "max-len": ["warn", {"code": 150}],
+      "no-console": ["warn", { "allow": ["info", "warn", "error"] }],
+      "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+      "semi": ["error", "never"]
+    },
+    "root": true
+  }
