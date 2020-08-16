@@ -15,6 +15,7 @@
       "no-console": ["warn", { "allow": ["info", "warn", "error"] }],
       "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
       "no-use-before-define": "off",
+      "radix": "off",
       "semi": ["error", "never"]
     },
     "root": true
