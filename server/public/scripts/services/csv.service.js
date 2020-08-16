@@ -14,42 +14,28 @@ myApp.service('CsvService', function ($http, $location, $mdToast) {
 
   // exports all responses to a csv file and tells the browser to download it
   self.exportAllResponses = function (year) {
-    $http.get('/csv/export/' + year).then(function (response) {
-
-      // format the data into a csv file
-      var exportCsv = Papa.unparse(response.data);
-      exportCsv = "data:text/csv;charset=utf-8," + exportCsv;
-      exportCsv = encodeURI(exportCsv);
-
-      // tell the browser to download it
-      var link = document.createElement("a");
-      link.download = 'home-survey-responses-' + year;
-      link.href = exportCsv;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      delete link;
-    });
-  };
+    $http.get('/csv/export/' + year).then((response) => {
+      const link = document.createElement("a")
+      link.download = `home-survey-responses-${year}.csv`
+      link.href = "data:text/csv;charset=utf-8," + response.data
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      delete link
+    })
+  }
 
   self.exportHouseholdResponses = function (year) {
     $http.get('/csv/household/' + year).then(function (response) {
-
-      // format the data into a csv file
-      var exportCsv = Papa.unparse(response.data);
-      exportCsv = "data:text/csv;charset=utf-8," + exportCsv;
-      exportCsv = encodeURI(exportCsv);
-
-      // tell the browser to download it
-      var link = document.createElement("a");
-      link.download = 'household-responses-' + year;
-      link.href = exportCsv;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      delete link;
-    });
-  };
+      const link = document.createElement("a")
+      link.download = `home-survey-households-${year}.csv`
+      link.href = "data:text/csv;charset=utf-8," + response.data
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      delete link
+    })
+  }
 
 
   // gets all languages of questions from the db (for the updateQuestions view)
