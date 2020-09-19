@@ -13,6 +13,8 @@
       "linebreak-style": "off",
       "max-len": ["warn", {"code": 150}],
       "no-console": ["warn", { "allow": ["info", "warn", "error"] }],
+      "no-restricted-globals": "warn",
+      "no-trailing-spaces": "off",
       "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
       "no-use-before-define": "off",
       "radix": "off",

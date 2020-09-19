@@ -1,8 +1,8 @@
-var myApp = angular.module('myApp', ['ngMaterial', 'ngRoute', 'md.data.table']);
+const myApp = angular.module('myApp', ['ngMaterial', 'ngRoute', 'md.data.table'])
 
 /// Routes ///
-myApp.config(function ($routeProvider, $locationProvider, $mdThemingProvider) {
-  $locationProvider.hashPrefix('');
+myApp.config(($routeProvider, $locationProvider, $mdThemingProvider) => {
+  $locationProvider.hashPrefix('')
   $routeProvider
     .when('/home', {
       templateUrl: '/views/templates/home.html',
@@ -20,8 +20,8 @@ myApp.config(function ($routeProvider, $locationProvider, $mdThemingProvider) {
       templateUrl: '/views/templates/survey-language.html',
       controller: 'SurveyController as sc',
       resolve: {
-        getUser: function (UserService) {
-          return UserService.getUser('Resident');
+        getUser(UserService) {
+          return UserService.getUser('Resident')
         }
       }
     })
@@ -29,8 +29,8 @@ myApp.config(function ($routeProvider, $locationProvider, $mdThemingProvider) {
       templateUrl: '/views/templates/survey-intro.html',
       controller: 'SurveyController as sc',
       resolve: {
-        getUser: function (UserService) {
-          return UserService.getUser('Resident');
+        getUser(UserService) {
+          return UserService.getUser('Resident')
         }
       }
     })
@@ -38,8 +38,8 @@ myApp.config(function ($routeProvider, $locationProvider, $mdThemingProvider) {
       templateUrl: '/views/templates/survey-demographics.html',
       controller: 'SurveyController as sc',
       resolve: {
-        getUser: function (UserService) {
-          return UserService.getUser('Resident');
+        getUser(UserService) {
+          return UserService.getUser('Resident')
         }
       }
     })
@@ -47,8 +47,8 @@ myApp.config(function ($routeProvider, $locationProvider, $mdThemingProvider) {
       templateUrl: '/views/templates/survey-household.html',
       controller: 'SurveyController as sc',
       resolve: {
-        getUser: function (UserService) {
-          return UserService.getUser('Resident');
+        getUser(UserService) {
+          return UserService.getUser('Resident')
         }
       }
     })
@@ -56,8 +56,8 @@ myApp.config(function ($routeProvider, $locationProvider, $mdThemingProvider) {
       templateUrl: '/views/templates/survey-language.html',
       controller: 'SurveyController as sc',
       resolve: {
-        getUser: function (UserService) {
-          return UserService.getUser('Resident');
+        getUser(UserService) {
+          return UserService.getUser('Resident')
         }
       }
     })
@@ -65,8 +65,8 @@ myApp.config(function ($routeProvider, $locationProvider, $mdThemingProvider) {
       templateUrl: '/views/templates/survey-property.html',
       controller: 'SurveyController as sc',
       resolve: {
-        getUser: function (UserService) {
-          return UserService.getUser('Resident');
+        getUser(UserService) {
+          return UserService.getUser('Resident')
         }
       }
     })
@@ -74,8 +74,8 @@ myApp.config(function ($routeProvider, $locationProvider, $mdThemingProvider) {
       templateUrl: '/views/templates/survey-q1.html',
       controller: 'SurveyController as sc',
       resolve: {
-        getUser: function (UserService) {
-          return UserService.getUser('Resident');
+        getUser(UserService) {
+          return UserService.getUser('Resident')
         }
       }
     })
@@ -83,8 +83,8 @@ myApp.config(function ($routeProvider, $locationProvider, $mdThemingProvider) {
       templateUrl: '/views/templates/survey-q2.html',
       controller: 'SurveyController as sc',
       resolve: {
-        getUser: function (UserService) {
-          return UserService.getUser('Resident');
+        getUser(UserService) {
+          return UserService.getUser('Resident')
         }
       }
     })
@@ -92,8 +92,8 @@ myApp.config(function ($routeProvider, $locationProvider, $mdThemingProvider) {
       templateUrl: '/views/templates/survey-q3.html',
       controller: 'SurveyController as sc',
       resolve: {
-        getUser: function (UserService) {
-          return UserService.getUser('Resident');
+        getUser(UserService) {
+          return UserService.getUser('Resident')
         }
       }
     })
@@ -101,8 +101,8 @@ myApp.config(function ($routeProvider, $locationProvider, $mdThemingProvider) {
       templateUrl: '/views/templates/survey-q4.html',
       controller: 'SurveyController as sc',
       resolve: {
-        getUser: function (UserService) {
-          return UserService.getUser('Resident');
+        getUser(UserService) {
+          return UserService.getUser('Resident')
         }
       }
     })
@@ -110,8 +110,8 @@ myApp.config(function ($routeProvider, $locationProvider, $mdThemingProvider) {
       templateUrl: '/views/templates/survey-thanks.html',
       controller: 'SurveyController as sc',
       resolve: {
-        getUser: function (UserService) {
-          return UserService.getUser('Resident');
+        getUser(UserService) {
+          return UserService.getUser('Resident')
         }
       }
     })
@@ -119,8 +119,8 @@ myApp.config(function ($routeProvider, $locationProvider, $mdThemingProvider) {
       templateUrl: '/views/templates/admin.html',
       controller: 'AdminController as ac',
       resolve: {
-        getUser: function (UserService) {
-          return UserService.getUser('Administrator');
+        getUser(UserService) {
+          return UserService.getUser('Administrator')
         }
       }
     })
@@ -128,8 +128,8 @@ myApp.config(function ($routeProvider, $locationProvider, $mdThemingProvider) {
       templateUrl: '/views/templates/admin-questions.html',
       controller: 'AdminController as ac',
       resolve: {
-        getUser: function (UserService) {
-          return UserService.getUser('Administrator');
+        getUser(UserService) {
+          return UserService.getUser('Administrator')
         }
       }
     })    
@@ -137,8 +137,8 @@ myApp.config(function ($routeProvider, $locationProvider, $mdThemingProvider) {
       templateUrl: '/views/templates/admin-properties.html',
       controller: 'AdminPropertiesController as apc',
       resolve: {
-        getUser: function (UserService) {
-          return UserService.getUser('Administrator');
+        getUser(UserService) {
+          return UserService.getUser('Administrator')
         }
       }
     })
@@ -146,8 +146,8 @@ myApp.config(function ($routeProvider, $locationProvider, $mdThemingProvider) {
       templateUrl: '/views/templates/admin-reporting.html',
       controller: 'AdminReportingController as arc',
       resolve: {
-        getUser: function (UserService) {
-          return UserService.getUser('Administrator');
+        getUser(UserService) {
+          return UserService.getUser('Administrator')
         }
       }
     })  
@@ -155,8 +155,8 @@ myApp.config(function ($routeProvider, $locationProvider, $mdThemingProvider) {
       templateUrl: '/views/templates/admin-users.html',
       controller: 'AdminController as ac',
       resolve: {
-        getUser: function (UserService) {
-          return UserService.getUser('Administrator');
+        getUser(UserService) {
+          return UserService.getUser('Administrator')
         }
       }
     })    
@@ -164,8 +164,8 @@ myApp.config(function ($routeProvider, $locationProvider, $mdThemingProvider) {
       templateUrl: '/views/templates/admin-site-manager.html',
       controller: 'AdminController as ac',
       resolve: {
-        getUser: function (UserService) {
-          return UserService.getUser('Administrator');
+        getUser(UserService) {
+          return UserService.getUser('Administrator')
         }
       }
     })    
@@ -173,25 +173,23 @@ myApp.config(function ($routeProvider, $locationProvider, $mdThemingProvider) {
       templateUrl: '/views/templates/site-manager.html',
       controller: 'SiteManagerController as smc',
       resolve: {
-        getUser: function (UserService) {
-          return UserService.getUser('Aeon');
+        getUser(UserService) {
+          return UserService.getUser('Aeon')
         }
       }
     })
     .when('/logout', {
       resolve: {
-        logout: function (UserService) {
-          return UserService.logout();
+        logout(UserService) {
+          return UserService.logout()
         }
       }
     })
     .otherwise({
       redirectTo: 'home'
-    });
+    })
 
   $mdThemingProvider.theme('default')
     .primaryPalette('teal')
     .accentPalette('teal')
-
-
-});
+})

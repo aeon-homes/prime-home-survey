@@ -36,7 +36,7 @@ The following are tasks completed for the project.
 ## Deployment
 
 - The app can be opened with the Heroku live link: https://aeon-home-survey.herokuapp.com
-- Deploy the app to a hositng environment of your choice, like Heroku.
+- Deploy the app to a hosting environment of your choice, like Heroku.
 - Deploy a Postgres database and configure the database using the database.sql file.
 - Refer to Google Doc being provided as walkthrough for entire app.
 
