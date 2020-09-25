@@ -76,6 +76,22 @@
           </section>
         </div>
       </div>
+      <div layout="row">
+        <div flex class="md-whiteframe-4dp" layout-padding layout-margin>
+          <section id="admin-import-emails-container">
+            <h3 class="md-headline">Import Resident Emails</h3>
+            <md-input-container>
+              <label>Select Year to Import</label>
+              <md-select ng-model="ac.emailYearToAdd" style="min-width: 200px;">
+                <md-option ng-value="year" ng-repeat="year in ac.yearsArray">{{year}}</md-option>
+              </md-select>
+            </md-input-container>
+            <label for="admin-email-input" class="md-button md-raised md-primary">Choose File To Upload</label>
+            <input class="ng-hide" id="admin-email-input" type="file" name="admin-email-input" accept=".csv" /><md-button ng-show="ac.validInput" class="md-raised md-primary" ng-click="ac.importEmailCsv()">Upload</md-button>
+            </md-input-container>
+          </section>
+        </div>
+      </div>
     </div>
   </md-content>
 

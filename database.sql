@@ -6,6 +6,7 @@ CREATE TABLE resident_emails
     paid BOOLEAN DEFAULT FALSE,
     active BOOLEAN DEFAULT FALSE
 );
+CREATE UNIQUE INDEX email_year on resident_emails (email, year);
 CREATE TABLE questions
 (
     id SERIAL PRIMARY KEY,

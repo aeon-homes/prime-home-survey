@@ -15,6 +15,7 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
 
   self.yearsArray = []
   self.yearToAdd = self.thisYear
+  self.emailYearToAdd = self.thisYear
   self.householdYear = self.thisYear
   self.selectedYear = self.thisYear
   self.validInput = false
@@ -119,6 +120,34 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
     }, () => { })
   }
 
+  self.importEmailCsv = function () {
+    const confirm = $mdDialog.confirm()
+      .title('Confirm Upload')
+      .textContent('Uploading data will add any emails not already present in the system for the selected year. Are you sure?')
+      .ariaLabel('upload confirm dialog')
+      .targetEvent(event)
+      .ok('Import')
+      .cancel('Cancel')
+
+    $mdDialog.show(confirm).then(() => {
+      CsvService.uploadEmailCsv(self.emailFileInput, self.emailYearToAdd)
+      self.validInput = false
+    }, () => { })
+  }
+
+  self.handleEmailFileSelect = function (fileEvent) {
+    const reader = new FileReader()
+    reader.onerror = function () {
+      console.error('reader error')
+    }
+    reader.onload = function (readerEvent) {
+      // this is where the data is ready
+      self.validInput = true
+      $scope.$apply()
+      self.emailFileInput = readerEvent.target.result
+    }
+    reader.readAsText(fileEvent.target.files[0])
+  }
   // --------------UPDATE QUESTIONS---------------
 
   // gets the list of questions from the db and sends the user to the updateQuestions page
@@ -157,6 +186,10 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
   self.currentPath = $location.path()
   if (self.currentPath === '/admin') {
     document.getElementById('admin-file-input').addEventListener('change', self.handleFileSelect, false)
+  }
+
+  if (self.currentPath === '/admin') {
+    document.getElementById('admin-email-input').addEventListener('change', self.handleEmailFileSelect, false)
   }
 
   // Gets user information and assign to self.users

@@ -122,6 +122,29 @@ myApp.service('CsvService', function ($http, $location, $mdToast) {
     })
   }
 
+  self.uploadEmailCsv = function (file, year) {
+    var parsed = Papa.parse(file, {
+      skipEmptyLines: true,
+    });
+
+    $http.post('/csv/email/' + year, parsed).then(function (response) {
+      $mdToast.show(
+        $mdToast.simple()
+        .textContent('Email CSV uploaded!')
+        .hideDelay(2000)
+      );
+      $location.path('/admin');
+    }).catch((response) => {
+      console.log('email csv upload failure', response.body)
+      $mdToast.show(
+        $mdToast.simple()
+        .highlightClass('md-warn')
+        .textContent('Email CSV upload error!')
+        .hideDelay(2000)
+      )
+    })
+  }
+
   //--------------------------------------
   //-------------RUNTIME CODE-------------
   //--------------------------------------
