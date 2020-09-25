@@ -1,3 +1,11 @@
+CREATE TABLE resident_emails
+(
+    id SERIAL PRIMARY KEY,
+    email TEXT NOT NULL,
+    year INT NOT NULL,
+    paid BOOLEAN DEFAULT FALSE,
+    active BOOLEAN DEFAULT FALSE
+);
 CREATE TABLE questions
 (
     id SERIAL PRIMARY KEY,
