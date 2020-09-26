@@ -45,7 +45,7 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
 
     return $http({
       method: 'GET',
-      url: '/api/test',
+      url: '/rewards/test',
     })
   }
 

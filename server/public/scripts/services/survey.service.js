@@ -5,7 +5,8 @@ myApp.service('SurveyService', function ($http, $location, $mdDialog) {
   // --------------------------------------
 
   const NUM_SURVEY_QUESTIONS = 34 // used as a magic number for building the answers array
-
+  const EMAIL_NOT_FOUND = 'Email not found.'
+  const EMAIL_ALREADY_SUBMITTED = 'Email already submitted for rewards.'
   const self = this
 
   const now = new Date()
@@ -16,7 +17,7 @@ myApp.service('SurveyService', function ($http, $location, $mdDialog) {
   self.propertyUnits = { list: [] }
   self.surveyUnit = '' // holds the user-selected unit
   self.household = false
-
+  self.email = { hideEmailSubmit: true }
   self.surveyAnswers = { // holds the user's responses
     list: [],
     // eslint-disable-next-line no-undef
@@ -30,6 +31,38 @@ myApp.service('SurveyService', function ($http, $location, $mdDialog) {
   // --------------------------------------
   // -------------FUNCTIONS----------------
   // --------------------------------------
+
+  self.submitEmail = (emailToSubmit, callback) => {
+    $http.post('/rewards/email', { email: emailToSubmit })
+      .then((_) => {
+        self.email.hideEmailSubmit = true
+        
+        $mdDialog.show(
+          $mdDialog.alert()
+            .title('Successfully submitted email for rewards!')
+            .ok('OK')
+        )
+        callback()
+      })
+      .catch((error) => {
+        console.error(error)
+        if (error.data.error === EMAIL_NOT_FOUND || error.data.error === EMAIL_ALREADY_SUBMITTED) {
+          $mdDialog.show(
+            $mdDialog.alert()
+              .title('Error')
+              .textContent(error.data.error)
+              .ok('OK')
+          )
+        } else {
+          $mdDialog.show(
+            $mdDialog.alert()
+              .title('Error')
+              .textContent('Error submitting email for rewards. Please try again, and contact your site manager if the error persists.')
+              .ok('OK')
+          )
+        }
+      })
+  }
 
   // checks that the property and unit are eligible to fill out survey
   // displays error dialogs on error states
@@ -111,6 +144,7 @@ myApp.service('SurveyService', function ($http, $location, $mdDialog) {
       }
     }).then((response) => {
       if (response.status === 201) {
+        self.email.hideEmailSubmit = false
         $location.path('/survey-thanks')
       } else if (response.data === 'responded') {
         $mdDialog.show(

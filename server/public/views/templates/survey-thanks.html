@@ -7,6 +7,16 @@
             <p>{{sc.surveyObject.requestresults}}</p>
         </div>
     </div>
+    <div layout="row" layout-align="center center" ng-hide="sc.email.hideEmailSubmit">
+        <div id="submit-email" flex-gt-xs="80" flex-offsetgt-xs="10">
+            <md-input-container>
+                <label>{{sc.surveyObject.submitEmailLabel || 'Submit Email'}}</label>
+                <input type="text" ng-model="sc.emailToSubmit">
+            </md-input-container>
+            <md-button class="md-raised md-primary" ng-click="sc.submitEmail()">{{sc.surveyObject.submitEmail || 'Submit'}}</md-button>
+        </div>
+    </div>
+
     <div layout="row" layout-align="center center">
         <img class="surveyCompleteBadge" ng-hide="{{sc.surveyLanguage.language==='spanish'}}"
             src="../../assets/HomeScore-Survey-Complete-English.png">

@@ -22,5 +22,5 @@ const queryClient = async (pgClient, queryText, queryParams) => new Promise((res
 
 module.exports = {
   getPostgresConnection,
-  queryClient,
+  queryClient
 }

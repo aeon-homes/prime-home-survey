@@ -6,6 +6,7 @@ myApp.controller('SurveyController', function (AdminService, SurveyService, User
 
   const self = this
 
+  self.emailRegex = /.+@.+\..+/
   self.queryParams = $location.search()
 
   self.RACE = {
@@ -26,6 +27,7 @@ myApp.controller('SurveyController', function (AdminService, SurveyService, User
   self.surveyLanguage = SurveyService.surveyLanguage // the user-selected language
   self.surveyObject = SurveyService.surveyObject // holds the translated questions for display
   self.household = SurveyService.household
+  self.email = SurveyService.email
 
   // eslint-disable-next-line no-undef
   if (angular.equals(self.surveyObject, {})) { // Load english as language on load
@@ -42,6 +44,30 @@ myApp.controller('SurveyController', function (AdminService, SurveyService, User
   //--------------------------------------
   // -------------FUNCTIONS----------------
   //--------------------------------------
+
+  self.submitEmail = () => {
+    if (!self.emailToSubmit) {
+      $mdDialog.show(
+        $mdDialog.alert()
+          .title('Please enter your email.')
+          .ok('OK')
+      )
+
+      return
+    }
+
+    if (!self.emailRegex.test(self.emailToSubmit)) {
+      $mdDialog.show(
+        $mdDialog.alert()
+          .title('Please enter a valid email.')
+          .ok('OK')
+      )
+
+      return
+    }
+
+    SurveyService.submitEmail(self.emailToSubmit, () => { window.removeEventListener('beforeunload', unloadWarning) })
+  }
 
   // displays a confirmation dialog for the user, and if confirmed clears the surveyAnswers object and sends the user back to the language-select page
   self.cancelSurvey = function (showAlert = true) {

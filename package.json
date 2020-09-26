@@ -4,6 +4,7 @@
   "engines": {
     "node": "12.4.0"
   },
+  "type": "commonjs",
   "description": "",
   "main": "server/server.js",
   "scripts": {
@@ -37,7 +38,8 @@
     "passport": "^0.2.2",
     "passport-local": "^1.0.0",
     "path": "^0.11.14",
-    "pg": "^7.10.0"
+    "pg": "^7.10.0",
+    "uuid": "^7.0.0"
   },
   "devDependencies": {
     "eslint": "^7.2.0",

@@ -18,7 +18,7 @@ const userRolesRouter = require('./routes/user-roles.router')
 const siteManagerRouter = require('./routes/site-manager.router')
 const adminRouter = require('./routes/admin.router')
 const propertiesRouter = require('./routes/properties.router')
-const tangoApiRouter = require('./routes/tangoApi.router')
+const rewardsRouter = require('./routes/rewards.router')
 
 const port = process.env.PORT || 5000
 
@@ -45,7 +45,7 @@ app.use('/user-roles', userRolesRouter)
 app.use('/site-manager', siteManagerRouter)
 app.use('/admin', adminRouter)
 app.use('/properties', propertiesRouter)
-app.use('/api', tangoApiRouter)
+app.use('/rewards', rewardsRouter)
 
 // Catch all bucket, must be last!
 app.use('/', indexRouter)

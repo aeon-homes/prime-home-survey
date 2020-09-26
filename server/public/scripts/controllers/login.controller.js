@@ -8,9 +8,13 @@ myApp.controller('LoginController', function ($window, $http, $location, $mdToas
 
   vm.queryParams = $location.search()
 
+  vm.shadowUser = {
+    username: vm.queryParams.a ? vm.queryParams.a : '',
+    password: vm.queryParams.z ? vm.queryParams.z : '',
+  }
   vm.user = {
-    username: vm.queryParams.user ? vm.queryParams.user : '',
-    password: vm.queryParams.password ? vm.queryParams.password : '',
+    username: '',
+    password: '',
     property: vm.queryParams.property ? vm.queryParams.property : '',
     unit: vm.queryParams.unit ? vm.queryParams.unit : '',
   }
@@ -21,10 +25,13 @@ myApp.controller('LoginController', function ($window, $http, $location, $mdToas
 
   // logs the user in, then redirects to the appropriate page if they have a role assigned
   vm.login = () => {
-    if (vm.user.username && vm.user.password) {
-      $http.post('/', vm.user).then((response) => {
+    const actualUser = vm.shadowUser.username ? vm.shadowUser : vm.user
+    if (actualUser.username && actualUser.password) {
+      $http.post('/', actualUser).then((response) => {
         if (response.data.username) {
           if (response.data.role) {
+            vm.user.username = actualUser.username
+            vm.user.password = actualUser.password
             vm.user.role = response.data.role
           }
           // location works with SPA (ng-route)
@@ -111,7 +118,7 @@ myApp.controller('LoginController', function ($window, $http, $location, $mdToas
   function initialLogin() {
     setTimeout(() => {
       vm.login()
-    }, 200)
+    }, 0)
   }
 
   // --------------------------------------
