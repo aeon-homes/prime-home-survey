@@ -18,21 +18,21 @@ myApp.controller('SurveyController', function (AdminService, SurveyService, User
     OTHER: 'other'
   }
 
-  self.propertyChosen = self.queryParams.property ? self.queryParams.property : '' // the user-selected property
+  self.propertyChosen = self.queryParams.property ? self.queryParams.property : ''
   self.unitChosen = self.queryParams.unit ? self.queryParams.unit : ''
 
-  self.propertyList = AdminService.propertyList // holds the list of properties pulled from the database
+  self.propertyList = AdminService.propertyList
   self.propertyUnits = SurveyService.propertyUnits
-  self.surveyAnswers = SurveyService.surveyAnswers // holds the user's answers
-  self.surveyLanguage = SurveyService.surveyLanguage // the user-selected language
-  self.surveyObject = SurveyService.surveyObject // holds the translated questions for display
+  self.surveyAnswers = SurveyService.surveyAnswers
+  self.surveyLanguage = SurveyService.surveyLanguage
+  self.surveyObject = SurveyService.surveyObject
   self.household = SurveyService.household
   self.email = SurveyService.email
 
   // eslint-disable-next-line no-undef
-  if (angular.equals(self.surveyObject, {})) { // Load english as language on load
+  if (angular.equals(self.surveyObject, {})) {
     SurveyService.getSurvey('english').then(
-      (_) => {
+      (_response) => {
         self.surveyObject = SurveyService.surveyObject
       },
       (err) => {
@@ -121,18 +121,8 @@ myApp.controller('SurveyController', function (AdminService, SurveyService, User
   }
 
   // takes hard-coded question_id and answer values from the user/DOM and puts them in surveyAnswers.list
-  self.respond = function (questionId, answer) {
-    // If question is #25 gender and answer is self-identify, include the input response in surveyAnswers
-    if (questionId === 25) {
-      if (answer === 3) {
-        SurveyService.surveyAnswers.list[questionId - 1].answer = `${answer} (${self.selfIdentify})`
-      } else {
-        self.selfIdentify = ''
-        SurveyService.surveyAnswers.list[questionId - 1].answer = answer
-      }
-    } else {
-      SurveyService.surveyAnswers.list[questionId - 1].answer = answer
-    }
+  self.respond = (questionId, answer) => {
+    SurveyService.storeAnswer(questionId, answer)
   }
 
   // displays a confirmation dialog, and if confirmed invokes the service's submitSurvey function to store responses in the db

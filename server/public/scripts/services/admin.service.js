@@ -14,6 +14,8 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
     list: []
   } // stores all administrators, site manager
 
+  self.emails = { list: [], totalEmails: 0 }
+
   self.chartData = {} // holds data to be charted
 
   self.gottenData = {} // holds data gotten from the server for reporting
@@ -39,6 +41,73 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
   //--------------------------------------
   // -------------FUNCTIONS----------------
   //--------------------------------------
+
+  self.addEmail = async (email) => $http({
+    method: 'POST',
+    url: `/admin/emails/${encodeURIComponent(email)}`,
+  })
+  
+  self.getEmails = async ({ searchText, pageNumber, pageSize, year, active }) => {
+    console.log('svc', searchText, pageNumber, pageSize, year, active)
+    $http({
+      method: 'GET',
+      url: '/admin/emails',
+      params: {
+        searchText,
+        pageNumber,
+        pageSize,
+        year,
+        active
+      }
+    }).then((response) => {
+      self.emails.list = response.data
+    }).catch((error) => {
+      console.error(error)
+      $mdToast.show(
+        $mdToast.simple()
+          .textContent('Error getting emails.')
+          .hideDelay(2000)
+      )
+    })
+
+    $http({
+      method: 'GET',
+      url: '/admin/emails/count',
+      params: {
+        searchText,
+        year,
+        active
+      }
+    }).then((response) => {
+      console.log('count response', response)
+      self.emails.totalEmails = response && response.data && response.data[0] && response.data[0].count
+    })
+  }
+
+  self.deleteEmail = (emailDto) => {
+    console.log('svc', emailDto)
+
+    return $http({
+      method: 'DELETE',
+      url: `/admin/emails/${emailDto.id}`,
+    })
+  }
+
+  self.updateEmail = (emailDto) => {
+    console.log('svc', emailDto)
+    $http({
+      method: 'PUT',
+      url: `/admin/emails/${emailDto.id}`,
+      data: emailDto
+    }).catch((error) => {
+      console.error(error)
+      $mdToast.show(
+        $mdToast.simple()
+          .textContent(`Error updating email ${emailDto.email}.`)
+          .hideDelay(2000)
+      )
+    })
+  }
 
   self.testApiOrder = async () => {
     console.log('service testApiOrder')
@@ -758,6 +827,7 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
   //--------------------------------------
 
   self.getProperties() // build propertyList immediately
+  self.getEmails({ year: new Date().getFullYear(), pageSize: 20, pageNumber: 1 })
 }])
 
 // self.buildTestChart = function(){

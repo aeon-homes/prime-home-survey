@@ -4,7 +4,7 @@ myApp.service('SurveyService', function ($http, $location, $mdDialog) {
   // -------------VARIABLES----------------
   // --------------------------------------
 
-  const NUM_SURVEY_QUESTIONS = 34 // used as a magic number for building the answers array
+  const NUM_SURVEY_QUESTIONS = 34
   const EMAIL_NOT_FOUND = 'Email not found.'
   const EMAIL_ALREADY_SUBMITTED = 'Email already submitted for rewards.'
   const self = this
@@ -12,25 +12,39 @@ myApp.service('SurveyService', function ($http, $location, $mdDialog) {
   const now = new Date()
   self.thisYear = now.getFullYear()
 
-  self.surveyObject = {} // holds the translated answers from the db
-  self.surveyProperty = '' // holds the user-selected property
+  self.surveyObject = {}
+  self.surveyProperty = ''
   self.propertyUnits = { list: [] }
-  self.surveyUnit = '' // holds the user-selected unit
+  self.surveyUnit = ''
   self.household = false
   self.email = { hideEmailSubmit: true }
-  self.surveyAnswers = { // holds the user's responses
+  self.surveyAnswers = {
     list: [],
     // eslint-disable-next-line no-undef
     householdMembers: [new HouseholdMember({})]
   }
 
-  self.surveyLanguage = { // holds the user-selected language, default English
+  self.surveyLanguage = {
     language: 'english'
   }
 
   // --------------------------------------
   // -------------FUNCTIONS----------------
   // --------------------------------------
+
+  self.storeAnswer = (questionId, answer) => {
+    // If question is #25 gender and answer is self-identify, include the input response in surveyAnswers
+    if (questionId === 25) {
+      if (answer === 3) {
+        self.surveyAnswers.list[questionId - 1].answer = `${answer} (${self.selfIdentify})`
+      } else {
+        self.selfIdentify = ''
+        self.surveyAnswers.list[questionId - 1].answer = answer
+      }
+    } else {
+      self.surveyAnswers.list[questionId - 1].answer = answer
+    }
+  }
 
   self.submitEmail = (emailToSubmit, callback) => {
     $http.post('/rewards/email', { email: emailToSubmit })

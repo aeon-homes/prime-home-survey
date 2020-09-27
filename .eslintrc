@@ -17,6 +17,7 @@
       "no-trailing-spaces": "off",
       "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
       "no-use-before-define": "off",
+      "object-curly-newline": "off",
       "radix": "off",
       "semi": ["error", "never"]
     },

@@ -9,6 +9,7 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
   const START_YEAR = 2010
   const NUM_FUTURE_YEARS = 3
 
+
   // get the current year so the select defaults to it
   const now = new Date()
   self.thisYear = now.getFullYear()
@@ -22,6 +23,13 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
 
   self.questions = CsvService.questions
   self.propertyList = AdminService.propertyList
+
+  self.emails = AdminService.emails
+  self.emailSearch = ''
+  self.emailYear = self.thisYear
+  self.emailOrder = 'email'
+  self.emailPageNumber = 1
+  self.EMAIL_PAGE_SIZE = 20
 
   self.selectedSiteManagerProperty = AdminService.selectedSiteManagerProperty
   self.mySiteManagerOrder = 'unit' // default site manager property order
@@ -46,6 +54,56 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
         .textContent('Test resolved!')
         .position('top right')
     )
+  }
+
+  self.paginateEmails = (page, limit) => {
+    console.log(page, limit)
+    self.emailPageNumber = page
+    self.searchEmails()
+  }
+
+  self.addEmail = () => {
+    console.log('click', self.emailToAdd)
+    AdminService.addEmail(self.emailToAdd).then((_response) => {
+      self.emailToAdd = ''
+      self.searchEmails()
+    }).catch((error) => {
+      console.error(error)
+      $mdToast.show(
+        $mdToast.simple()
+          .textContent(`Error creating email ${self.emailToAdd}.`)
+          .hideDelay(2000)
+      )
+    })
+  }
+  
+  self.searchEmails = () => {
+    console.log('click', self.emailSearch)
+    AdminService.getEmails({
+      searchText: self.emailSearch, 
+      year: self.emailYear, 
+      pageSize: self.EMAIL_PAGE_SIZE, 
+      pageNumber: self.emailPageNumber 
+    })
+  }
+
+  self.deleteEmail = (emailDto) => {
+    console.log('click', emailDto)
+    AdminService.deleteEmail(emailDto).then((_response) => {
+      self.searchEmails()
+    }).catch((error) => {
+      console.error(error)
+      $mdToast.show(
+        $mdToast.simple()
+          .textContent(`Error deleting email ${emailDto.email}.`)
+          .hideDelay(2000)
+      )
+    })
+  }
+
+  self.updateEmail = (emailDto) => {
+    console.log('click', emailDto)
+    AdminService.updateEmail(emailDto)
   }
 
   // deletes a user out of the db

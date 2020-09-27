@@ -1,7 +1,8 @@
 const express = require('express')
+const pool = require('../modules/pool.js')
+const authUtil = require('../util/auth.util')
 
 const router = express.Router()
-const pool = require('../modules/pool.js')
 
 const SUPPORTED_LANGUAGES = [
   'english',
@@ -11,11 +12,7 @@ const SUPPORTED_LANGUAGES = [
   'oromo'
 ]
 
-const ROLES = {
-  RESIDENT: 'Resident',
-  ADMINISTRATOR: 'Administrator',
-  SITE_MANAGER: 'Site Manager'
-}
+const ROLES = require('../enum/userRoles.enum')
 
 const SURVEY_DOMAIN = process.env.SURVEY_DOMAIN ? process.env.SURVEY_DOMAIN : 'https://aeon-home-survey.herokuapp.com'
 const RESIDENT_USERNAME = process.env.RESIDENT_USERNAME ? process.env.RESIDENT_USERNAME : 'b'
@@ -257,7 +254,7 @@ router.get('/language', (req, res) => {
     return
   }
 
-  if (!validateAuthorization(req, ROLES.RESIDENT)) {
+  if (!authUtil.validateAuthorization(req, [ROLES.RESIDENT])) {
     res.sendStatus(403)
     return
   }
@@ -334,7 +331,7 @@ router.get('/questions', (req, res) => {
 
 // updates the posted question in the db. 'year' defaults to this year if not specified, which it really shouldn't be.
 router.post('/questions', (req, res) => {
-  if (!validateAuthorization(req, ROLES.ADMINISTRATOR)) {
+  if (!authUtil.validateAuthorization(req, [ROLES.ADMINISTRATOR])) {
     res.sendStatus(403)
     return
   }
@@ -370,7 +367,7 @@ router.post('/questions', (req, res) => {
 // takes a completed survey and posts it to the database. also updates the unit to having responded in the `occupancy` table.
 router.post('/', (req, res) => {
   logIphoneUserAgent(req.header('user-agent'), 'survey submit')
-  if (!validateAuthorization(req, ROLES.RESIDENT)) {
+  if (!authUtil.validateAuthorization(req, [ROLES.RESIDENT])) {
     res.sendStatus(403)
     return
   }
@@ -571,10 +568,6 @@ function sanitizeSurveyResponse(surveyAnswers) {
 
 function validateSurveyLanguage(language) {
   return SUPPORTED_LANGUAGES.includes(language)
-}
-
-function validateAuthorization(req, role) {
-  return req.isAuthenticated() && req.user.role === role
 }
 
 function trimBlankHouseholdMembers(members) {

@@ -142,6 +142,15 @@ myApp.config(($routeProvider, $locationProvider, $mdThemingProvider) => {
         }
       }
     })
+    .when('/admin-resident-emails', {
+      templateUrl: '/views/templates/admin-resident-emails.html',
+      controller: 'AdminController as ac',
+      resolve: {
+        getUser(UserService) {
+          return UserService.getUser('Administrator')
+        }
+      }
+    })
     .when('/admin-reporting', {
       templateUrl: '/views/templates/admin-reporting.html',
       controller: 'AdminReportingController as arc',

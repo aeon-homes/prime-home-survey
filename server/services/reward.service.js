@@ -5,12 +5,10 @@ const ERROR_MESSAGES = require('../enum/errorMessages.enum')
 const submitEmailForTangoReward = async ({ email, year }) => {
   await emailService.validateEmailAgainstDatabase({ email, year })
   
-  console.log('email validation passed')
-
   const apiResult = await tangoApiClient.submitEmail(email)
 
   if (apiResult.status === 201) {
-    console.log('apiResult.data', apiResult.data)
+    console.info(`Tango API result for ${email}: `, apiResult.data)
 
     const { externalRefID: referenceId } = apiResult.data
   

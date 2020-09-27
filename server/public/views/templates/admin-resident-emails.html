@@ -1,0 +1,106 @@
+<md-toolbar class="no-print">
+  <div class="md-toolbar-tools">
+    <md-button class="md-icon-button" ng-click="ac.openLeftMenu()" hide-gt-sm>
+      <i class="material-icons">menu</i>
+    </md-button>
+    <h2 md-truncate flex>Aeon Home Survey Administration</h2>
+    <md-button ng-click="ac.UserService.logout()">
+      Logout
+    </md-button>
+  </div>
+</md-toolbar>
+<div layout="row" class="full-height" ng-cloak>
+
+  <div ng-include="'views/partials/sidenav.html'"></div>
+
+  <md-content flex layout-padding>
+
+    <div layout="column">
+      <div layout="row" class="no-print">
+        <div flex>
+          <h2 class="md-display-1">Admin | Resident Emails</h2>
+        </div>
+      </div>
+      <div layout="row" class="no-print">
+        <div flex class="md-whiteframe-4dp" layout-padding layout-margin>
+          <md-input-container>
+            <label>Select Year</label>
+            <md-select ng-model="ac.emailYear" style="min-width: 200px;">
+              <md-option ng-value="year" ng-repeat="year in ac.yearsArray | orderBy: '-year'">{{ year }}</md-option>
+            </md-select>
+          </md-input-container>
+          <md-input-container>
+            <label>Search Emails</label>
+            <input ng-model="ac.emailSearch" type="text">
+          </md-input-container>
+          <md-input-container>
+            <md-button class="md-raised md-primary" ng-click="ac.searchEmails()">Search</md-button>
+          </md-input-container>
+        </div>
+        <div flex class="md-whiteframe-4dp" layout-padding layout-margin>
+          <md-input-container>
+            <label>Add Email</label>
+            <input ng-model="ac.emailToAdd">
+          </md-input-container>
+          <md-input-container>
+            <md-button class="md-raised md-primary" ng-click="ac.addEmail()">Add</md-button>
+          </md-input-container>
+        </div>
+      </div>
+      <div layout="row">
+        <div flex class="md-whiteframe-4dp" layout-padding layout-margin>
+          <h3 class="md-headline">Resident Emails</h3>
+          <md-table-container>
+            <table md-table multiple ng-model="ac.emails.list">
+              <thead md-head md-order="ac.emailOrder">
+                <tr md-row>
+                  <th md-column>Year</th>
+                  <th md-column>Email</th>
+                  <th md-column>Paid</th>
+                  <th md-column>Tango ID</th>
+                  <th md-column>Active</th>
+                  <th md-column></th>
+                </tr>
+              </thead>
+              <tbody md-body>
+                <tr md-row md-select="email" md-select-id="email" md-auto-select
+                  ng-repeat="email in ac.emails.list | orderBy: ac.emailOrder" aria-label="users">
+                  <td md-cell>
+                    <md-numeric ng-model="email.year" aria-label="year">{{email.year}}</md-numeric>
+                  </td>
+                  <td md-cell>
+                    <input ng-model="email.email">
+                    <md-button class="md-raised" ng-click="ac.updateEmail(email)">Update</md-button>
+                  </td>
+                  <td md-cell>
+                    <span ng-if="email.paid" class="responded-highlight">Yes</span>
+                    <span ng-if="!email.paid" class="responded-un-highlight">No</span>
+                  </td>
+                  <td md-cell>
+                    {{email.reference_id || ''}}
+                  </td>
+                  <td md-cell>
+                    <md-checkbox ng-model="email.active" ng-change="ac.AdminService.updateEmail(email)"
+                      aria-label="Active"></md-checkbox>
+                  </td>
+                  <td md-cell>
+                    <md-button class="md-warn md-raised" ng-click="ac.deleteEmail(email)">Delete</md-button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <md-table-pagination
+              md-limit="ac.EMAIL_PAGE_SIZE" 
+              md-page="ac.emailPageNumber" 
+              md-total="{{ac.emails.totalEmails}}" 
+              md-label="{page: 'Page:', rowsPerPage: 'Rows per page:', of: 'of'}"
+              md-on-paginate="ac.paginateEmails"
+              md-boundary-links
+            ></md-table-pagination>
+          </md-table-container>
+        </div>
+      </div>
+    </div>
+  </md-content>
+
+</div>

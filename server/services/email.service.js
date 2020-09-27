@@ -25,23 +25,19 @@ const validateEmailAgainstDatabase = async ({ email, year }) => {
   if (emailRecord.paid) throw new Error(ERROR_MESSAGES.EMAIL_ALREADY_SUBMITTED)
 }
 
-const setEmailAsPaid = async ({ email, year }) => {
+const setEmailAsPaid = async ({ email, year, referenceId }) => {
   const { pgClient, done } = await postgresClient.getPostgresConnection()
 
-  let emailResult
-
   try {
-    const queryString = 'UPDATE resident_emails set paid=true where email=$1 and year=$2'
-    const queryParams = [email, year]
-    emailResult = await postgresClient.queryClient(pgClient, queryString, queryParams)
+    const queryString = 'UPDATE resident_emails set paid=true, reference_id=$1 where email=$2 and year=$3'
+    const queryParams = [referenceId, email, year]
+    await postgresClient.queryClient(pgClient, queryString, queryParams)
   } catch (error) {
     console.error(error)
     throw new Error(ERROR_MESSAGES.DATABASE_ERROR)
   } finally {
     done()
   }
-
-  console.log('database result', emailResult)
 }
 
 module.exports = {

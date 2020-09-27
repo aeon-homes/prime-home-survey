@@ -3,10 +3,12 @@ CREATE TABLE resident_emails
     id SERIAL PRIMARY KEY,
     email TEXT NOT NULL,
     year INT NOT NULL,
+    reference_id TEXT,
     paid BOOLEAN DEFAULT FALSE,
     active BOOLEAN DEFAULT FALSE
 );
 CREATE UNIQUE INDEX email_year on resident_emails (email, year);
+CREATE INDEX ON resident_emails ((lower(email)));
 CREATE TABLE questions
 (
     id SERIAL PRIMARY KEY,
