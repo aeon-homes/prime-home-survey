@@ -25,9 +25,6 @@ router.get('/test', async (req, res) => {
 })
 
 router.post('/email', async (req, res) => {
-  console.log('/rewards/email POST')
-  console.log(req.body)
-
   if (!req.isAuthenticated() || req.user.role !== 'Resident') {
     res.sendStatus(403)
     return

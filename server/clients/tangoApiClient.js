@@ -31,8 +31,6 @@ const tangoPost = ({ path, data }) => axios({
 })
 
 const getCatalog = () => {
-  console.log(apiUser, apiPassword)
-
   return tangoGet({ path: 'catalogs' })
 }
 
@@ -51,8 +49,6 @@ const submitEmail = (email) => {
     sendEmail: true,
     utid: apiRewardId
   }
-
-  console.log(submitOrderBody)
 
   return tangoPost({ path: 'orders', data: submitOrderBody })
 }

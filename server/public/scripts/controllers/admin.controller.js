@@ -57,13 +57,11 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
   }
 
   self.paginateEmails = (page, limit) => {
-    console.log(page, limit)
     self.emailPageNumber = page
     self.searchEmails()
   }
 
   self.addEmail = () => {
-    console.log('click', self.emailToAdd)
     AdminService.addEmail(self.emailToAdd).then((_response) => {
       self.emailToAdd = ''
       self.searchEmails()
@@ -78,7 +76,6 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
   }
   
   self.searchEmails = () => {
-    console.log('click', self.emailSearch)
     AdminService.getEmails({
       searchText: self.emailSearch, 
       year: self.emailYear, 
@@ -88,7 +85,6 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
   }
 
   self.deleteEmail = (emailDto) => {
-    console.log('click', emailDto)
     AdminService.deleteEmail(emailDto).then((_response) => {
       self.searchEmails()
     }).catch((error) => {
@@ -102,7 +98,6 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
   }
 
   self.updateEmail = (emailDto) => {
-    console.log('click', emailDto)
     AdminService.updateEmail(emailDto)
   }
 

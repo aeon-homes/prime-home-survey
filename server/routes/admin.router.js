@@ -335,8 +335,6 @@ router.get('/emails', (req, res) => {
   if (active) queryParams.push(active)
   if (pageSize && pageNumber) queryParams.push(pageSize, (pageNumber - 1) * pageSize)
 
-  console.log(queryString)
-  console.log(queryParams)
   pool.query(queryString, queryParams, (err, data) => {
     if (err) {
       console.error(err)
@@ -369,8 +367,6 @@ router.get('/emails/count', (req, res) => {
   if (year) queryParams.push(year)
   if (active) queryParams.push(active)
 
-  console.log(queryString)
-  console.log(queryParams)
   pool.query(queryString, queryParams, (err, data) => {
     if (err) {
       console.error(err)
@@ -387,8 +383,6 @@ router.delete('/emails/:id', (req, res) => {
     res.sendStatus(403)
     return
   }
-
-  console.log(req.query)
 
   const { id } = req.params
 
@@ -431,10 +425,6 @@ router.post('/emails/:email', (req, res) => {
     res.sendStatus(403)
     return
   }
-
-  console.log('req.query', req.query)
-  console.log('req.params', req.params)
-  console.log('req.body', req.body)
 
   const { email } = req.params
   

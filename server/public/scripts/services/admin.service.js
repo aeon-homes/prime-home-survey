@@ -48,7 +48,6 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
   })
   
   self.getEmails = async ({ searchText, pageNumber, pageSize, year, active }) => {
-    console.log('svc', searchText, pageNumber, pageSize, year, active)
     $http({
       method: 'GET',
       url: '/admin/emails',
@@ -79,14 +78,11 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
         active
       }
     }).then((response) => {
-      console.log('count response', response)
       self.emails.totalEmails = response && response.data && response.data[0] && response.data[0].count
     })
   }
 
   self.deleteEmail = (emailDto) => {
-    console.log('svc', emailDto)
-
     return $http({
       method: 'DELETE',
       url: `/admin/emails/${emailDto.id}`,
@@ -150,7 +146,6 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
 
   // takes a DOM HTML5 <canvas> element and builds a chart in it based on the chartType data and what's in self.gottenData
   self.buildChart = function (chartTarget, chartType) {
-    // console.log('buildChart', chartType);
     self.destroyAllCharts()
 
     if (chartType === 'Gender') {

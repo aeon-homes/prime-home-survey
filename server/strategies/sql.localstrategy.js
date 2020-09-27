@@ -52,8 +52,6 @@ passport.use('local', new LocalStrategy({
         release()
         let user = {}
 
-        // console.log('here');
-
         // Handle Errors
         if (queryError) {
           console.error('connection err ', queryError)
