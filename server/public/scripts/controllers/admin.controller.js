@@ -148,17 +148,9 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
     }
     reader.readAsText(fileEvent.target.files[0])
   }
-  // --------------UPDATE QUESTIONS---------------
-
-  // gets the list of questions from the db and sends the user to the updateQuestions page
-  // self.goToUpdateQuestions = function (year = self.thisYear) {
-  //   CsvService.getQuestions(year);
-  // }
-  const year = self.thisYear
-  CsvService.getQuestions(year)
 
   // called by a button on each individual question. displays a confirm dialog and if confirmed, updates the question in the db
-  self.updateQuestion = function (question, yearToUpdate = self.thisYear) {
+  self.updateQuestion = function (question) {
     const confirm = $mdDialog.confirm()
       .title('Confirm Update')
       .textContent('Do you really want to update this question? This will affect every survey from now on!')
@@ -168,13 +160,14 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
       .cancel('Cancel')
 
     $mdDialog.show(confirm).then(() => {
-      CsvService.updateQuestion(question, yearToUpdate)
+      CsvService.updateQuestion(question)
     }, () => { })
   }
 
   //--------------------------------------
   // -------------RUNTIME CODE-------------
   //--------------------------------------
+  CsvService.getQuestions()
 
   // build yearsArray - this is what's shown in the select. Starts at START_YEAR and ends at that plus NUM_FUTURE_YEARS
   for (let index = START_YEAR; index < (self.thisYear + NUM_FUTURE_YEARS); index += 1) {
