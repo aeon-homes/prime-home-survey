@@ -392,7 +392,7 @@ router.delete('/emails/:id', (req, res) => {
       console.error(new Error(ERROR_MESSAGES.DATABASE_ERROR))
       res.sendStatus(500)
     } else {
-      res.send(200)  
+      res.sendStatus(200)  
     }
   })
 })
@@ -415,7 +415,7 @@ router.put('/emails/:id', (req, res) => {
       console.error(new Error(ERROR_MESSAGES.DATABASE_ERROR))
       res.sendStatus(500)
     } else {
-      res.send(200)  
+      res.sendStatus(200)  
     }
   })
 })
@@ -434,7 +434,7 @@ router.post('/emails/:email', (req, res) => {
       console.error(new Error(ERROR_MESSAGES.DATABASE_ERROR))
       res.sendStatus(500)
     } else {
-      res.send(201)
+      res.sendStatus(201)
     }
   })
 })

@@ -38,6 +38,7 @@ router.post('/email', async (req, res) => {
     if (error.message === ERROR_MESSAGES.EMAIL_NOT_FOUND || error.message === ERROR_MESSAGES.EMAIL_ALREADY_SUBMITTED) {
       res.status(400).send({ error: error.message })
     } else {
+      console.error('Tango API Error', JSON.stringify(error))
       res.sendStatus(500)
     }
   }

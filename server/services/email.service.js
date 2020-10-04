@@ -8,8 +8,8 @@ const validateEmailAgainstDatabase = async ({ email, year }) => {
   let emailResult
 
   try {
-    const queryString = `SELECT * FROM ${DATABASE_TABLES.RESIDENT_EMAILS} WHERE email=$1 AND year=$2`
-    const queryParams = [email, year]
+    const queryString = `SELECT * FROM ${DATABASE_TABLES.RESIDENT_EMAILS} WHERE lower(email)=$1 AND year=$2`
+    const queryParams = [email.toLowerCase(), year]
     emailResult = await postgresClient.queryClient(pgClient, queryString, queryParams)
   } catch (error) {
     console.error(error)
@@ -29,8 +29,8 @@ const setEmailAsPaid = async ({ email, year, referenceId }) => {
   const { pgClient, done } = await postgresClient.getPostgresConnection()
 
   try {
-    const queryString = 'UPDATE resident_emails set paid=true, reference_id=$1 where email=$2 and year=$3'
-    const queryParams = [referenceId, email, year]
+    const queryString = 'UPDATE resident_emails set paid=true, reference_id=$1 where lower(email)=$2 and year=$3'
+    const queryParams = [referenceId, email.toLowerCase(), year]
     await postgresClient.queryClient(pgClient, queryString, queryParams)
   } catch (error) {
     console.error(error)
