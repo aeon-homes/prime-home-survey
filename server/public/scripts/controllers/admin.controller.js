@@ -221,6 +221,7 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
   // -------------RUNTIME CODE-------------
   //--------------------------------------
   CsvService.getQuestions()
+  AdminService.getEmails({ year: new Date().getFullYear(), pageSize: 20, pageNumber: 1 })
 
   // build yearsArray - this is what's shown in the select. Starts at START_YEAR and ends at that plus NUM_FUTURE_YEARS
   for (let index = START_YEAR; index < (self.thisYear + NUM_FUTURE_YEARS); index += 1) {
@@ -232,9 +233,6 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
   self.currentPath = $location.path()
   if (self.currentPath === '/admin') {
     document.getElementById('admin-file-input').addEventListener('change', self.handleFileSelect, false)
-  }
-
-  if (self.currentPath === '/admin') {
     document.getElementById('admin-email-input').addEventListener('change', self.handleEmailFileSelect, false)
   }
 

@@ -8,7 +8,7 @@
   "description": "",
   "main": "server/server.js",
   "scripts": {
-    "test": "nodemon server/server.js",
+    "debug": "nodemon server/server.js",
     "start": "node server/server.js",
     "lint": "eslint server",
     "fix": "eslint server --fix"

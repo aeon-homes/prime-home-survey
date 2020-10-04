@@ -822,7 +822,6 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
   //--------------------------------------
 
   self.getProperties() // build propertyList immediately
-  self.getEmails({ year: new Date().getFullYear(), pageSize: 20, pageNumber: 1 })
 }])
 
 // self.buildTestChart = function(){
