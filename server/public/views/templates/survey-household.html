@@ -121,19 +121,19 @@
             <section class="survey-question-section section-long-question">
                 <h2>{{sc.surveyObject.list_members}}</h2>
                 <div class="householdRow" ng-repeat="member in sc.surveyAnswers.householdMembers">
-                    <div id="{{'householdRow' + $index + name}}" class="household-row-question">
+                    <div id="{{'householdRow' + $index + 'name'}}" class="household-row-question">
                         <md-input-container class="md-block">
                             <label>{{sc.surveyObject.name}}</label>
-                            <input id="{{'householdRow' + $index + nameInput}}" type="text"
+                            <input id="{{'householdRow' + $index + 'nameInput'}}" type="text"
                                 ng-model="sc.surveyAnswers.householdMembers[$index].name">
                         </md-input-container>
                     </div>
-                    <div id="{{'householdRow' + $index + dateOfBirth}}" class="household-row-question">
+                    <div id="{{'householdRow' + $index + 'dateOfBirth'}}" class="household-row-question">
                         <span class="householdQuestionLabel">{{sc.surveyObject.date_of_birth}}</span>
                         <md-datepicker ng-model="sc.surveyAnswers.householdMembers[$index].dateOfBirth">
                         </md-datepicker>
                     </div>
-                    <div id="{{'householdRow' + $index + gender}}" class="household-row-question">
+                    <div id="{{'householdRow' + $index + 'gender'}}" class="household-row-question">
                         <span class="householdQuestionLabel">{{sc.surveyObject[25]}}</span>
                         <md-button class="md-raised" ng-click="sc.setHouseholdMemberGender($index, 'female')"
                             ng-class="{ 'md-accent': sc.surveyAnswers.householdMembers[$index].gender == 'female'}">
@@ -149,7 +149,7 @@
                                 ng-change="sc.setHouseholdMemberGender($index, sc.surveyAnswers.householdMembers[$index].genderSelfIdentify)">
                         </md-input-container>
                     </div>
-                    <div id="{{'householdRow' + $index + race}}" class="household-row-question">
+                    <div id="{{'householdRow' + $index + 'race'}}" class="household-row-question">
                         <span class="householdQuestionLabel">{{sc.surveyObject.race_check_all}}</span>
                         <md-button class="md-raised survey-button-longtext"
                             ng-click="sc.setHouseholdMemberRace($index, sc.RACE.WHITE)"
@@ -181,7 +181,7 @@
                             <input type="text" ng-model="sc.surveyAnswers.householdMembers[$index].race.selfIdentify">
                         </md-input-container>
                     </div>
-                    <div id="{{'householdRow' + $index + hispanic}}" class="household-row-question">
+                    <div id="{{'householdRow' + $index + 'hispanic'}}" class="household-row-question">
                         <span class="householdQuestionLabel">{{sc.surveyObject.race_hispanic}}</span>
                         <md-button class="md-raised"
                             ng-click="sc.surveyAnswers.householdMembers[$index].hispanic = true"
@@ -194,7 +194,7 @@
                             {{sc.surveyObject.no}}
                         </md-button>
                     </div>
-                    <div id="{{'householdRow' + $index + disabled}}" class="household-row-question">
+                    <div id="{{'householdRow' + $index + 'disabled'}}" class="household-row-question">
                         <span class="householdQuestionLabel">{{sc.surveyObject.disabled}}</span>
                         <md-button class="md-raised"
                             ng-click="sc.surveyAnswers.householdMembers[$index].disabled = true"

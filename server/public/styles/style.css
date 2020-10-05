@@ -146,45 +146,8 @@ md-list {
     padding: 0px 0px 8px 0px;
 }
 
-#bg img {
-    width: 85%;
-    height: 70%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    margin: auto;
-    min-width: 50%;
-    min-height: 50%;
-    opacity: .5;
-    z-index: 100;
-    pointer-events: none;
-}
-
-@media (min-width: 800px) {
-    #bg img {
-        width: 40%;
-        height: 85%;
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        margin: auto;
-        min-width: 50%;
-        min-height: 50%;
-        opacity: .5;
-        z-index: 100;
-        pointer-events: none;
-        margin-top: 120px;
-    }
-}
-
-@media (min-width: 600px) {
-    md-sidenav {
-        max-width: 250px;
-    }
+md-sidenav {
+  max-width: 250px;
 }
 
 #thankyou-message {
