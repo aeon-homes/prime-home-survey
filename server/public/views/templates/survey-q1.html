@@ -63,16 +63,16 @@
         <div layout="row" layout-align="center">
             <section class="survey-question-section">
                 <p class="survey-question-paragraph">4. {{sc.surveyObject[4]}}</p>
-                <md-button class="md-raised" ng-click="sc.respond(4,1)"
+                <md-button class="md-raised" ng-click="sc.respond(4,4)"
                     ng-class="{ 'md-accent': sc.surveyAnswers.list[3].answer == 4}">{{sc.surveyObject.answer1}}
                 </md-button>
-                <md-button class="md-raised" ng-click="sc.respond(4,2)"
+                <md-button class="md-raised" ng-click="sc.respond(4,3)"
                     ng-class="{ 'md-accent': sc.surveyAnswers.list[3].answer == 3}">{{sc.surveyObject.answer2}}
                 </md-button>
-                <md-button class="md-raised" ng-click="sc.respond(4,3)"
+                <md-button class="md-raised" ng-click="sc.respond(4,2)"
                     ng-class="{ 'md-accent': sc.surveyAnswers.list[3].answer == 2}">{{sc.surveyObject.answer3}}
                 </md-button>
-                <md-button class="md-raised" ng-click="sc.respond(4,4)"
+                <md-button class="md-raised" ng-click="sc.respond(4,1)"
                     ng-class="{ 'md-accent': sc.surveyAnswers.list[3].answer == 1}">{{sc.surveyObject.answer4}}
                 </md-button>
             </section>
