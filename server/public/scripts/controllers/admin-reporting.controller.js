@@ -138,7 +138,7 @@ myApp.controller('AdminReportingController', ['AdminService', '$mdDialog', '$tim
     //-------------RUNTIME CODE-------------
     //--------------------------------------
 
-    AdminService.getResponseRate();
+    AdminService.getResponseRate(null, thisYear);
     self.responseRate = AdminService.responseRate;
     
 

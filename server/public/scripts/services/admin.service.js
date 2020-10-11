@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-undef
 myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http, $mdToast) {
   //--------------------------------------
   // -------------VARIABLES----------------
@@ -46,7 +47,7 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
     method: 'POST',
     url: `/admin/emails/${encodeURIComponent(email)}`,
   })
-  
+
   self.getEmails = async ({ searchText, pageNumber, pageSize, year, active }) => {
     $http({
       method: 'GET',
@@ -82,15 +83,12 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
     })
   }
 
-  self.deleteEmail = (emailDto) => {
-    return $http({
-      method: 'DELETE',
-      url: `/admin/emails/${emailDto.id}`,
-    })
-  }
+  self.deleteEmail = (emailDto) => $http({
+    method: 'DELETE',
+    url: `/admin/emails/${emailDto.id}`,
+  })
 
   self.updateEmail = (emailDto) => {
-    console.log('svc', emailDto)
     $http({
       method: 'PUT',
       url: `/admin/emails/${emailDto.id}`,
@@ -158,20 +156,21 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
         switch (genderAnswer) {
           // 1,2,3 (string),null,
           case '1':
-            self.genderData[1]++
+            self.genderData[1] += 1
             break
           case '2':
-            self.genderData[2]++
+            self.genderData[2] += 1
             break
           case '3':
-            self.genderData[3]++
+            self.genderData[3] += 1
             self.genderStrings.push(genderAnswer)
             break
           default:
-            self.genderData[0]++
+            self.genderData[0] += 1
         }
       }
 
+      // eslint-disable-next-line no-undef
       const genderPieChart = new Chart(chartTarget, {
         type: 'pie',
         data: {
@@ -203,15 +202,16 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
     } else if (chartType === 'How Long') {
       self.howLongData = [0, 0, 0, 0, 0, 0]
 
-      for (var i = 0; i < self.gottenData.list.length; i++) {
+      for (let i = 0; i < self.gottenData.list.length; i += 1) {
         const howLongAnswer = self.gottenData.list[i].answer23
-        if ((howLongAnswer == undefined) || (howLongAnswer == null)) {
-          self.howLongData[0]++
+        if ((howLongAnswer === undefined) || (howLongAnswer == null)) {
+          self.howLongData[0] += 1
         } else {
-          self.howLongData[howLongAnswer]++
+          self.howLongData[howLongAnswer] += 1
         }
       }
 
+      // eslint-disable-next-line no-undef
       const howLongPieChart = new Chart(chartTarget, {
         type: 'pie',
         data: {
@@ -247,16 +247,17 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
     } else if (chartType === 'Ethnicity') {
       self.ethnicityData = [0, 0, 0, 0, 0, 0, 0, 0]
 
-      for (var i = 0; i < self.gottenData.list.length; i++) {
+      for (let i = 0; i < self.gottenData.list.length; i += 1) {
         const ethnicityAnswer = self.gottenData.list[i].answer24
 
-        if ((ethnicityAnswer == undefined) || (ethnicityAnswer == null)) {
-          self.ethnicityData[0]++
+        if ((ethnicityAnswer === undefined) || (ethnicityAnswer == null)) {
+          self.ethnicityData[0] += 1
         } else {
-          self.ethnicityData[ethnicityAnswer]++
+          self.ethnicityData[ethnicityAnswer] += 1
         }
       }
 
+      // eslint-disable-next-line no-undef
       const ethnicityPieChart = new Chart(chartTarget, {
         type: 'pie',
         data: {
@@ -296,16 +297,17 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
     } else if (chartType === 'Age') {
       self.ageData = [0, 0, 0, 0, 0, 0, 0]
 
-      for (var i = 0; i < self.gottenData.list.length; i++) {
+      for (let i = 0; i < self.gottenData.list.length; i += 1) {
         const ageAnswer = self.gottenData.list[i].answer26
 
-        if ((ageAnswer == undefined) || (ageAnswer == null)) {
-          self.ageData[0]++
+        if ((ageAnswer === undefined) || (ageAnswer == null)) {
+          self.ageData[0] += 1
         } else {
-          self.ageData[ageAnswer]++
+          self.ageData[ageAnswer] += 1
         }
       }
 
+      // eslint-disable-next-line no-undef
       const agePieChart = new Chart(chartTarget, {
         type: 'pie',
         data: {
@@ -344,16 +346,17 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
     } else if (chartType === 'Income') {
       self.incomeData = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 
-      for (var i = 0; i < self.gottenData.list.length; i++) {
+      for (let i = 0; i < self.gottenData.list.length; i += 1) {
         const incomeAnswer = self.gottenData.list[i].answer26
 
-        if ((incomeAnswer == undefined) || (incomeAnswer == null)) {
-          self.incomeData[0]++
+        if ((incomeAnswer === undefined) || (incomeAnswer == null)) {
+          self.incomeData[0] += 1
         } else {
-          self.incomeData[incomeAnswer]++
+          self.incomeData[incomeAnswer] += 1
         }
       }
 
+      // eslint-disable-next-line no-undef
       const incomePieChart = new Chart(chartTarget, {
         type: 'pie',
         data: {
@@ -412,10 +415,7 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
         [0, 0],
       ] // [total points, #of responses]
 
-      const engagementResult = 0
-      const engagementTotal = 0
-
-      for (var i = 0; i < self.gottenData.list.length; i++) {
+      for (let i = 0; i < self.gottenData.list.length; i += 1) {
         // Engagement = average of questions 5-13
 
         const engagementAnswers = [
@@ -430,7 +430,7 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
           self.gottenData.list[i].answer13
         ]
 
-        for (let j = 0; j < engagementAnswers.length; j++) {
+        for (let j = 0; j < engagementAnswers.length; j += 1) {
           // question 8 is reversed; 1 is a positive response
           if (engagementAnswers[j]) {
             if (j === 3) {
@@ -447,11 +447,13 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
                 case 3:
                   engagementAnswers[j] = 1
                   break
+                default:
+                  console.warn('unexpected value in engagement answers')
               }
             }
 
             scoreTotals[0][0] += engagementAnswers[j]
-            scoreTotals[0][1]++
+            scoreTotals[0][1] += 1
           }
         }
 
@@ -464,10 +466,10 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
           self.gottenData.list[i].answer4
         ]
 
-        for (let j = 0; j < safetyAnswers.length; j++) {
+        for (let j = 0; j < safetyAnswers.length; j += 1) {
           if (safetyAnswers[j]) {
             scoreTotals[1][0] += safetyAnswers[j]
-            scoreTotals[1][1]++
+            scoreTotals[1][1] += 1
           }
         }
 
@@ -479,10 +481,10 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
           self.gottenData.list[i].answer20
         ]
 
-        for (let j = 0; j < ownershipAnswers.length; j++) {
+        for (let j = 0; j < ownershipAnswers.length; j += 1) {
           if (ownershipAnswers[j]) {
             scoreTotals[2][0] += ownershipAnswers[j]
-            scoreTotals[2][1]++
+            scoreTotals[2][1] += 1
           }
         }
 
@@ -494,10 +496,10 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
           self.gottenData.list[i].answer18
         ]
 
-        for (let j = 0; j < staffAnswers.length; j++) {
+        for (let j = 0; j < staffAnswers.length; j += 1) {
           if (staffAnswers[j]) {
             scoreTotals[3][0] += staffAnswers[j]
-            scoreTotals[3][1]++
+            scoreTotals[3][1] += 1
           }
         }
       }
@@ -517,11 +519,11 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
 
       let positiveScores = 0
 
-      for (let j = 0; j < scoreTotals.length; j++) {
+      for (let j = 0; j < scoreTotals.length; j += 1) {
         if (scoreTotals[j][1] > 0) {
           // non-zero divisor
           self.scoreData[j] = scoreTotals[j][0] / scoreTotals[j][1]
-          positiveScores++
+          positiveScores += 1
           self.scoreData[self.scoreData.length - 1] += self.scoreData[j]
         } // else it remains 0
       }
@@ -546,6 +548,7 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
 
       // VICTORY! (hopefully)
 
+      // eslint-disable-next-line no-undef
       const scoreBarChart = new Chart(chartTarget, {
         type: 'bar',
         data: {
@@ -596,7 +599,7 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
       params: {
         occupancyId
       }
-    }).then((response) => {
+    }).then((_response) => {
       $mdToast.show(
         $mdToast.simple()
           .textContent('Unit has been deleted.')
@@ -610,7 +613,7 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
   // Delete a user from delete button the user section in admin
   self.deleteUser = function (user) {
     $http.delete(`/user-roles/${user.id}`).then((response) => {
-      if (response.status == 200) {
+      if (response.status === 200) {
         $mdToast.show(
           $mdToast.simple()
             .textContent('User deleted.')
@@ -628,7 +631,7 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
   }
 
   self.destroyAllCharts = function () {
-    for (let i = 0; i < self.chartsArray.length; i++) {
+    for (let i = 0; i < self.chartsArray.length; i += 1) {
       self.chartsArray[i].destroy()
     }
   }
@@ -652,7 +655,7 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
     })
       .then((response) => {
         self.responseRate.rate = +response.data
-        self.responseRate.rate = self.responseRate.rate * 100
+        self.responseRate.rate *= 100
         self.responseRate.rate = self.responseRate.rate.toFixed(2)
       })
   }
@@ -726,7 +729,7 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
 
     $http.get(`/user-roles/properties/${thisYear}`).then((response) => {
       // sets propertyList to an array with the unique property names in the occupancy table
-      for (let i = 0; i < response.data.length; i++) {
+      for (let i = 0; i < response.data.length; i += 1) {
         self.propertyList.list.push(response.data[i].property)
       }
     })
@@ -749,9 +752,9 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
       property
     }
 
-    $http.put(`/user-roles/properties/${route}`, authInfo).then((response) => {
+    $http.put(`/user-roles/properties/${route}`, authInfo).then((_response) => {
       self.getUsers()
-    }, (response) => {
+    }, (_response) => {
       $mdToast.show(
         $mdToast.simple()
           .textContent('ERROR - Property already authorized.')
@@ -766,7 +769,7 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
       method: 'PUT',
       url: '/user-roles/active',
       data: user
-    }).then((response) => {
+    }).then((_response) => {
       self.getUsers()
     })
   }
@@ -779,7 +782,7 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
         name,
         value: newValue
       }
-    }).then((response) => {
+    }).then((_response) => {
       if (self.selectedEditProperty.list[0]) {
         self.getSelectedEditProperty(self.selectedEditProperty.list[0].property, self.selectedEditProperty.list[0].year)
       } else if (self.selectedSiteManagerProperty.list[0]) {
@@ -794,7 +797,7 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
       method: 'PUT',
       url: '/admin/updateOccupied',
       data: property
-    }).then((response) => {
+    }).then((_response) => {
       if (self.selectedEditProperty.list[0]) {
         self.getSelectedEditProperty(self.selectedEditProperty.list[0].property, self.selectedEditProperty.list[0].year)
       } else if (self.selectedSiteManagerProperty.list[0]) {
@@ -812,7 +815,7 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
         user,
         role: user.role
       }
-    }).then((response) => {
+    }).then((_response) => {
       self.getUsers() // get a fresh list of users with updates role
     })
   }
@@ -826,23 +829,23 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
 
 // self.buildTestChart = function(){
 //     self.chartData.list = [0,0,0,0,0];
-//     for (var i = 0; i < self.gottenData.list.length; i++) {
+//     for (var i = 0; i < self.gottenData.list.length; i += 1) {
 //         switch(self.gottenData.list[i].answer1){
 //             // 1,2,3,4,null
 //             case 1:
-//                 self.chartData.list[1]++;
+//                 self.chartData.list[1] += 1;
 //                 break;
 //             case 2:
-//                 self.chartData.list[2]++;
+//                 self.chartData.list[2] += 1;
 //                 break;
 //             case 3:
-//                 self.chartData.list[3]++;
+//                 self.chartData.list[3] += 1;
 //                 break;
 //             case 4:
-//                 self.chartData.list[4]++;
+//                 self.chartData.list[4] += 1;
 //                 break;
 //             default:
-//                 self.chartData.list[0]++;
+//                 self.chartData.list[0] += 1;
 //                 break;
 //         }
 //     }

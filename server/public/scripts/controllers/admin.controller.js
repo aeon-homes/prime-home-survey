@@ -128,7 +128,7 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
   self.updatePaperResponse = function (property, year) {
     SiteManagerService.updatePaperResponse(property, year)
       .then((_response) => {
-        AdminService.getResponseRate(property.property, year)
+        AdminService.getResponseRate([property.property], year)
       })
   }
 

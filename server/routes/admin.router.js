@@ -1,10 +1,11 @@
 const express = require('express')
 const pool = require('../modules/pool.js')
-const pgClient = require('../clients/postgresClient')
+const postgresClient = require('../clients/postgresClient')
 const authUtil = require('../util/auth.util')
 const ROLES = require('../enum/userRoles.enum')
 const TABLES = require('../enum/databaseTables.enum')
 const ERROR_MESSAGES = require('../enum/errorMessages.enum')
+
 const router = express.Router()
 
 // get a dataset for reporting purposes. takes in an array of properties and a year, and sends back the matching dataset
@@ -202,10 +203,8 @@ router.get('/selectedProperty', (req, res) => {
   })
 })
 
-// return the response rate for a passed array of properties (or 'all')
-router.get('/responses', (req, res) => {
-  // req.params.properties is either a string ('all') or an array of properties
-
+// return the response rate for a passed string or array of properties (or all, if no query param passed)
+router.get('/responses', async (req, res) => {
   if (!authUtil.validateAuthorization(req, [ROLES.ADMINISTRATOR, ROLES.SITE_MANAGER])) {
     res.sendStatus(403)
     return
@@ -214,68 +213,47 @@ router.get('/responses', (req, res) => {
   const { properties } = req.query
   const year = req.query.year || new Date().getFullYear()
 
-  let queryString
-  let secondQueryString
-  let params
+  const { pgClient, done } = await postgresClient.getPostgresConnection()
 
-  if (!properties) {
-    queryString = 'SELECT COUNT(*) FROM occupancy WHERE responded=$1 OR paper_response=true AND occupied=true AND year=$2'
-    secondQueryString = 'SELECT COUNT(*) FROM occupancy WHERE occupied=$1 AND year=$2'
-    params = [year]
-  } else {
-    let propBlingString = ''
-    let yearBling = '$3;'
+  try {
+    let responsesQueryString = 'SELECT COUNT(*) FROM occupancy WHERE (responded=true OR paper_response=true) AND occupied=true AND year=$1'
+    let occupancyQueryString = 'SELECT COUNT(*) FROM occupancy WHERE occupied=true AND year=$1'
+    const queryParams = [year]
+
+    let propertiesBlingString = ''
+
+    if (typeof properties === 'object' && properties.length > 0) {
+      properties.forEach((passedProperty, index) => {
+        propertiesBlingString += `$${index}`
+        if (index < properties.length + 1) responsesQueryString += ','
+        queryParams.push(passedProperty)
+      })
+
+      responsesQueryString += ` AND property IN (${propertiesBlingString})`
+      occupancyQueryString += ` AND property IN (${propertiesBlingString})`
+    }
 
     if (typeof properties === 'string') {
-      propBlingString = '$2'
-      params = [properties, year]
-    } else {
-      // properties is an array
-      for (let i = 0; i < properties.length; i += 1) {
-        propBlingString += `$${i + 2},`
-      }
-      propBlingString = propBlingString.slice(0, -1)
-      params = properties
-      params.push(year)
-      yearBling = properties.length + 2
+      propertiesBlingString = '$2'
+      queryParams.push(properties)
+
+      responsesQueryString += ` AND property IN (${propertiesBlingString})`
+      occupancyQueryString += ` AND property IN (${propertiesBlingString})`  
     }
 
-    queryString = `SELECT COUNT(*) FROM occupancy WHERE (responded=$1 OR paper_response=true) AND occupied=true AND property IN (${propBlingString}) AND year=${yearBling}`
-    secondQueryString = `SELECT COUNT(*) FROM occupancy WHERE occupied=$1 AND property IN (${propBlingString}) AND year=${yearBling}`
+    const responseRateResult = await postgresClient.queryClient(pgClient, responsesQueryString, queryParams)
+    const occupancyResult = await postgresClient.queryClient(pgClient, occupancyQueryString, queryParams)
+
+    const responseCount = responseRateResult.rows[0].count
+    const occupancyCount = occupancyResult.rows[0].count
+
+    res.send((responseCount / occupancyCount).toString())
+  } catch (error) {
+    console.error(error)
+    res.status(500).send(ERROR_MESSAGES.DATABASE_ERROR)
+  } finally {
+    done()
   }
-
-  pool.connect((err, client, done) => {
-    if (err) {
-      done()
-      console.error('db connect error', err)
-      res.sendStatus(500)
-    } else {
-      client.query(queryString, [true, ...params], (queryError, data) => {
-        if (queryError) {
-          done()
-          console.error('data count query error', queryError)
-          res.sendStatus(500)
-        } else {
-          // data.rows[0].count is a string of how many responses we have
-          const responses = data.rows[0].count
-          client.query(secondQueryString, [true, ...params], (secondQueryError, occupancyData) => {
-            done()
-            if (secondQueryError) {
-              console.error('data count2 query error', secondQueryError)
-              res.sendStatus(500)
-            } else if (occupancyData.rows[0].count > 0) {
-              // data.rows[0].count is a string of how many occupied units we have
-              const occupied = occupancyData.rows[0].count
-              const responseRate = responses / occupied
-              res.send(responseRate.toString())
-            } else {
-              res.send('no occupied units found')
-            }
-          })
-        }
-      })
-    }
-  })
 })
 
 router.put('/updateHousehold', (req, res) => {
