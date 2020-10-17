@@ -19,6 +19,7 @@ const siteManagerRouter = require('./routes/site-manager.router')
 const adminRouter = require('./routes/admin.router')
 const propertiesRouter = require('./routes/properties.router')
 const rewardsRouter = require('./routes/rewards.router')
+const computerLabRouter = require('./routes/computer-lab.router')
 
 const port = process.env.PORT || 5000
 
@@ -46,6 +47,7 @@ app.use('/site-manager', siteManagerRouter)
 app.use('/admin', adminRouter)
 app.use('/properties', propertiesRouter)
 app.use('/rewards', rewardsRouter)
+app.use('/computerLab', computerLabRouter)
 
 // Catch all bucket, must be last!
 app.use('/', indexRouter)

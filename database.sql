@@ -1,3 +1,11 @@
+CREATE TABLE lab_usage
+(
+    id SERIAL PRIMARY KEY,
+    language TEXT,
+    timestamp INT,
+    age TEXT,
+    reason TEXT
+);
 CREATE TABLE resident_emails
 (
     id SERIAL PRIMARY KEY,
@@ -229,7 +237,92 @@ Amana'),
 'Aeon también desea conocer más a nuestros residentes. Este formulario de información demográfica nos ayudará a lograr esto. Algunas preguntas se repiten en la escuesta y en el formulario pero es importante que complete ambos. La información que usted provea no se compartirá con ninguna persona fuera de Aeon.',
 'Aeon waxay rabaan inay faahfaahin ka helaan dadka guryaha ku nool. Waa in la qoro jawaabaha loo baahan yahay. Su''aalo noocaas ah ayaa la isku weydiinayaa daraasadda iyo waraaqda, laakiin waxaa muhiim ah in labadaba laga jawaabo. Macluumaadka dadka laga helo ma lala wadaagi doono meelo ka baxsan Aeon.',
 'Tsis tas li ntawd, Aeon kuj tseem xav kawm paub ntau ntxiv txog tias seb peb cov pej xeem yog leeg twg. Daim foos sau qhia txog cov zej tsoom no yuav pab tau. Peb yuav nug qee cov lus nug uas zoo tib yam nkaus nyob rau lub sij hawm ua qhov kev tshuaj ntsuam xyuas thiab sau daim foos sau qhia txog cov zej tsoom, tab sis mam nws tseem ceeb uas koj yuav tau sau rau ob daim foos tib si. Koj cov lus qhia paub yuav tsis raug muab coj mus qhia rau ib tus neeg twg dhau ntawm Aeon lawm.',
-'Aeon itti dabalataan eenyufaa akka as jiraatan baruu barbaada. Unkaan qorannoo ummataa kun ni gargaara. Gaaffiilee unkaa qo''annoo qorannoo ummataa sana irratti argaman tokko tokko ammas irra deebinee gaafanna, haa ta''u malee lamaanuu guutuun barbaachisaa dha. Odeeffannoon keessan nama Aeon ala ta''e tokkoof iyyuu hinqoodamu.')
+'Aeon itti dabalataan eenyufaa akka as jiraatan baruu barbaada. Unkaan qorannoo ummataa kun ni gargaara. Gaaffiilee unkaa qo''annoo qorannoo ummataa sana irratti argaman tokko tokko ammas irra deebinee gaafanna, haa ta''u malee lamaanuu guutuun barbaachisaa dha. Odeeffannoon keessan nama Aeon ala ta''e tokkoof iyyuu hinqoodamu.'),
+('lab_welcome',
+'Welcome to Aeon’s computer lab. We have a few questions before you enter the internet.',
+'SPANISH Welcome to Aeon’s computer lab. We have a few questions before you enter the internet.',
+'SOMALI Welcome to Aeon’s computer lab. We have a few questions before you enter the internet.',
+'HMONG Welcome to Aeon’s computer lab. We have a few questions before you enter the internet.',
+'OROMO Welcome to Aeon’s computer lab. We have a few questions before you enter the internet.'
+),
+('computer_select_age',
+'Age of person using computer',
+'SPANISH Age of person using computer',
+'SOMALI Age of person using computer',
+'HMONG Age of person using computer',
+'OROMO Age of person using computer'
+),
+('lab_reason',
+'Reason for visiting the computer lab',
+'SPANISH Reason for visiting the computer lab',
+'SOMALI Reason for visiting the computer lab',
+'HMONG Reason for visiting the computer lab',
+'OROMO Reason for visiting the computer lab'
+),
+('school_work',
+'School Work',
+'SPANISH School work',
+'SOMALI School work',
+'HMONG School work',
+'OROMO School work'
+),
+('job_search',
+'Job Search',
+'SPANISH Job Search',
+'SOMALI Job Search',
+'HMONG Job Search',
+'OROMO Job Search'
+),
+('unemployment_benefits',
+'Unemployment Benefits',
+'SPANISH Unemployment Benefits',
+'SOMALI Unemployment Benefits',
+'HMONG Unemployment Benefits',
+'OROMO Unemployment Benefits'
+),
+('covid_resources',
+'COVID Resources',
+'SPANISH COVID Resources',
+'SOMALI COVID Resources',
+'HMONG COVID Resources',
+'OROMO COVID Resources'
+),
+('assistance',
+'Assistance',
+'SPANISH Assistance',
+'SOMALI Assistance',
+'HMONG Assistance',
+'OROMO Assistance'
+),
+('rent_cafe',
+'Rent Café',
+'SPANISH Rent Café',
+'SOMALI Rent Café',
+'HMONG Rent Café',
+'OROMO Rent Café'
+),
+('other',
+'Other',
+'SPANISH Other',
+'SOMALI Other',
+'HMONG Other',
+'OROMO Other'
+),
+('my_home',
+'My Home',
+'SPANISH My Home',
+'SOMALI My Home',
+'HMONG My Home',
+'OROMO My Home'
+),
+('computer_schedule',
+'Computer – Schedule',
+'SPANISH Computer – Schedule',
+'SOMALI Computer – Schedule',
+'HMONG Computer – Schedule',
+'OROMO Computer – Schedule'
+)
+
 INSERT INTO questions
     (question_number,
     english,

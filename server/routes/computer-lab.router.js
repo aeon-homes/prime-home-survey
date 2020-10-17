@@ -1,0 +1,127 @@
+const express = require('express')
+const postgresClient = require('../clients/postgresClient')
+const ERROR_MESSAGES = require('../enum/errorMessages.enum')
+
+const router = express.Router()
+const LOWER_ONLY_REGEX = /[^a-z]/
+
+const LAB_TEXT_KEYS = [
+  'lab_welcome',
+  'computer_select_age',
+  'lab_reason',
+  'school_work',
+  'job_search',
+  'unemployment_benefits',
+  'covid_resources',
+  'assistance',
+  'rent_cafe',
+  'other',
+  'my_home',
+  'computer_schedule',
+  'submit',
+  'goback'
+]
+
+// router.options('/text/:language', async (req, res) => {
+//   console.log('options')
+//   res.header('Access-Control-Allow-Origin', '*')
+//   res.header('Access-Control-Allow-Methods', 'GET,OPTIONS')
+//   res.header('Access-Control-Allow-Headers', '*')
+//   res.send(200)
+// })
+
+router.get('/text/:language', async (req, res) => {
+  console.log('/text/:language')
+
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Methods', 'GET,OPTIONS')
+  res.header('Access-Control-Allow-Headers', '*')
+
+  try {
+    console.log('getting conn')
+    const { pgClient, done } = await postgresClient.getPostgresConnection()
+    const { language } = req.params
+    console.log(language)
+
+    if (LOWER_ONLY_REGEX.test(language)) throw new Error(ERROR_MESSAGES.ILLEGAL_PARAMETER)
+
+    // eslint-disable-next-line
+    const keyString = LAB_TEXT_KEYS.reduce((acc, key) => acc += `'${key}',`, '').slice(0, -1)
+
+    try {
+      const queryString = `SELECT ${language}, type FROM translations WHERE type IN (${keyString})`
+      console.log(queryString)
+
+      const dbResult = await postgresClient.queryClient(pgClient, queryString)
+
+      const mappedResult = dbResult.rows.reduce((acc, row) => {
+        acc[row.type] = row[language]
+        return acc
+      }, {})
+
+      res.send(mappedResult)
+    } catch (error) {
+      console.error(error)
+      res.status(500).send(ERROR_MESSAGES.DATABASE_ERROR)
+    } finally {
+      console.log('done')
+      done()
+    }
+  } catch (dbConnectionError) {
+    console.error(dbConnectionError)
+    res.status(500).send(ERROR_MESSAGES.DATABASE_ERROR)
+  }
+})
+
+router.post('/', async (req, res) => {
+  console.log('/')
+
+  // todo: CORS properly
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Methods', 'GET,OPTIONS')
+  res.header('Access-Control-Allow-Headers', '*')
+
+  try {
+    const { pgClient, done } = await postgresClient.getPostgresConnection()
+    const { 
+      language,
+      age,
+      reason 
+    } = req.body
+
+    const timestamp = new Date().getTime()
+
+    console.log(
+      language,
+      age,
+      reason
+    )
+
+    try {
+      const queryParams = [
+        language,
+        timestamp,
+        age,
+        reason
+      ]
+
+      const queryString = `INSERT INTO lab_usage (language, timestamp, age, reason) VALUES ($1, $2, $3, $4)`
+      console.log(queryString)
+
+      await postgresClient.queryClient(pgClient, queryString, queryParams)
+
+      res.sendStatus(200)
+    } catch (error) {
+      console.error(error)
+      res.status(500).send(ERROR_MESSAGES.DATABASE_ERROR)
+    } finally {
+      console.log('done')
+      done()
+    }
+  } catch (dbConnectionError) {
+    console.error(dbConnectionError)
+    res.status(500).send(ERROR_MESSAGES.DATABASE_ERROR)
+  }
+})
+
+module.exports = router
