@@ -1,16 +1,15 @@
 const uuid = require('uuid')
 const axios = require('axios')
 
-const apiUser = process.env.TANGO_API_ENABLE_PROD ? process.env.TANGO_API_USER : process.env.TANGO_API_USER_SANDBOX
-const apiPassword = process.env.TANGO_API_ENABLE_PROD ? process.env.TANGO_API_KEY : process.env.TANGO_API_KEY_SANDBOX
-const apiAccountId = process.env.TANGO_API_ENABLE_PROD ? process.env.TANGO_API_ACCOUNT_ID : process.env.TANGO_API_ACCOUNT_ID_SANDBOX
-const apiCustomerId = process.env.TANGO_API_ENABLE_PROD ? process.env.TANGO_API_CUSTOMER_ID : process.env.TANGO_API_CUSTOMER_ID_SANDBOX
-const apiEmailTemplateId = process.env.TANGO_API_ENABLE_PROD ? process.env.TANGO_API_EMAIL_TEMPLATE_ID : process.env.TANGO_API_EMAIL_TEMPLATE_ID_SANDBOX
-const apiRewardId = process.env.TANGO_API_ENABLE_PROD ? process.env.TANGO_API_REWARD_ID : process.env.TANGO_API_REWARD_ID_SANDBOX
+const apiRoot = process.env.TANGO_API_ENABLE_PROD === 'true' ? 'https://api.tangocard.com/raas/v2/' : 'https://integration-api.tangocard.com/raas/v2/'
+const apiUser = process.env.TANGO_API_ENABLE_PROD === 'true' ? process.env.TANGO_API_USER : process.env.TANGO_API_USER_SANDBOX
+const apiPassword = process.env.TANGO_API_ENABLE_PROD === 'true' ? process.env.TANGO_API_KEY : process.env.TANGO_API_KEY_SANDBOX
+const apiAccountId = process.env.TANGO_API_ENABLE_PROD === 'true' ? process.env.TANGO_API_ACCOUNT_ID : process.env.TANGO_API_ACCOUNT_ID_SANDBOX
+const apiCustomerId = process.env.TANGO_API_ENABLE_PROD === 'true' ? process.env.TANGO_API_CUSTOMER_ID : process.env.TANGO_API_CUSTOMER_ID_SANDBOX
+const apiEmailTemplateId = process.env.TANGO_API_ENABLE_PROD === 'true' ? process.env.TANGO_API_EMAIL_TEMPLATE_ID : process.env.TANGO_API_EMAIL_TEMPLATE_ID_SANDBOX
+const apiRewardId = process.env.TANGO_API_ENABLE_PROD === 'true' ? process.env.TANGO_API_REWARD_ID : process.env.TANGO_API_REWARD_ID_SANDBOX
 
-const GIFT_CARD_AMOUNT = 10
-
-const apiRoot = 'https://integration-api.tangocard.com/raas/v2/'
+const GIFT_CARD_AMOUNT = process.env.TANGO_API_GIFT_CARD_AMOUNT || 5
 
 const tangoGet = ({ path }) => axios({
   url: `${apiRoot}${path}`,
@@ -30,9 +29,7 @@ const tangoPost = ({ path, data }) => axios({
   }
 })
 
-const getCatalog = () => {
-  return tangoGet({ path: 'catalogs' })
-}
+const getCatalog = () => tangoGet({ path: 'catalogs' })
 
 const submitEmail = (email) => {
   const submitOrderBody = {
