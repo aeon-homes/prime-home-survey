@@ -22,26 +22,16 @@ const LAB_TEXT_KEYS = [
   'goback'
 ]
 
-// router.options('/text/:language', async (req, res) => {
-//   console.log('options')
-//   res.header('Access-Control-Allow-Origin', '*')
-//   res.header('Access-Control-Allow-Methods', 'GET,OPTIONS')
-//   res.header('Access-Control-Allow-Headers', '*')
-//   res.send(200)
-// })
-
 router.get('/text/:language', async (req, res) => {
-  console.log('/text/:language')
+  console.info(`GET /text/:language ${req.params.language}`)
 
   res.header('Access-Control-Allow-Origin', '*')
   res.header('Access-Control-Allow-Methods', 'GET,OPTIONS')
   res.header('Access-Control-Allow-Headers', '*')
 
   try {
-    console.log('getting conn')
     const { pgClient, done } = await postgresClient.getPostgresConnection()
     const { language } = req.params
-    console.log(language)
 
     if (LOWER_ONLY_REGEX.test(language)) throw new Error(ERROR_MESSAGES.ILLEGAL_PARAMETER)
 
@@ -50,7 +40,6 @@ router.get('/text/:language', async (req, res) => {
 
     try {
       const queryString = `SELECT ${language}, type FROM translations WHERE type IN (${keyString})`
-      console.log(queryString)
 
       const dbResult = await postgresClient.queryClient(pgClient, queryString)
 
@@ -64,7 +53,6 @@ router.get('/text/:language', async (req, res) => {
       console.error(error)
       res.status(500).send(ERROR_MESSAGES.DATABASE_ERROR)
     } finally {
-      console.log('done')
       done()
     }
   } catch (dbConnectionError) {
@@ -73,31 +61,35 @@ router.get('/text/:language', async (req, res) => {
   }
 })
 
-router.post('/', async (req, res) => {
-  console.log('/')
+router.options('/', async (req, res) => {
+  console.info('OPTIONS /computerLab')
 
-  // todo: CORS properly
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Methods', 'GET,OPTIONS')
+  res.header('Access-Control-Allow-Origin', '*') // todo: CORS from actual deployment domain?
+  res.header('Access-Control-Allow-Methods', 'POST,OPTIONS')
+  res.header('Access-Control-Allow-Headers', '*')
+
+  res.sendStatus(200)
+})
+
+router.post('/', async (req, res) => {
+  console.info('POST /computerLab')
+
+  res.header('Access-Control-Allow-Origin', '*') // todo: CORS from actual deployment domain?
+  res.header('Access-Control-Allow-Methods', 'POST,OPTIONS')
   res.header('Access-Control-Allow-Headers', '*')
 
   try {
     const { pgClient, done } = await postgresClient.getPostgresConnection()
-    const { 
-      language,
-      age,
-      reason 
-    } = req.body
-
-    const timestamp = new Date().getTime()
-
-    console.log(
-      language,
-      age,
-      reason
-    )
 
     try {
+      const { 
+        language,
+        age,
+        reason 
+      } = req.body
+  
+      const timestamp = new Date().getTime()
+    
       const queryParams = [
         language,
         timestamp,
@@ -105,8 +97,7 @@ router.post('/', async (req, res) => {
         reason
       ]
 
-      const queryString = `INSERT INTO lab_usage (language, timestamp, age, reason) VALUES ($1, $2, $3, $4)`
-      console.log(queryString)
+      const queryString = 'INSERT INTO lab_usage (language, timestamp, age, reason) VALUES ($1, $2, $3, $4)'
 
       await postgresClient.queryClient(pgClient, queryString, queryParams)
 
@@ -115,7 +106,6 @@ router.post('/', async (req, res) => {
       console.error(error)
       res.status(500).send(ERROR_MESSAGES.DATABASE_ERROR)
     } finally {
-      console.log('done')
       done()
     }
   } catch (dbConnectionError) {

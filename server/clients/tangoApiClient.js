@@ -1,6 +1,14 @@
 const uuid = require('uuid')
 const axios = require('axios')
 
+/**
+ * apiUser is the human-readable account name on the Tango web console.
+ * apiPassword is the API key
+ * apiAccountId is in the result from calling the /accounts endpoint
+ * apiCustomerId is in the result from /customers
+ * apiEmailTemplateId is from the web console
+ * apiRewardId is from the /catalogs endpoint
+ */
 const apiRoot = process.env.TANGO_API_ENABLE_PROD === 'true' ? 'https://api.tangocard.com/raas/v2/' : 'https://integration-api.tangocard.com/raas/v2/'
 const apiUser = process.env.TANGO_API_ENABLE_PROD === 'true' ? process.env.TANGO_API_USER : process.env.TANGO_API_USER_SANDBOX
 const apiPassword = process.env.TANGO_API_ENABLE_PROD === 'true' ? process.env.TANGO_API_KEY : process.env.TANGO_API_KEY_SANDBOX
@@ -29,7 +37,17 @@ const tangoPost = ({ path, data }) => axios({
   }
 })
 
-const getCatalog = () => tangoGet({ path: 'catalogs' })
+const getCatalog = () => {
+  console.log(process.env.TANGO_API_ENABLE_PROD)
+  console.log(apiRoot)
+  console.log(apiUser)
+  console.log(apiPassword)
+  console.log(apiAccountId)
+  console.log(apiCustomerId)
+  console.log(apiEmailTemplateId)
+  console.log(apiRewardId)
+  return tangoGet({ path: 'catalogs' })
+}
 
 const submitEmail = (email) => {
   const submitOrderBody = {

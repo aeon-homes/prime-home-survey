@@ -7,7 +7,7 @@ const ERROR_MESSAGES = require('../enum/errorMessages.enum')
 
 // GET list of all properties the site manager is authorized for
 router.get('/test', async (req, res) => {
-  console.log('/rewards/test')
+  console.info('GET /rewards/test')
 
   if (!req.isAuthenticated() || req.user.role !== 'Administrator') {
     res.sendStatus(403)
@@ -16,15 +16,17 @@ router.get('/test', async (req, res) => {
 
   try {
     const apiResult = await tangoApiClient.getCatalog()
-    console.log(apiResult)
+    console.info(apiResult)
     res.send(apiResult.data)
   } catch (error) {
-    console.log(error)
+    console.error(error)
     res.sendStatus(500)
   }
 })
 
 router.post('/email', async (req, res) => {
+  console.info('POST /rewards/email')
+
   if (!req.isAuthenticated() || req.user.role !== 'Resident') {
     res.sendStatus(403)
     return

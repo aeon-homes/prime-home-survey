@@ -11,7 +11,6 @@ passport.deserializeUser((id, done) => {
   pool.connect((err, client, release) => {
     if (err) {
       console.error('connection err ', err)
-      release()
       done(err)
     }
 
@@ -47,8 +46,7 @@ passport.use('local', new LocalStrategy({
 }, ((req, username, password, done) => {
   pool.connect((err, client, release) => {
     if (err) {
-      console.error(err)
-      release()
+      console.error('connection err in passpart.use', err)
       done(null, false, { message: 'An unexpected error has occurred.' })
       return
     }
