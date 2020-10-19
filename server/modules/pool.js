@@ -18,7 +18,7 @@ if (process.env.DATABASE_URL) {
     ssl: true, // heroku requires ssl to be true
     max: 10, // max number of clients in the pool
     idleTimeoutMillis: 1000, // how long a client is allowed to remain idle before being closed
-    connectionTimeoutMillis: 1500
+    connectionTimeoutMillis: 3500
   }
 } else {
   config = {
@@ -29,7 +29,7 @@ if (process.env.DATABASE_URL) {
     database: process.env.DATABASE_NAME || 'aeon-local', // env var: PGDATABASE
     max: 10, // max number of clients in the pool
     idleTimeoutMillis: 1000, // how long a client is allowed to remain idle before being closed
-    connectionTimeoutMillis: 1500
+    connectionTimeoutMillis: 3500
   }
 }
 
