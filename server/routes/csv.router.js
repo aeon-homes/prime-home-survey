@@ -1,5 +1,4 @@
 const express = require('express')
-const { Parser } = require('json2csv')
 const { getPostgresConnection, queryClient } = require('../clients/postgresClient')
 
 const router = express.Router()
@@ -106,12 +105,7 @@ router.get('/export/:year', async (req, res) => {
       const queryString = 'SELECT * FROM responses WHERE year=$1'
       const responsesQueryResult = await queryClient(pgClient, queryString, [req.params.year])
 
-      const csvSchema = responsesQueryResult.rows[0] || {}
-      const csvFields = Object.getOwnPropertyNames(csvSchema)
-      const parser = new Parser({ fields: csvFields })
-      const csvData = parser.parse(responsesQueryResult.rows)
-
-      res.send(csvData)
+      res.send(responsesQueryResult.rows)
     } catch (error) {
       console.error(error)
       res.sendStatus(500)
@@ -137,12 +131,7 @@ router.get('/household/:year', async (req, res) => {
       const queryString = 'SELECT * FROM household WHERE year=$1'
       const responsesQueryResult = await queryClient(pgClient, queryString, [req.params.year])
 
-      const csvSchema = responsesQueryResult.rows[0] || {}
-      const csvFields = Object.getOwnPropertyNames(csvSchema)
-      const parser = new Parser({ fields: csvFields })
-      const csvData = parser.parse(responsesQueryResult.rows)
-
-      res.send(csvData)
+      res.send(responsesQueryResult.rows)
     } catch (error) {
       console.error(error)
       res.sendStatus(500)

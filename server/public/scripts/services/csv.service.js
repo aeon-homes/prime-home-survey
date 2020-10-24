@@ -15,9 +15,12 @@ myApp.service('CsvService', function ($http, $location, $mdToast) {
   // exports all responses to a csv file and tells the browser to download it
   self.exportAllResponses = function (year) {
     $http.get(`/csv/export/${year}`).then((response) => {
+      // eslint-disable-next-line no-undef
+      const csvData = Papa.unparse(response.data)
+
       const link = document.createElement('a')
       link.download = `home-survey-responses-${year}.csv`
-      link.href = `data:text/csv;charset=utf-8,${response.data}`
+      link.href = `data:text/plain;charset=utf-8,${encodeURIComponent(csvData)}`
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
@@ -26,9 +29,12 @@ myApp.service('CsvService', function ($http, $location, $mdToast) {
 
   self.exportHouseholdResponses = function (year) {
     $http.get(`/csv/household/${year}`).then((response) => {
+      // eslint-disable-next-line no-undef
+      const csvData = Papa.unparse(response.data)
+
       const link = document.createElement('a')
       link.download = `home-survey-households-${year}.csv`
-      link.href = `data:text/csv;charset=utf-8,${response.data}`
+      link.href = `data:text/csv;charset=utf-8,${csvData}`
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
