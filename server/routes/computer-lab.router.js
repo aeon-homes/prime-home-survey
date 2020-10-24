@@ -23,8 +23,6 @@ const LAB_TEXT_KEYS = [
 ]
 
 router.get('/text/:language', async (req, res) => {
-  console.info(`GET /text/:language ${req.params.language}`)
-
   res.header('Access-Control-Allow-Origin', '*')
   res.header('Access-Control-Allow-Methods', 'GET,OPTIONS')
   res.header('Access-Control-Allow-Headers', '*')
@@ -62,8 +60,6 @@ router.get('/text/:language', async (req, res) => {
 })
 
 router.options('/', async (req, res) => {
-  console.info('OPTIONS /computerLab')
-
   res.header('Access-Control-Allow-Origin', '*') // todo: CORS from actual deployment domain?
   res.header('Access-Control-Allow-Methods', 'POST,OPTIONS')
   res.header('Access-Control-Allow-Headers', '*')
@@ -72,8 +68,6 @@ router.options('/', async (req, res) => {
 })
 
 router.post('/', async (req, res) => {
-  console.info('POST /computerLab')
-
   res.header('Access-Control-Allow-Origin', '*') // todo: CORS from actual deployment domain?
   res.header('Access-Control-Allow-Methods', 'POST,OPTIONS')
   res.header('Access-Control-Allow-Headers', '*')

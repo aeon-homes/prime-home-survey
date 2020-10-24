@@ -26,4 +26,32 @@ router.get('/units', async (req, res) => {
   }
 })
 
+router.get('/', async (req, res) => {
+  res.header('Access-Control-Allow-Origin', '*') // todo: CORS from actual deployment domain?
+  res.header('Access-Control-Allow-Methods', 'POST,OPTIONS')
+  res.header('Access-Control-Allow-Headers', '*')
+
+  try {
+    const { pgClient, done } = await getPostgresConnection()
+
+    try {
+      const { queryYear } = req.query
+      const queryYearString = queryYear ? ' WHERE year=$1 ' : ''
+      const queryText = `SELECT DISTINCT property FROM occupancy ${queryYearString} ORDER BY property`
+      const queryParams = queryYear ? [queryYear] : []
+      const dbResult = await queryClient(pgClient, queryText, queryParams)
+
+      res.send(dbResult.rows)
+    } catch (queryError) {
+      console.error('queryError in GET /properties/', queryError)
+      res.sendStatus(500)
+    }
+    
+    done()
+  } catch (dbConnectionError) {
+    console.error('dbConnectionError in GET /properties/', dbConnectionError)
+    res.sendStatus(500)
+  }
+})
+
 module.exports = router
