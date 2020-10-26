@@ -7,7 +7,17 @@ const LOWER_ONLY_REGEX = /[^a-z]/
 
 const LAB_TEXT_KEYS = [
   'lab_welcome',
+  'select_property',
   'computer_select_age',
+  'age_0',
+  'age_1',
+  'age_2',
+  'age_3',
+  'age_4',
+  'age_5',
+  'age_6',
+  'age_7',
+  'age_8',
   'lab_reason',
   'school_work',
   'job_search',
@@ -16,10 +26,8 @@ const LAB_TEXT_KEYS = [
   'assistance',
   'rent_cafe',
   'other',
-  'my_home',
-  'computer_schedule',
   'submit',
-  'goback'
+  'goback',
 ]
 
 router.get('/text/:language', async (req, res) => {
