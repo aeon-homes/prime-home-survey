@@ -1,38 +1,42 @@
-<md-sidenav md-component-id="left" class="md-sidenav-left md-whiteframe-z2 full-height no-print" md-is-locked-open="$mdMedia('gt-sm')"
-    flex>
-    <md-content>
-        <md-list>
-            <md-list-item ng-href="#/admin">
-                <p>Import/Export Data</p>
-            </md-list-item>
-            <md-divider></md-divider>
-            <md-list-item ng-href="#/admin-properties">
-                <p>Properties</p>
-            </md-list-item>
-            <md-divider></md-divider>
-            <md-list-item ng-href="#/admin-resident-emails">
-              <p>Resident Emails</p>
-            </md-list-item>
-            <md-divider></md-divider>
-            <md-list-item ng-href="#/admin-questions">
-                <p>Survey Questions</p>
-            </md-list-item>
-            <md-divider></md-divider>
-            <md-list-item ng-href="#/admin-users" ng-click="ac.selectedSiteManager = false">
-                <p>Users</p>
-            </md-list-item>
-            <md-divider></md-divider>            
-            <md-list-item ng-href="#/admin-reporting">
-                <p>Reporting</p>
-            </md-list-item>
-            <md-divider></md-divider>
-            <md-list-item ng-href="#/admin-site-manager">
-                <p>Site Manager View</p>
-            </md-list-item>
-            <md-divider></md-divider>
-        </md-list>
-        <div>
-            <img style="max-width: 170px; padding: 20px 0  0 20px;" src="../../assets/Aeon-Logo-Tag-H-554x243.png" alt="">
-        </div>
-    </md-content>
+<md-sidenav md-component-id="left" class="md-sidenav-left md-whiteframe-z2 full-height no-print"
+  md-is-locked-open="$mdMedia('gt-sm')" flex>
+  <md-content>
+    <md-list>
+      <md-list-item ng-href="#/admin-survey-toggle">
+        <p>Survey Toggle</p>
+      </md-list-item>
+      <md-divider></md-divider>
+      <md-list-item ng-href="#/admin">
+        <p>Import/Export Data</p>
+      </md-list-item>
+      <md-divider></md-divider>
+      <md-list-item ng-href="#/admin-properties">
+        <p>Properties</p>
+      </md-list-item>
+      <md-divider></md-divider>
+      <md-list-item ng-href="#/admin-resident-emails">
+        <p>Resident Emails</p>
+      </md-list-item>
+      <md-divider></md-divider>
+      <md-list-item ng-href="#/admin-questions">
+        <p>Survey Questions</p>
+      </md-list-item>
+      <md-divider></md-divider>
+      <md-list-item ng-href="#/admin-users" ng-click="ac.selectedSiteManager = false">
+        <p>Users</p>
+      </md-list-item>
+      <md-divider></md-divider>
+      <md-list-item ng-href="#/admin-reporting">
+        <p>Reporting</p>
+      </md-list-item>
+      <md-divider></md-divider>
+      <md-list-item ng-href="#/admin-site-manager">
+        <p>Site Manager View</p>
+      </md-list-item>
+      <md-divider></md-divider>
+    </md-list>
+    <div>
+      <img style="max-width: 170px; padding: 20px 0  0 20px;" src="../../assets/Aeon-Logo-Tag-H-554x243.png" alt="">
+    </div>
+  </md-content>
 </md-sidenav>

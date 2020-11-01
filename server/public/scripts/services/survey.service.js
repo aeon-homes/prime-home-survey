@@ -28,19 +28,32 @@ myApp.service('SurveyService', function ($http, $location, $mdDialog) {
     language: 'english'
   }
 
+  self.surveyStatus = {
+    open_residents: null,
+    open_volunteers: null
+  }
+
   // --------------------------------------
   // -------------FUNCTIONS----------------
   // --------------------------------------
 
-  self.storeAnswer = (questionId, answer) => {
+  self.getSurveyStatus = async () => {
+    try {
+      const statusResponse = await $http({
+        method: 'GET',
+        url: '/survey/enabled',
+      })
+      self.surveyStatus.open_residents = statusResponse.data && statusResponse.data.open_residents
+      self.surveyStatus.open_volunteers = statusResponse.data && statusResponse.data.open_volunteers
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  self.storeAnswer = (questionId, answer, freeform) => {
     // If question is #25 gender and answer is self-identify, include the input response in surveyAnswers
-    if (questionId === 25) {
-      if (answer === 3) {
-        self.surveyAnswers.list[questionId - 1].answer = `${answer} (${self.selfIdentify})`
-      } else {
-        self.selfIdentify = ''
-        self.surveyAnswers.list[questionId - 1].answer = answer
-      }
+    if (questionId === 25 && answer === 3) {
+      self.surveyAnswers.list[questionId - 1].answer = `${answer} (${freeform})`
     } else {
       self.surveyAnswers.list[questionId - 1].answer = answer
     }
@@ -183,4 +196,5 @@ myApp.service('SurveyService', function ($http, $location, $mdDialog) {
   // --------------------------------------
 
   self.wipeSurveyClean() // start out with a fresh survey
+  self.getSurveyStatus()
 })

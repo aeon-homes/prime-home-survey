@@ -1,10 +1,11 @@
 // eslint-disable-next-line no-undef
-myApp.controller('SurveyController', function (AdminService, SurveyService, UserService, $location, $mdDialog, $scope) {
+myApp.controller('SurveyController', function (AdminService, SurveyService, UserService, $location, $mdDialog, $scope, $window) {
   //--------------------------------------
   // -------------VARIABLES----------------
   //--------------------------------------
 
   const self = this
+  self.UserService = UserService
 
   self.emailRegex = /.+@.+\..+/
   self.queryParams = $location.search()
@@ -28,6 +29,9 @@ myApp.controller('SurveyController', function (AdminService, SurveyService, User
   self.surveyObject = SurveyService.surveyObject
   self.household = SurveyService.household
   self.email = SurveyService.email
+
+  const now = new Date()
+  self.thisYear = now.getFullYear()
 
   // eslint-disable-next-line no-undef
   if (angular.equals(self.surveyObject, {})) {
@@ -121,8 +125,8 @@ myApp.controller('SurveyController', function (AdminService, SurveyService, User
   }
 
   // takes hard-coded question_id and answer values from the user/DOM and puts them in surveyAnswers.list
-  self.respond = (questionId, answer) => {
-    SurveyService.storeAnswer(questionId, answer)
+  self.respond = (questionId, answer, freeform) => {
+    SurveyService.storeAnswer(questionId, answer, freeform)
   }
 
   // displays a confirmation dialog, and if confirmed invokes the service's submitSurvey function to store responses in the db
@@ -223,8 +227,6 @@ myApp.controller('SurveyController', function (AdminService, SurveyService, User
     )
   }
 
-  self.UserService = UserService
-
   // handle the window unload event
   function unloadWarning(event) {
     // eslint-disable-next-line no-param-reassign
@@ -236,4 +238,10 @@ myApp.controller('SurveyController', function (AdminService, SurveyService, User
   $scope.$on('$destroy', () => {
     window.removeEventListener('beforeunload', unloadWarning)
   })
+
+  setTimeout(() => {
+    if (UserService.userObject.surveyEligible === false) {
+      $location.path('/survey-closed')
+    }
+  }, 0)
 })

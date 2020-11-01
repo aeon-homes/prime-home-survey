@@ -1,6 +1,6 @@
 <header ng-include="'/views/partials/header-login.html'"></header>
 
-<div layout="column" class="aeon-logo-bg">
+<div layout="column" class="aeon-logo-bg" ng-if="sc.UserService.userObject.surveyEligible">
     <div layout="row" layout-align="center center">
         <div id="thankyou-message" flex-gt-xs="80" flex-offsetgt-xs="10">
             <p>{{sc.surveyObject.thanks}}</p>

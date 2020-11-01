@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-undef
-myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http, $mdToast) {
+myApp.service('AdminService', ['$http', '$mdToast', function ($http, $mdToast) {
   //--------------------------------------
   // -------------VARIABLES----------------
   //--------------------------------------
@@ -39,9 +39,44 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
     list: []
   }
 
+  self.surveyStatus = {
+    data: {
+      open_residents: null,
+      open_volunteers: null  
+    }
+  }
+
   //--------------------------------------
   // -------------FUNCTIONS----------------
   //--------------------------------------
+
+  self.getSurveyStatus = async () => {
+    try {
+      const statusResponse = await $http({
+        method: 'GET',
+        url: '/survey/enabled',
+      })
+      self.surveyStatus.data.open_residents = statusResponse.data && statusResponse.data.open_residents
+      self.surveyStatus.data.open_volunteers = statusResponse.data && statusResponse.data.open_volunteers
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  self.updateSurveyStatus = async (role, state) => {
+    try {
+      await $http({
+        method: 'PUT',
+        url: '/survey/enabled',
+        params: {
+          role,
+          state
+        }
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   self.addEmail = async (email) => $http({
     method: 'POST',
@@ -821,6 +856,7 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
   //--------------------------------------
 
   self.getProperties() // build propertyList immediately
+  self.getSurveyStatus()
 }])
 
 // self.buildTestChart = function(){

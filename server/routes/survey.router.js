@@ -1,6 +1,8 @@
 const express = require('express')
 const pool = require('../modules/pool.js')
 const authUtil = require('../util/auth.util')
+const postgresClient = require('../clients/postgresClient')
+const ERROR_MESSAGES = require('../enum/errorMessages.enum')
 
 const router = express.Router()
 
@@ -373,62 +375,82 @@ router.post('/', (req, res) => {
       return
     }
 
-    // double-check that the unit hasn't responded yet 
-    client.query('SELECT * FROM occupancy WHERE property=$1 AND unit=$2 AND year=$3', [req.query.property, req.query.unit, req.query.year], (selectQueryError, selectData) => {
-      if (selectQueryError) {
+    client.query('SELECT * FROM survey_status', (statusError, statusData) => {
+      if (statusError) {
         done()
-        console.error('unit check query error', selectQueryError)
+        console.error('status check query error', statusError)
         res.sendStatus(500)
         return
       }
 
-      if (!selectData.rows[0]) {
-        done()
-        res.send('unit not found')
-        return
-      }
+      const statusResult = statusData && statusData.rows && statusData.rows[0]
 
-      if (selectData.rows[0].responded) {
-        done()
-        res.send('responded')
-        return
-      }
-
-      // unit exists and hasn't responded
-      client.query(insertQueryString, sqlValues, (queryError) => {
-        if (queryError) {
-          done()
-          console.error('insert query error', queryError, insertQueryString)
-          res.sendStatus(500)
-          return
-        }
-
-        const householdQueryString = 'INSERT INTO household (property, unit, year, name, date_of_birth, gender, race_white, race_black, race_islander, race_asian, race_native, race_self_identify, hispanic_or_latino, disabled) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);'
-
-        trimBlankHouseholdMembers(req.body.householdMembers)
-
-        for (let memberIndex = 0; memberIndex < req.body.householdMembers.length; memberIndex += 1) {
-          const householdValues = generateHouseholdMemberSqlValues(req.body.householdMembers[memberIndex], req.query.property, req.query.unit, req.query.year)
-          client.query(householdQueryString, householdValues, (hhQueryError) => {
-            if (hhQueryError) {
+      if (statusResult) {
+        if ((req.user.role === ROLES.RESIDENT && !statusResult.open_residents) 
+          || (req.user.role === ROLES.VOLUNTEER && !statusResult.open_volunteers)) {
+          res.sendStatus(400)
+        } else {
+          // double-check that the unit hasn't responded yet 
+          client.query('SELECT * FROM occupancy WHERE property=$1 AND unit=$2 AND year=$3', [req.query.property, req.query.unit, req.query.year], (selectQueryError, selectData) => {
+            if (selectQueryError) {
               done()
-              console.error('insert household query error:', selectQueryError)
+              console.error('unit check query error', selectQueryError)
               res.sendStatus(500)
+              return
             }
+
+            if (!selectData.rows[0]) {
+              done()
+              res.send('unit not found')
+              return
+            }
+
+            if (selectData.rows[0].responded) {
+              done()
+              res.send('responded')
+              return
+            }
+
+            // unit exists and hasn't responded
+            client.query(insertQueryString, sqlValues, (queryError) => {
+              if (queryError) {
+                done()
+                console.error('insert query error', queryError, insertQueryString)
+                res.sendStatus(500)
+                return
+              }
+
+              const householdQueryString = 'INSERT INTO household (property, unit, year, name, date_of_birth, gender, race_white, race_black, race_islander, race_asian, race_native, race_self_identify, hispanic_or_latino, disabled) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14);'
+
+              trimBlankHouseholdMembers(req.body.householdMembers)
+
+              for (let memberIndex = 0; memberIndex < req.body.householdMembers.length; memberIndex += 1) {
+                const householdValues = generateHouseholdMemberSqlValues(req.body.householdMembers[memberIndex], req.query.property, req.query.unit, req.query.year)
+                client.query(householdQueryString, householdValues, (hhQueryError) => {
+                  if (hhQueryError) {
+                    done()
+                    console.error('insert household query error:', selectQueryError)
+                    res.sendStatus(500)
+                  }
+                })
+              }
+
+              client.query('UPDATE occupancy SET responded=true WHERE property=$1 AND unit=$2;', [req.query.property, req.query.unit], (updateError) => {
+                if (updateError) {
+                  done()
+                  console.error('query error', selectQueryError)
+                  res.sendStatus(500)
+                  return
+                }
+
+                res.sendStatus(201)
+              })
+            })
           })
         }
-
-        client.query('UPDATE occupancy SET responded=true WHERE property=$1 AND unit=$2;', [req.query.property, req.query.unit], (updateError) => {
-          if (updateError) {
-            done()
-            console.error('query error', selectQueryError)
-            res.sendStatus(500)
-            return
-          }
-
-          res.sendStatus(201)
-        })
-      })
+      } else {
+        res.sendStatus(500)
+      }
     })
   })
 })
@@ -481,6 +503,63 @@ router.get('/status', (req, res) => {
       error_message: 'Unable to process request.'
     })
   })
+})
+
+router.get('/enabled', async (req, res) => {
+  if (!authUtil.validateAuthorization(req, [ROLES.RESIDENT, ROLES.VOLUNTEER, ROLES.SITE_MANAGER, ROLES.ADMINISTRATOR])) {
+    res.sendStatus(403)
+    return
+  }
+
+  const { pgClient, done } = await postgresClient.getPostgresConnection()
+
+  try {
+    const queryString = 'SELECT * FROM survey_status'
+
+    const dbResult = await postgresClient.queryClient(pgClient, queryString, [])
+
+    res.send(dbResult.rows[0])
+  } catch (error) {
+    console.error(error)
+    res.status(500).send(ERROR_MESSAGES.DATABASE_ERROR)
+  } finally {
+    done()
+  }
+})
+
+router.put('/enabled', async (req, res) => {
+  if (!authUtil.validateAuthorization(req, [ROLES.ADMINISTRATOR])) {
+    res.sendStatus(403)
+    return
+  }
+
+  const roleToToggle = req.query.role
+  const newState = req.query.state
+
+  if (!roleToToggle || !newState) {
+    res.sendStatus(400)
+    return
+  }
+
+  if (!(roleToToggle === ROLES.RESIDENT || roleToToggle === ROLES.VOLUNTEER)) {
+    res.sendStatus(400)
+    return
+  }
+
+  const { pgClient, done } = await postgresClient.getPostgresConnection()
+
+  try {
+    const queryString = `UPDATE survey_status SET open_${roleToToggle.toLowerCase()}s=$1`
+
+    await postgresClient.queryClient(pgClient, queryString, [newState === 'true'])
+
+    res.send(200)
+  } catch (error) {
+    console.error(error)
+    res.status(500).send(ERROR_MESSAGES.DATABASE_ERROR)
+  } finally {
+    done()
+  }
 })
 
 function validateSurveyStatusRequest(requestData) {

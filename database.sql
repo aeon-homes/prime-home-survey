@@ -1,3 +1,10 @@
+CREATE TABLE survey_status
+(
+    id SERIAL PRIMARY KEY,
+    year INT,
+    open_residents BOOLEAN,
+    open_volunteers BOOLEAN
+);
 CREATE TABLE lab_usage
 (
     id SERIAL PRIMARY KEY,

@@ -115,8 +115,26 @@ myApp.config(($routeProvider, $locationProvider, $mdThemingProvider) => {
         }
       }
     })
+    .when('/survey-closed', {
+      templateUrl: '/views/templates/survey-closed.html',
+      controller: 'SurveyController as sc',
+      resolve: {
+        getUser(UserService) {
+          return UserService.getUser('Resident')
+        }
+      }
+    })
     .when('/admin', {
       templateUrl: '/views/templates/admin.html',
+      controller: 'AdminController as ac',
+      resolve: {
+        getUser(UserService) {
+          return UserService.getUser('Administrator')
+        }
+      }
+    })
+    .when('/admin-survey-toggle', {
+      templateUrl: '/views/templates/admin-survey-toggle.html',
       controller: 'AdminController as ac',
       resolve: {
         getUser(UserService) {

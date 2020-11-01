@@ -36,6 +36,8 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
 
   self.selectedUser = [] // used for the user md-data-table
 
+  self.surveyStatus = AdminService.surveyStatus
+
   //--------------------------------------
   // -------------FUNCTIONS----------------
   //--------------------------------------
@@ -217,6 +219,17 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
     }, () => { })
   }
 
+  self.getSurveyStatus = async () => {
+    await AdminService.getSurveyStatus()
+    $scope.$apply()
+  }
+
+  self.updateSurveyStatus = async (role, state) => {
+    await AdminService.updateSurveyStatus(role, state)
+    await AdminService.getSurveyStatus()
+    $scope.$apply()
+  }
+
   //--------------------------------------
   // -------------RUNTIME CODE-------------
   //--------------------------------------
@@ -252,4 +265,6 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
   self.responseRate = AdminService.responseRate
 
   AdminService.getResponseRate()
+
+  if ($location.path === '/admin-survey-toggle') self.getSurveyStatus()
 }])

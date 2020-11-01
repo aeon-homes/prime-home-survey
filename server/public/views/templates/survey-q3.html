@@ -1,5 +1,5 @@
 <header ng-include="'/views/partials/header-survey.html'"></header>
-<div class="survey-outer-wrapper" layout="row" layout-align="space-around center">
+<div class="survey-outer-wrapper" layout="row" layout-align="space-around center" ng-if="sc.UserService.userObject.surveyEligible">
 
     <div layout="column" class="aeon-logo-bg">
         <div layout="row" layout-align="center">
