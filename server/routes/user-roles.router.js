@@ -150,7 +150,7 @@ router.get('/', (req, res) => {
 // Update user active status
 router.put('/active', (req, res) => {
   if (req.isAuthenticated()) {
-    if (req.user.role ==- 'Administrator') {
+    if (req.user.role === 'Administrator') {
       pool.connect((errDatabase, client, done) => {
         if (errDatabase) {
           console.error('Error connecting to database', errDatabase)

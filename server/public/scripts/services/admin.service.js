@@ -690,8 +690,6 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
 
   // take in a year and an array of properties, and get the matching dataset from the server
   self.getData = function (year, properties, chartFunction, domElement) {
-    // console.log('getData year, properties, callback', year, properties, chartFunction);
-
     $http({
       method: 'GET',
       url: '/admin/data',
@@ -701,9 +699,7 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
       }
     }).then((response) => {
       self.gottenData.list = response.data
-      // console.log('self.gottenData.list', self.gottenData.list);
 
-      // now we actually build the chart
       self.buildChart(domElement, chartFunction)
 
       // switch (chartFunction) {
@@ -816,7 +812,7 @@ myApp.service('AdminService', ['$http', '$mdToast', '$location', function ($http
         role: user.role
       }
     }).then((_response) => {
-      self.getUsers() // get a fresh list of users with updates role
+      self.getUsers() // get a fresh list of users with updated roles
     })
   }
 

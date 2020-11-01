@@ -9,6 +9,7 @@ myApp.service('UserService', function ($http, $window) {
       if (response.data.username) {
         // user has a current session on the server
         self.userObject.userName = response.data.username
+        self.userObject.role = response.data.role
       } else {
         // user has no session, bounce them back to the login page
         $window.location.assign('/#/home')

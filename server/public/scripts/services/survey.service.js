@@ -148,39 +148,14 @@ myApp.service('SurveyService', function ($http, $location, $mdDialog) {
 
   // sends the user's language, property, unit, and survey answers to the db to be stored
   // displays error dialogs if a unit has already responded or a server error happens, or takes the user to the thanks page if successful
-  self.submitSurvey = function () {
-    $http.post('/survey', self.surveyAnswers, {
-      params: {
-        language: self.surveyLanguage.language,
-        property: self.surveyProperty,
-        unit: self.surveyUnit,
-        year: self.thisYear
-      }
-    }).then((response) => {
-      if (response.status === 201) {
-        self.email.hideEmailSubmit = false
-        $location.path('/survey-thanks')
-      } else if (response.data === 'responded') {
-        $mdDialog.show(
-          $mdDialog.alert()
-            .clickOutsideToClose(true)
-            .title('Already Responded')
-            .textContent('This unit has already responded. Please try again.')
-            .ariaLabel('Survey Begin Error Alert')
-            .ok('OK')
-        )
-      } else {
-        $mdDialog.show(
-          $mdDialog.alert()
-            .clickOutsideToClose(true)
-            .title('Survey Error')
-            .textContent('There was an error submitting the survey. Please ask your Aeon staff member for assistance.')
-            .ariaLabel('Survey Submit Error Alert')
-            .ok('OK')
-        )
-      }
-    })
-  }
+  self.submitSurvey = () => $http.post('/survey', self.surveyAnswers, {
+    params: {
+      language: self.surveyLanguage.language,
+      property: self.surveyProperty,
+      unit: self.surveyUnit,
+      year: self.thisYear
+    }
+  })
 
   // clears out all responses and rebuilds the answers array with null objects
   self.wipeSurveyClean = function () {

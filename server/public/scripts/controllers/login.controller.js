@@ -12,6 +12,7 @@ myApp.controller('LoginController', function ($window, $http, $location, $mdToas
     username: vm.queryParams.a ? vm.queryParams.a : '',
     password: vm.queryParams.z ? vm.queryParams.z : '',
   }
+  
   vm.user = {
     username: '',
     password: '',
@@ -39,7 +40,7 @@ myApp.controller('LoginController', function ($window, $http, $location, $mdToas
             $location.path('/admin-reporting') // http://localhost:5000/#/admin
           } else if (vm.user.role === 'Site Manager') {
             $location.path('/site-manager') // http://localhost:5000/#/site-manager
-          } else if (vm.user.role === 'Resident') {
+          } else if (vm.user.role === 'Resident' || vm.user.role === 'Volunteer') {
             const params = vm.user.property ? `?property=${vm.user.property}&unit=${vm.user.unit}` : ''
             $window.location.assign(`/#/survey-language${params}`) // http://localhost:5000/#/survey-language
           } else {

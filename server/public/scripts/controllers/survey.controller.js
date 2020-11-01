@@ -126,7 +126,7 @@ myApp.controller('SurveyController', function (AdminService, SurveyService, User
   }
 
   // displays a confirmation dialog, and if confirmed invokes the service's submitSurvey function to store responses in the db
-  self.submitSurvey = function () {
+  self.submitSurvey = async () => {
     const confirm = $mdDialog.confirm()
       .textContent(self.surveyObject.suresubmit)
       .ariaLabel('confirm survey dialog')
@@ -134,9 +134,56 @@ myApp.controller('SurveyController', function (AdminService, SurveyService, User
       .ok(self.surveyObject.continue)
       .cancel(self.surveyObject.cancel)
 
-    $mdDialog.show(confirm).then(() => {
-      SurveyService.submitSurvey()
-    }, () => {})
+    $mdDialog.show(confirm).then(async () => {
+      try {
+        const response = await SurveyService.submitSurvey()
+
+        if (response.status === 201) {
+          if (UserService.userObject.role === 'Resident') {
+            self.email.hideEmailSubmit = false
+            $location.path('/survey-thanks')
+            $scope.$apply()
+          } else if (UserService.userObject.role === 'Volunteer') {
+            $mdDialog.show(
+              $mdDialog.alert()
+                .clickOutsideToClose(false)
+                .title('Survey Submitted')
+                .textContent('Survey successfully submitted. Click OK to go back to language selection.')
+                .ariaLabel('Survey Submit Error Alert')
+                .ok('OK')
+            ).then(() => { $location.path('/survey-language') })
+          }
+        } else if (response.data === 'responded') {
+          $mdDialog.show(
+            $mdDialog.alert()
+              .clickOutsideToClose(true)
+              .title('Already Responded')
+              .textContent('This unit has already responded. Please try again.')
+              .ariaLabel('Survey Begin Error Alert')
+              .ok('OK')
+          ).then(() => { $location.path('/survey-language') })
+        } else {
+          $mdDialog.show(
+            $mdDialog.alert()
+              .clickOutsideToClose(true)
+              .title('Survey Error')
+              .textContent('There was an error submitting the survey. Please ask your Aeon staff member for assistance.')
+              .ariaLabel('Survey Submit Error Alert')
+              .ok('OK')
+          )
+        }
+      } catch (error) {
+        console.error(error)
+        $mdDialog.show(
+          $mdDialog.alert()
+            .clickOutsideToClose(true)
+            .title('Survey Error')
+            .textContent('There was an error submitting the survey. Please ask your Aeon staff member for assistance.')
+            .ariaLabel('Survey Submit Error Alert')
+            .ok('OK')
+        )
+      }
+    })
   }
 
   self.addHouseholdMember = function () {

@@ -175,48 +175,39 @@ router.get('/data/:number', function (req, res) {
 */
 
 router.get('/begin', (req, res) => {
-  logIphoneUserAgent(req.header('user-agent'), 'survey begin')
-
-  if (req.isAuthenticated()) {
-    if (req.user.role === 'Resident') {
-      // is this property/unit combo legit?
-      pool.connect((err, client, done) => {
-        if (err) {
-          console.error('db connect error', err)
+  if (!authUtil.validateAuthorization(req, [ROLES.RESIDENT, ROLES.VOLUNTEER])) {
+    res.sendStatus(403)
+    return
+  }
+  
+  // is this property/unit combo legit?
+  pool.connect((err, client, done) => {
+    if (err) {
+      console.error('db connect error', err)
+      res.sendStatus(500)
+    } else {
+      client.query('SELECT * FROM occupancy WHERE property=$1 AND unit=$2 AND year=$3', [req.query.property, req.query.unit, req.query.year], (queryError, data) => {
+        done()
+        if (queryError) {
+          console.error('query error', queryError)
           res.sendStatus(500)
+        } else if (data.rows[0]) {
+          if (data.rows[0].responded) {
+            // responded == true
+            res.send('responded')
+          } else {
+            res.send('authorized')
+          }
         } else {
-          client.query('SELECT * FROM occupancy WHERE property=$1 AND unit=$2 AND year=$3', [req.query.property, req.query.unit, req.query.year], (queryError, data) => {
-            done()
-            if (queryError) {
-              console.error('query error', queryError)
-              res.sendStatus(500)
-            } else if (data.rows[0]) {
-              if (data.rows[0].responded) {
-                // responded == true
-                res.send('responded')
-              } else {
-                res.send('authorized')
-              }
-            } else {
-              // unit not found
-              res.send('unit not found')
-            }
-          })
+          // unit not found
+          res.send('unit not found')
         }
       })
-    } else {
-      // not resident role
-      res.sendStatus(403)
     }
-  } else {
-    // not authenticated
-    res.sendStatus(403)
-  }
+  })
 })
 
 router.get('/household', (req, res) => {
-  logIphoneUserAgent(req.header('user-agent'), 'get household')
-
   const householdSql = 'SELECT household FROM properties WHERE name=$1 LIMIT 1;'
 
   let household = false
@@ -254,12 +245,10 @@ router.get('/language', (req, res) => {
     return
   }
 
-  if (!authUtil.validateAuthorization(req, [ROLES.RESIDENT])) {
+  if (!authUtil.validateAuthorization(req, [ROLES.RESIDENT, ROLES.VOLUNTEER])) {
     res.sendStatus(403)
     return
   }
-
-  logIphoneUserAgent(req.header('user-agent'), `get language ${req.query.language}`)
 
   const languageSql = `SELECT question_number, ${req.query.language} FROM questions;`
   const translationSql = `SELECT type, ${req.query.language} FROM translations;`
@@ -366,8 +355,7 @@ router.post('/questions', (req, res) => {
 
 // takes a completed survey and posts it to the database. also updates the unit to having responded in the `occupancy` table.
 router.post('/', (req, res) => {
-  logIphoneUserAgent(req.header('user-agent'), 'survey submit')
-  if (!authUtil.validateAuthorization(req, [ROLES.RESIDENT])) {
+  if (!authUtil.validateAuthorization(req, [ROLES.RESIDENT, ROLES.VOLUNTEER])) {
     res.sendStatus(403)
     return
   }
