@@ -9,7 +9,6 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
   const START_YEAR = 2010
   const NUM_FUTURE_YEARS = 3
 
-
   // get the current year so the select defaults to it
   const now = new Date()
   self.thisYear = now.getFullYear()
@@ -41,6 +40,10 @@ myApp.controller('AdminController', ['CsvService', 'AdminService', 'UserService'
   //--------------------------------------
   // -------------FUNCTIONS----------------
   //--------------------------------------
+
+  self.exportVolunteerGiftCards = async () => {
+    CsvService.exportVolunteerGiftCards(new Date().getFullYear())
+  }
 
   self.testApiOrder = async () => {
     console.log('testApiOrder')

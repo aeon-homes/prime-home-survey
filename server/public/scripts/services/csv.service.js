@@ -12,6 +12,20 @@ myApp.service('CsvService', function ($http, $location, $mdToast) {
   // -------------FUNCTIONS----------------
   //--------------------------------------
 
+  self.exportVolunteerGiftCards = function (year) {
+    $http.get(`/csv/export/volunteer/${year}`).then((response) => {
+      // eslint-disable-next-line no-undef
+      const csvData = Papa.unparse(response.data)
+
+      const link = document.createElement('a')
+      link.download = `volunteer-gift-cards-${year}.csv`
+      link.href = `data:text/plain;charset=utf-8,${encodeURIComponent(csvData)}`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    })
+  }
+
   // exports all responses to a csv file and tells the browser to download it
   self.exportAllResponses = function (year) {
     $http.get(`/csv/export/${year}`).then((response) => {

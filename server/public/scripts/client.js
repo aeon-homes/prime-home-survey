@@ -178,6 +178,15 @@ myApp.config(($routeProvider, $locationProvider, $mdThemingProvider) => {
         }
       }
     })
+    .when('/admin-volunteer-gift-cards', {
+      templateUrl: '/views/templates/admin-volunteer-gift-cards.html',
+      controller: 'AdminController as ac',
+      resolve: {
+        getUser(UserService) {
+          return UserService.getUser('Administrator')
+        }
+      }
+    })
     .when('/admin-reporting', {
       templateUrl: '/views/templates/admin-reporting.html',
       controller: 'AdminReportingController as arc',

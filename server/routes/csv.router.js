@@ -1,5 +1,7 @@
 const express = require('express')
 const { getPostgresConnection, queryClient } = require('../clients/postgresClient')
+const ROLES = require('../enum/userRoles.enum')
+const authUtil = require('../util/auth.util')
 
 const router = express.Router()
 
@@ -115,6 +117,37 @@ router.get('/export/:year', async (req, res) => {
   } catch (error) {
     console.error(error)
     res.sendStatus(500)
+  }
+})
+
+router.get('/export/volunteer/:year', async (req, res) => {
+  const { pgClient, done } = await getPostgresConnection()
+
+  if (!pgClient) {
+    res.send(500)
+    return
+  }
+
+  if (!authUtil.validateAuthorization(req, [ROLES.ADMINISTRATOR])) {
+    res.send(403)
+    return
+  }
+
+  if (!req.params.year) {
+    res.send(400)
+    return
+  }
+ 
+  try {
+    const queryString = 'SELECT * FROM volunteer_gift_cards WHERE year=$1'
+    const responsesQueryResult = await queryClient(pgClient, queryString, [req.params.year])
+
+    res.send(responsesQueryResult.rows)
+  } catch (error) {
+    console.error(error)
+    res.sendStatus(500)
+  } finally { 
+    done() 
   }
 })
 
