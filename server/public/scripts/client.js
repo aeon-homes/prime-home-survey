@@ -124,6 +124,15 @@ myApp.config(($routeProvider, $locationProvider, $mdThemingProvider) => {
         }
       }
     })
+    .when('/survey-volunteer-reward', {
+      templateUrl: '/views/templates/survey-volunteer-reward.html',
+      controller: 'SurveyController as sc',
+      resolve: {
+        getUser(UserService) {
+          return UserService.getUser('Volunteer')
+        }
+      }
+    })
     .when('/admin', {
       templateUrl: '/views/templates/admin.html',
       controller: 'AdminController as ac',

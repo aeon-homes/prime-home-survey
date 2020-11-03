@@ -1,5 +1,5 @@
 // eslint-disable-next-line no-undef
-myApp.controller('SurveyController', function (AdminService, SurveyService, UserService, $location, $mdDialog, $scope, $window) {
+myApp.controller('SurveyController', function (AdminService, SurveyService, UserService, $location, $mdDialog, $scope) {
   //--------------------------------------
   // -------------VARIABLES----------------
   //--------------------------------------
@@ -33,6 +33,10 @@ myApp.controller('SurveyController', function (AdminService, SurveyService, User
   const now = new Date()
   self.thisYear = now.getFullYear()
 
+  self.giftCardAddress = {}
+
+  self.giftCardType = null
+
   // eslint-disable-next-line no-undef
   if (angular.equals(self.surveyObject, {})) {
     SurveyService.getSurvey('english').then(
@@ -48,6 +52,30 @@ myApp.controller('SurveyController', function (AdminService, SurveyService, User
   //--------------------------------------
   // -------------FUNCTIONS----------------
   //--------------------------------------
+
+  self.setGiftCardType = (type) => {
+    self.giftCardType = type
+  }
+
+  self.submitVolunteerGiftCard = async () => {
+    try {
+      await SurveyService.submitVolunteerGiftCard({ type: self.giftCardType, addressDto: self.giftCardAddress })
+    } catch (error) {
+      $mdDialog.show(
+        $mdDialog.alert()
+          .title('Error submitting gift card address')
+          .ok('OK')
+      )
+    }
+    $mdDialog.show(
+      $mdDialog.alert()
+        .clickOutsideToClose(false)
+        .title('Gift Card Submitted')
+        .textContent('Gift Card successfully submitted. Click OK to go to language selection.')
+        .ariaLabel('Gift Card Submit Success Alert')
+        .ok('OK')
+    ).then(() => { $location.path('/survey-language') })
+  }
 
   self.submitEmail = () => {
     if (!self.emailToSubmit) {
@@ -152,10 +180,10 @@ myApp.controller('SurveyController', function (AdminService, SurveyService, User
               $mdDialog.alert()
                 .clickOutsideToClose(false)
                 .title('Survey Submitted')
-                .textContent('Survey successfully submitted. Click OK to go back to language selection.')
-                .ariaLabel('Survey Submit Error Alert')
+                .textContent('Survey successfully submitted. Click OK to go to gift card selection.')
+                .ariaLabel('Survey Submit Success Alert')
                 .ok('OK')
-            ).then(() => { $location.path('/survey-language') })
+            ).then(() => { $location.path('/survey-volunteer-reward') })
           }
         } else if (response.data === 'responded') {
           $mdDialog.show(

@@ -1,0 +1,41 @@
+<header ng-include="'/views/partials/header-login.html'"></header>
+
+<div layout="column" class="aeon-logo-bg">
+  <div layout="row" layout-align="center center">
+    <div flex-gt-xs="80" flex-offsetgt-xs="10">
+      <p>What kind of gift card would the resident like?</p>
+      <md-button class="md-raised" ng-class="{ 'md-primary': sc.giftCardType === 'Target' }" ng-click="sc.setGiftCardType('Target')">Target</md-button>
+      <md-button class="md-raised" ng-class="{ 'md-primary': sc.giftCardType === 'Wal-Mart' }" ng-click="sc.setGiftCardType('Wal-Mart')">Wal-Mart</md-button>
+    </div>
+  </div>
+  <div layout="row" layout-align="center center">
+    <div id="submit-volunteer-giftcard" flex-gt-xs="80" flex-offsetgt-xs="10">
+      <h2>Address</h2>
+      <md-input-container>
+        <label>Name</label>
+        <input type="text" ng-model="sc.giftCardAddress.name">
+      </md-input-container>
+      <md-input-container>
+        <label>Address</label>
+        <input type="text" ng-model="sc.giftCardAddress.addressOne">
+      </md-input-container>
+      <md-input-container>
+        <label>Address 2</label>
+        <input type="text" ng-model="sc.giftCardAddress.addressTwo">
+      </md-input-container>
+      <md-input-container>
+        <label>City</label>
+        <input type="text" ng-model="sc.giftCardAddress.city">
+      </md-input-container>
+      <md-input-container>
+        <label>State</label>
+        <input type="text" ng-model="sc.giftCardAddress.state">
+      </md-input-container>
+      <md-input-container>
+        <label>Zip</label>
+        <input type="text" ng-model="sc.giftCardAddress.zip">
+      </md-input-container>
+      <md-button class="md-raised md-primary" ng-click="sc.submitVolunteerGiftCard()">Submit</md-button>
+    </div>
+  </div>
+</div>

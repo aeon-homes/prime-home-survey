@@ -1,3 +1,18 @@
+CREATE TABLE volunteer_gift_cards
+(
+    id SERIAL PRIMARY KEY,
+    year INT,
+    property TEXT,
+    unit TEXT,
+    paid BOOLEAN,
+    name TEXT,
+    addressOne TEXT,
+    addressTwo TEXT,
+    city TEXT,
+    state TEXT,
+    zip TEXT,
+    type TEXT
+)
 CREATE TABLE survey_status
 (
     id SERIAL PRIMARY KEY,

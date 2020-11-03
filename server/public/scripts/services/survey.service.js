@@ -37,6 +37,23 @@ myApp.service('SurveyService', function ($http, $location, $mdDialog) {
   // -------------FUNCTIONS----------------
   // --------------------------------------
 
+  self.submitVolunteerGiftCard = async ({ type, addressDto }) => {
+    try {
+      await $http({
+        method: 'POST',
+        url: '/rewards/address',
+        data: {
+          type,
+          property: self.surveyProperty,
+          unit: self.surveyUnit,
+          address: addressDto
+        }
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
   self.getSurveyStatus = async () => {
     try {
       const statusResponse = await $http({

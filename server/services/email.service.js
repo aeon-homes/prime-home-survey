@@ -5,6 +5,10 @@ const DATABASE_TABLES = require('../enum/databaseTables.enum')
 const validateEmailAgainstDatabase = async ({ email, year }) => {
   const { pgClient, done } = await postgresClient.getPostgresConnection()
 
+  if (!pgClient) {
+    throw new Error(ERROR_MESSAGES.DATABASE_ERROR)
+  }
+
   let emailResult
 
   try {
@@ -27,6 +31,10 @@ const validateEmailAgainstDatabase = async ({ email, year }) => {
 
 const setEmailAsPaid = async ({ email, year, referenceId }) => {
   const { pgClient, done } = await postgresClient.getPostgresConnection()
+
+  if (!pgClient) {
+    throw new Error(ERROR_MESSAGES.DATABASE_ERROR)
+  }
 
   try {
     const queryString = 'UPDATE resident_emails set paid=true, reference_id=$1 where lower(email)=$2 and year=$3'
