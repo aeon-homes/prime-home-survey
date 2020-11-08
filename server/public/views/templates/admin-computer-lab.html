@@ -1,0 +1,54 @@
+<md-toolbar>
+  <div class="md-toolbar-tools">
+      <md-button class="md-icon-button" ng-click="clc.openLeftMenu()" hide-gt-sm>
+          <i class="material-icons">menu</i>
+      </md-button>
+      <h2 md-truncate flex>Aeon Home Survey Administration</h2>
+      <md-button ng-click="clc.logout()">
+          Logout
+      </md-button>
+  </div>
+</md-toolbar>
+<div layout="row" class="full-height" ng-cloak>
+  <div ng-include="'views/partials/sidenav.html'"></div>
+  <md-content flex layout-padding>
+      <div layout="column">
+          <div layout="row">
+              <div flex>
+                  <h2 class="md-display-1">Admin | Computer Lab</h2>
+              </div>
+          </div>
+          <div layout="row">
+              <div flex class="md-whiteframe-4dp" layout-padding layout-margin>
+                  <h3 class="md-headline">Generate Report</h3>
+                  <md-input-container>
+                      <label>Property</label>
+                      <md-select ng-model="clc.selectedProperty" style="min-width: 200px;">
+                          <md-option ng-value="property" ng-repeat="property in clc.propertyList.list | orderBy: property">{{ property }}</md-option>
+                      </md-select>
+                      <md-button class="md-raised md-primary" ng-click="clc.clearProperty()">Clear</md-button>
+                  </md-input-container>
+                  <md-input-container>
+                      <label>Start Date</label>
+                      <md-datepicker ng-model="clc.startDate" />
+                  </md-input-container>
+                  <md-input-container>
+                    <label>End Date</label>
+                    <md-datepicker ng-model="clc.endDate" />
+                </md-input-container>
+                <div layout="row">
+                      <md-button class="md-raised md-primary" ng-click="clc.generateReport(clc.startDate, clc.endDate, clc.selectedProperty)">Generate Report</md-button>
+                </div>
+              </div>
+          </div>
+          <div layout="row" ng-if="clc.usageReport.data[0]">
+              <div flex class="md-whiteframe-4dp" layout-padding layout-margin>
+                  <h3 class="md-headline">{{clc.selectedProperty}} </h3>
+                  <span class="admin-property-household">Lab Usage Data: NYI</span>
+                  {{clc.usageReport.data}}
+              </div>
+          </div>
+      </div>
+  </md-content>
+
+</div>

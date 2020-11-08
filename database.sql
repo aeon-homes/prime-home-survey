@@ -24,7 +24,8 @@ CREATE TABLE lab_usage
 (
     id SERIAL PRIMARY KEY,
     language TEXT,
-    timestamp INT,
+    property TEXT,
+    timestamp BIGINT,
     age TEXT,
     reason TEXT
 );

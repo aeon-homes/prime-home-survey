@@ -5,6 +5,8 @@ const ERROR_MESSAGES = require('../enum/errorMessages.enum')
 const router = express.Router()
 const LOWER_ONLY_REGEX = /[^a-z]/
 
+const STATIC_SITE_HOST = process.env.DATABASE_URL ? 'http://computer-lab-homepage.s3-website-us-west-2.amazonaws.com' : 'http://localhost:3000' // using DATABASE_URL here as a proxy for prod toggle, which is horrible
+
 const LAB_TEXT_KEYS = [
   'lab_welcome',
   'select_property',
@@ -31,7 +33,7 @@ const LAB_TEXT_KEYS = [
 ]
 
 router.get('/text/:language', async (req, res) => {
-  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Origin', STATIC_SITE_HOST)
   res.header('Access-Control-Allow-Methods', 'GET,OPTIONS')
   res.header('Access-Control-Allow-Headers', '*')
 
@@ -68,7 +70,7 @@ router.get('/text/:language', async (req, res) => {
 })
 
 router.options('/', async (req, res) => {
-  res.header('Access-Control-Allow-Origin', '*') // todo: CORS from actual deployment domain?
+  res.header('Access-Control-Allow-Origin', STATIC_SITE_HOST)
   res.header('Access-Control-Allow-Methods', 'POST,OPTIONS')
   res.header('Access-Control-Allow-Headers', '*')
 
@@ -76,7 +78,7 @@ router.options('/', async (req, res) => {
 })
 
 router.post('/', async (req, res) => {
-  res.header('Access-Control-Allow-Origin', '*') // todo: CORS from actual deployment domain?
+  res.header('Access-Control-Allow-Origin', STATIC_SITE_HOST)
   res.header('Access-Control-Allow-Methods', 'POST,OPTIONS')
   res.header('Access-Control-Allow-Headers', '*')
 
@@ -86,6 +88,7 @@ router.post('/', async (req, res) => {
     try {
       const { 
         language,
+        property,
         age,
         reason 
       } = req.body
@@ -94,16 +97,55 @@ router.post('/', async (req, res) => {
     
       const queryParams = [
         language,
+        property,
         timestamp,
         age,
         reason
       ]
 
-      const queryString = 'INSERT INTO lab_usage (language, timestamp, age, reason) VALUES ($1, $2, $3, $4)'
+      const queryString = 'INSERT INTO lab_usage (language, property, timestamp, age, reason) VALUES ($1, $2, $3, $4, $5)'
 
       await postgresClient.queryClient(pgClient, queryString, queryParams)
 
       res.sendStatus(200)
+    } catch (error) {
+      console.error(error)
+      res.status(500).send(ERROR_MESSAGES.DATABASE_ERROR)
+    } finally {
+      done()
+    }
+  } catch (dbConnectionError) {
+    console.error(dbConnectionError)
+    res.status(500).send(ERROR_MESSAGES.DATABASE_ERROR)
+  }
+})
+
+router.get('/usage', async (req, res) => {
+  try {
+    const { pgClient, done } = await postgresClient.getPostgresConnection()
+
+    try {
+      const { 
+        startTime,
+        endTime,
+        property 
+      } = req.query
+      
+      const queryParams = [
+        startTime || 0,
+        endTime || new Date().getTime()        
+      ]
+
+      let queryString = 'SELECT * FROM lab_usage WHERE timestamp > $1 AND timestamp < $2 '
+      
+      if (property) {
+        queryParams.push(property)
+        queryString += 'AND property=$3'
+      }
+
+      const dbResult = await postgresClient.queryClient(pgClient, queryString, queryParams)
+
+      res.send(dbResult.rows)
     } catch (error) {
       console.error(error)
       res.status(500).send(ERROR_MESSAGES.DATABASE_ERROR)

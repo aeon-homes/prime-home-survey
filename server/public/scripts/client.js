@@ -142,6 +142,15 @@ myApp.config(($routeProvider, $locationProvider, $mdThemingProvider) => {
         }
       }
     })
+    .when('/admin-computer-lab', {
+      templateUrl: '/views/templates/admin-computer-lab.html',
+      controller: 'ComputerLabController as clc',
+      resolve: {
+        getUser(UserService) {
+          return UserService.getUser('Administrator')
+        }
+      }
+    })
     .when('/admin-survey-toggle', {
       templateUrl: '/views/templates/admin-survey-toggle.html',
       controller: 'AdminController as ac',

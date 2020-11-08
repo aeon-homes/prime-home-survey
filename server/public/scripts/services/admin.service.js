@@ -46,9 +46,29 @@ myApp.service('AdminService', ['$http', '$mdToast', function ($http, $mdToast) {
     }
   }
 
+  self.labUsageReport = {
+    data: null
+  }
+
   //--------------------------------------
   // -------------FUNCTIONS----------------
   //--------------------------------------
+
+  self.getLabUsage = async ({ startTime, endTime, property }) => {
+    console.log('getLabUsage', startTime, endTime, property)
+
+    try {
+      const apiResult = await $http({
+        method: 'GET',
+        url: '/computerLab/usage',
+        params: { startTime, endTime, property }
+      })
+
+      self.labUsageReport.data = apiResult.data
+    } catch (error) {
+      console.error(error)
+    }
+  }
 
   self.getSurveyStatus = async () => {
     try {
