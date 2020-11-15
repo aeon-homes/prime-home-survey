@@ -55,7 +55,7 @@ CREATE TABLE questions
 CREATE TABLE translations
 (
     id SERIAL PRIMARY KEY,
-    type TEXT NOT NULL,
+    type TEXT NOT NULL UNIQUE,
     english TEXT NOT NULL,
     somali TEXT NOT NULL,
     spanish TEXT NOT NULL,
@@ -262,11 +262,11 @@ Amana'),
 'Tsis tas li ntawd, Aeon kuj tseem xav kawm paub ntau ntxiv txog tias seb peb cov pej xeem yog leeg twg. Daim foos sau qhia txog cov zej tsoom no yuav pab tau. Peb yuav nug qee cov lus nug uas zoo tib yam nkaus nyob rau lub sij hawm ua qhov kev tshuaj ntsuam xyuas thiab sau daim foos sau qhia txog cov zej tsoom, tab sis mam nws tseem ceeb uas koj yuav tau sau rau ob daim foos tib si. Koj cov lus qhia paub yuav tsis raug muab coj mus qhia rau ib tus neeg twg dhau ntawm Aeon lawm.',
 'Aeon itti dabalataan eenyufaa akka as jiraatan baruu barbaada. Unkaan qorannoo ummataa kun ni gargaara. Gaaffiilee unkaa qo''annoo qorannoo ummataa sana irratti argaman tokko tokko ammas irra deebinee gaafanna, haa ta''u malee lamaanuu guutuun barbaachisaa dha. Odeeffannoon keessan nama Aeon ala ta''e tokkoof iyyuu hinqoodamu.'),
 ('lab_welcome',
-'Welcome to Aeon’s computer lab. We have a few questions before you enter the internet.',
-'Bienvenido al laboratorio de computadores de Aeon, tenemos algunas preguntas antes de que usted pueda entrar al Internet.',
-'Ku soo dhawoow qolka kambuyuutarka Aeon, intaadan internetka isticmaalin ka hor waxaa lagu weydiinayaa dhowr su''aalood.',
-'Zoo siab tos txais tuaj rau ntawm Aeon chav sim kuaj mob hauv Computer (Koos Pis Tawj), peb muaj ob peb cov lus nug ua ntej koj yuav nkag siv internet (is taws nej).',
-'Baga gara laabii Aeon nagaan dhuftan, interneeta seenuu keessan dura gaaffilee qabna.'
+'Welcome to Aeon’s computer lab/WiFi. We have a few questions before you enter the internet.',
+'Bienvenido al laboratorio de computadores / WiFi de Aeon, tenemos algunas preguntas antes de que usted pueda entrar al Internet.',
+'Ku soo dhawoow qolka kambuyuutarka / WiFi Aeon, intaadan internetka isticmaalin ka hor waxaa lagu weydiinayaa dhowr su''aalood.',
+'Zoo siab tos txais tuaj rau ntawm Aeon chav sim kuaj mob hauv Computer (Koos Pis Tawj) / WiFi, peb muaj ob peb cov lus nug ua ntej koj yuav nkag siv internet (is taws nej).',
+'Baga gara laabii / WiFi Aeon nagaan dhuftan, interneeta seenuu keessan dura gaaffilee qabna.'
 ),
 ('select_property',
 'Please Select Your Property',

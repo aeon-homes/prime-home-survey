@@ -41,13 +41,45 @@
                 </div>
               </div>
           </div>
-          <div layout="row" ng-if="clc.usageReport.data[0]">
-              <div flex class="md-whiteframe-4dp" layout-padding layout-margin>
-                  <h3 class="md-headline">{{clc.selectedProperty}} </h3>
-                  <span class="admin-property-household">Lab Usage Data: NYI</span>
-                  {{clc.usageReport.data}}
+          <section layout="row">
+            <md-button ng-click="clc.openAddDialog">
+            <md-input-container>
+              <label>Database Key</label>
+              <input type="textarea" ng-model="element.type">
+            </md-input-container>
+          </section>
+          <section id="admin-lab-text-container">
+            <div ng-repeat="element in clc.labText.list" layout="row">
+              <div flex layout-padding layout-margin class="md-whiteframe-4dp">
+                <div>
+                  <h3 class="md-title" style="margin-top:0;">{{element.type}}</h3>
+                </div>
+                <md-input-container class="md-block">
+                  <label>English</label>
+                  <input type="textarea" ng-model="element.english">
+                </md-input-container>
+                <md-input-container class="md-block">
+                  <label>Spanish</label>
+                  <input type="textarea" ng-model="element.spanish">
+                </md-input-container>
+                <md-input-container class="md-block">
+                  <label>Somali</label>
+                  <input type="textarea" ng-model="element.somali">
+                </md-input-container>
+                <md-input-container class="md-block">
+                  <label>Hmong</label>
+                  <input type="textarea" ng-model="element.hmong">
+                </md-input-container>
+                <md-input-container class="md-block">
+                  <label>Oromo</label>
+                  <input type="textarea" ng-model="element.oromo">
+                </md-input-container>
+                <div layout="row">
+                  <md-button type="button" class="md-primary md-raised" ng-click="clc.updateLabText(element)">Update {{element.type}}</md-button>
+                </div>
               </div>
-          </div>
+            </div>
+          </section>
       </div>
   </md-content>
 

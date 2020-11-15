@@ -50,13 +50,49 @@ myApp.service('AdminService', ['$http', '$mdToast', function ($http, $mdToast) {
     data: null
   }
 
+  self.labText = {
+    list: []
+  }
+
   //--------------------------------------
   // -------------FUNCTIONS----------------
   //--------------------------------------
 
-  self.getLabUsage = async ({ startTime, endTime, property }) => {
-    console.log('getLabUsage', startTime, endTime, property)
+  self.getLabText = async () => {
+    try {
+      const apiResult = await $http({
+        method: 'GET',
+        url: '/computerLab/text'
+      })
 
+      console.log(apiResult.data)
+
+      self.labText.list = apiResult.data.sort((a, b) => {
+        if (a.type > b.type) return 1
+        if (a.type < b.type) return -1
+        return 0
+      })
+
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  self.updateLabText = async ({ databaseKey, localizedText }) => {
+    try {
+      await $http({
+        method: 'POST',
+        url: '/computerLab/text',
+        data: { databaseKey, localizedText }
+      })
+
+      self.getLabText()
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  self.getLabUsage = async ({ startTime, endTime, property }) => {
     try {
       const apiResult = await $http({
         method: 'GET',
@@ -65,6 +101,18 @@ myApp.service('AdminService', ['$http', '$mdToast', function ($http, $mdToast) {
       })
 
       self.labUsageReport.data = apiResult.data
+
+      // eslint-disable-next-line no-undef
+      const csvData = Papa.unparse(apiResult.data)
+
+      const link = document.createElement('a')
+      link.download = 'computer-lab-usage.csv'
+      link.href = `data:text/csv;charset=utf-8,${csvData}`
+      document.body.appendChild(link)
+      link.click()
+
+      console.log(link)
+      document.body.removeChild(link)
     } catch (error) {
       console.error(error)
     }
