@@ -92,9 +92,7 @@ router.post('/text', async (req, res) => {
       const queryString = `INSERT INTO translations (type, ${Object.values(LANGUAGES).join(',')}) VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT (type) DO UPDATE SET english=$2, spanish=$3, somali=$4, hmong=$5, oromo=$6`
       const queryParams = [databaseKey, localizedText.english, localizedText.spanish, localizedText.somali, localizedText.hmong, localizedText.oromo]
 
-      const dbResult = await postgresClient.queryClient(pgClient, queryString, queryParams)
-
-      console.log(dbResult)
+      await postgresClient.queryClient(pgClient, queryString, queryParams)
 
       res.sendStatus(200)
     } catch (error) {

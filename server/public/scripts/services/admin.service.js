@@ -65,8 +65,6 @@ myApp.service('AdminService', ['$http', '$mdToast', function ($http, $mdToast) {
         url: '/computerLab/text'
       })
 
-      console.log(apiResult.data)
-
       self.labText.list = apiResult.data.sort((a, b) => {
         if (a.type > b.type) return 1
         if (a.type < b.type) return -1
@@ -111,7 +109,6 @@ myApp.service('AdminService', ['$http', '$mdToast', function ($http, $mdToast) {
       document.body.appendChild(link)
       link.click()
 
-      console.log(link)
       document.body.removeChild(link)
     } catch (error) {
       console.error(error)
