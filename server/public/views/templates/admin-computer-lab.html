@@ -22,7 +22,7 @@
               <div flex class="md-whiteframe-4dp" layout-padding layout-margin>
                   <h3 class="md-headline">Generate Report</h3>
                   <md-input-container>
-                      <label>Property</label>
+                      <label>Property - leave blank for all</label>
                       <md-select ng-model="clc.selectedProperty" style="min-width: 200px;">
                           <md-option ng-value="property" ng-repeat="property in clc.propertyList.list | orderBy: property">{{ property }}</md-option>
                       </md-select>

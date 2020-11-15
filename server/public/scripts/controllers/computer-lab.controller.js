@@ -24,7 +24,17 @@ myApp.controller(
     self.clearProperty = () => { self.selectedProperty = null }
     
     self.generateReport = async (startDate, endDate, property) => {
-      await AdminService.getLabUsage({ startTime: startDate.getTime(), endTime: endDate.getTime(), property })
+      const endingTimestamp = new Date(endDate.getTime())
+      endingTimestamp.setHours(23)
+      endingTimestamp.setMinutes(59)
+      endingTimestamp.setSeconds(59)
+      
+      const startingTimestamp = new Date(startDate.getTime())
+      startingTimestamp.setHours(23)
+      startingTimestamp.setMinutes(59)
+      startingTimestamp.setSeconds(59)
+
+      await AdminService.getLabUsage({ startTime: startingTimestamp.getTime(), endTime: endingTimestamp.getTime(), property })
     }
 
     self.getLabText = async () => {
