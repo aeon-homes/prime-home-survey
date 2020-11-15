@@ -332,17 +332,18 @@ router.post('/questions', (req, res) => {
     somali,
     spanish,
     hmong, 
+    oromo,
     theme
   } = req.body
 
-  const queryString = 'UPDATE questions SET english=$1, somali=$2, spanish=$3, hmong=$4, theme=$5 WHERE id=$6;'
+  const queryString = 'UPDATE questions SET english=$1, somali=$2, spanish=$3, hmong=$4, oromo=$5, theme=$6 WHERE id=$7;'
 
   pool.connect((err, client, done) => {
     if (err) {
       console.error('db connection error', err)
       res.sendStatus(500)
     } else {
-      client.query(queryString, [english, somali, spanish, hmong, theme, id], (queryError) => {
+      client.query(queryString, [english, somali, spanish, hmong, oromo, theme, id], (queryError) => {
         done()
         if (queryError) {
           console.error('db query error', queryError)
