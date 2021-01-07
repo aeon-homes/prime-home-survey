@@ -13,7 +13,7 @@ myApp.controller(
     self.endDate = new Date()
     self.startDate = new Date()
     self.startDate.setMonth((self.endDate.getMonth() || 12) - 1)
-    if (self.startDate.getMonth() === 12) self.startDate.setFullYear(self.startDate.getFullYear() - 1)
+    if (self.startDate.getMonth() === 11) self.startDate.setFullYear(self.startDate.getFullYear() - 1)
 
 
     self.openLeftMenu = () => {
