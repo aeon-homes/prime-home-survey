@@ -818,13 +818,9 @@ myApp.service('AdminService', ['$http', '$mdToast', function ($http, $mdToast) {
 
   // GET request for properties from the db
   self.getProperties = function () {
-    self.propertyList.list = []
-    // set a variable to get the current uyear
-    let thisYear = new Date()
-    thisYear = thisYear.getFullYear()
-
-    $http.get(`/user-roles/properties/${thisYear}`).then((response) => {
+    $http.get('/user-roles/properties').then((response) => {
       // sets propertyList to an array with the unique property names in the occupancy table
+      self.propertyList.list = []
       for (let i = 0; i < response.data.length; i += 1) {
         self.propertyList.list.push(response.data[i].property)
       }

@@ -4,18 +4,18 @@ const pool = require('../modules/pool.js')
 const router = express.Router()
 
 // fetches the list of properties from the db and returns it. One entry per property (for building selectors)
-router.get('/properties/:year', (req, res) => {
+router.get('/properties', (req, res) => {
   pool.connect((err, client, done) => {
     if (err) {
       console.error('error connecting to db', err)
       res.sendStatus(500)
     } else {
       // query
-      client.query('SELECT DISTINCT property FROM occupancy WHERE year=$1 ORDER BY property;', [req.params.year],
-        (err, data) => {
+      client.query('SELECT DISTINCT property FROM occupancy ORDER BY property;',
+        (queryError, data) => {
           done()
           if (err) {
-            console.error('query error', err)
+            console.error('query error', queryError)
             res.sendStatus(500)
           } else {
             res.send(data.rows)
