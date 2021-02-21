@@ -23,7 +23,7 @@
                   <h3 class="md-headline">Generate Report</h3>
                   <md-input-container>
                       <label>Property - leave blank for all</label>
-                      <md-select ng-model="clc.selectedProperty" style="min-width: 200px;">
+                      <md-select ng-model="clc.selectedPropertyName" style="min-width: 200px;">
                           <md-option ng-value="property" ng-repeat="property in clc.propertyList.list | orderBy: property">{{ property }}</md-option>
                       </md-select>
                       <md-button class="md-raised md-primary" ng-click="clc.clearProperty()">Clear</md-button>
@@ -37,7 +37,7 @@
                     <md-datepicker ng-model="clc.endDate" />
                 </md-input-container>
                 <div layout="row">
-                      <md-button class="md-raised md-primary" ng-click="clc.generateReport(clc.startDate, clc.endDate, clc.selectedProperty)">Generate Report</md-button>
+                      <md-button class="md-raised md-primary" ng-click="clc.generateReport(clc.startDate, clc.endDate, clc.selectedPropertyName)">Generate Report</md-button>
                 </div>
               </div>
           </div>

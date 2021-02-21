@@ -2,6 +2,8 @@ const express = require('express')
 const postgresClient = require('../clients/postgresClient')
 const ERROR_MESSAGES = require('../enum/errorMessages.enum')
 const LANGUAGES = require('../enum/languages')
+const ROLES = require('../enum/userRoles.enum')
+const authUtil = require('../util/auth.util')
 
 const router = express.Router()
 const LOWER_ONLY_REGEX = /[^a-z]/
@@ -115,6 +117,17 @@ router.options('/', async (req, res) => {
   res.sendStatus(200)
 })
 
+const logLabQueryToPg = async (pgClient, requestBody) => {
+  const queryString = 'INSERT INTO lab_usage_debug_log (query) VALUES ($1)'
+  const queryParams = [JSON.stringify(requestBody)]
+
+  try {
+    await postgresClient.queryClient(pgClient, queryString, queryParams)
+  } catch (dbErr) {
+    console.error('logLabQueryToPg db error', dbErr)
+  }
+}
+
 router.post('/', async (req, res) => {
   res.header('Access-Control-Allow-Origin', STATIC_SITE_HOST)
   res.header('Access-Control-Allow-Methods', 'POST,OPTIONS')
@@ -124,13 +137,10 @@ router.post('/', async (req, res) => {
     const { pgClient, done } = await postgresClient.getPostgresConnection()
 
     try {
-      const { 
-        language,
-        property,
-        age,
-        reason,
-        otherInput
-      } = req.body
+      const language = req.body.language || 'unknown'
+      const property = req.body.property || 'unknown'
+      const age = req.body.age || 'unknown'
+      const reason = req.body.otherInput || req.body.reason || 'unknown'
   
       const timestamp = new Date().getTime()
     
@@ -139,11 +149,12 @@ router.post('/', async (req, res) => {
         property,
         timestamp,
         age,
-        otherInput || reason
+        reason
       ]
 
       const queryString = 'INSERT INTO lab_usage (language, property, timestamp, age, reason) VALUES ($1, $2, $3, $4, $5)'
 
+      await logLabQueryToPg(pgClient, req.body)
       await postgresClient.queryClient(pgClient, queryString, queryParams)
 
       res.sendStatus(200)
@@ -185,6 +196,98 @@ router.get('/usage', async (req, res) => {
       const dbResult = await postgresClient.queryClient(pgClient, queryString, queryParams)
 
       res.send(dbResult.rows)
+    } catch (error) {
+      console.error(error)
+      res.status(500).send(ERROR_MESSAGES.DATABASE_ERROR)
+    } finally {
+      done()
+    }
+  } catch (dbConnectionError) {
+    console.error(dbConnectionError)
+    res.status(500).send(ERROR_MESSAGES.DATABASE_ERROR)
+  }
+})
+
+router.get('/properties?', async (req, res) => {
+  res.header('Access-Control-Allow-Origin', STATIC_SITE_HOST)
+  res.header('Access-Control-Allow-Methods', 'POST,OPTIONS')
+  res.header('Access-Control-Allow-Headers', '*')
+
+  try {
+    const { pgClient, done } = await postgresClient.getPostgresConnection()
+
+    try {
+      const queryString = 'SELECT * FROM lab_properties ORDER BY name'
+      
+      const dbResult = await postgresClient.queryClient(pgClient, queryString)
+
+      if (req.query.all === 'true') {
+        const getDistinctQueryString = 'SELECT DISTINCT property FROM lab_usage'
+        const distinctDbResult = await postgresClient.queryClient(pgClient, getDistinctQueryString)
+        if (distinctDbResult && distinctDbResult.rows) {
+          distinctDbResult.rows.forEach((row) => {
+            if (!dbResult.rows.some((baseResult) => baseResult.name === row.property)) dbResult.rows.push({ name: row.property })
+          })
+        }
+      }
+
+      res.send(dbResult.rows)
+    } catch (error) {
+      console.error(error)
+      res.status(500).send(ERROR_MESSAGES.DATABASE_ERROR)
+    } finally {
+      done()
+    }
+  } catch (dbConnectionError) {
+    console.error(dbConnectionError)
+    res.status(500).send(ERROR_MESSAGES.DATABASE_ERROR)
+  }
+})
+
+router.post('/properties', async (req, res) => {
+  if (!authUtil.validateAuthorization(req, [ROLES.ADMINISTRATOR])) {
+    res.sendStatus(403)
+    return
+  }
+
+  try {
+    const { pgClient, done } = await postgresClient.getPostgresConnection()
+
+    try {
+      const queryParams = [req.body.name]
+      const queryString = 'INSERT INTO lab_properties (name) VALUES ($1)'
+      
+      const dbResult = await postgresClient.queryClient(pgClient, queryString, queryParams)
+
+      res.status(201).send(dbResult.rows)
+    } catch (error) {
+      console.error(error)
+      res.status(500).send(ERROR_MESSAGES.DATABASE_ERROR)
+    } finally {
+      done()
+    }
+  } catch (dbConnectionError) {
+    console.error(dbConnectionError)
+    res.status(500).send(ERROR_MESSAGES.DATABASE_ERROR)
+  }
+})
+
+router.delete('/properties?', async (req, res) => {
+  if (!authUtil.validateAuthorization(req, [ROLES.ADMINISTRATOR])) {
+    res.sendStatus(403)
+    return
+  }
+
+  try {
+    const { pgClient, done } = await postgresClient.getPostgresConnection()
+
+    try {
+      const queryParams = [req.query.name]
+      const queryString = 'DELETE FROM lab_properties WHERE name=$1'
+      
+      await postgresClient.queryClient(pgClient, queryString, queryParams)
+
+      res.status(204).send()
     } catch (error) {
       console.error(error)
       res.status(500).send(ERROR_MESSAGES.DATABASE_ERROR)

@@ -4,9 +4,8 @@ myApp.controller(
   ['AdminService', '$mdSidenav', '$scope', 'UserService', function (AdminService, $mdSidenav, $scope, UserService) {
     const self = this
     
-    self.propertyList = AdminService.propertyList
-    self.allProperties = AdminService.allProperties // list of all property information from the occupancy table  
-    self.selectedProperty = AdminService.selectedProperty // Property selected by user to edit
+    self.propertyList = AdminService.fullLabPropertyList
+    self.selectedPropertyName = ''
     self.usageReport = AdminService.labUsageReport
     self.labText = AdminService.labText
   
@@ -14,7 +13,6 @@ myApp.controller(
     self.startDate = new Date()
     self.startDate.setMonth((self.endDate.getMonth() || 12) - 1)
     if (self.startDate.getMonth() === 11) self.startDate.setFullYear(self.startDate.getFullYear() - 1)
-
 
     self.openLeftMenu = () => {
       $mdSidenav('left').toggle()

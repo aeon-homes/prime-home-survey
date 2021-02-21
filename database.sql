@@ -20,6 +20,11 @@ CREATE TABLE survey_status
     open_residents BOOLEAN,
     open_volunteers BOOLEAN
 );
+CREATE TABLE lab_usage_debug_log
+(
+    id SERIAL PRIMARY KEY,
+    query TEXT
+);
 CREATE TABLE lab_usage
 (
     id SERIAL PRIMARY KEY,
@@ -29,6 +34,13 @@ CREATE TABLE lab_usage
     age TEXT,
     reason TEXT
 );
+CREATE TABLE lab_properties
+(
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL
+);
+CREATE UNIQUE INDEX ON lab_properties (name);
+
 CREATE TABLE resident_emails
 (
     id SERIAL PRIMARY KEY,

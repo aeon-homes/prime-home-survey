@@ -1,0 +1,48 @@
+<md-toolbar>
+  <div class="md-toolbar-tools">
+      <md-button class="md-icon-button" ng-click="clpc.openLeftMenu()" hide-gt-sm>
+          <i class="material-icons">menu</i>
+      </md-button>
+      <h2 md-truncate flex>Aeon Home Survey Administration</h2>
+      <md-button ng-click="clpc.logout()">
+          Logout
+      </md-button>
+  </div>
+</md-toolbar>
+<div layout="row" class="full-height" ng-cloak>
+  <div ng-include="'views/partials/sidenav.html'"></div>
+  <md-content flex layout-padding>
+      <div layout="column">
+          <div layout="row">
+              <div flex>
+                  <h2 class="md-display-1">Admin | Computer Lab Properties</h2>
+              </div>
+          </div>
+          <section id="admin-lab-properties-controls-container">
+            <div layout="row">
+              <div flex layout-padding layout-margin class="md-whiteframe-4dp">
+                <div>
+                  <h3 class="md-title" style="margin-top:0;">Add Property</h3>
+                </div>
+                <md-input-container class="md-block">
+                  <label>Name</label>
+                  <input type="textarea" ng-model="clpc.propertyToAdd">
+                </md-input-container>
+                <div layout="row">
+                  <md-button type="button" class="md-primary md-raised" ng-click="clpc.addProperty(clpc.propertyToAdd)">Add Property</md-button>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section id="admin-lab-properties-container">
+            <div ng-repeat="propertyName in clpc.propertyList.list" layout="row">
+              <div flex layout-padding layout-margin class="md-whiteframe-4dp">
+                <md-button type="button" class="md-warn md-raised" ng-click="clpc.deleteProperty(propertyName)">Delete</md-button>
+                <strong>{{propertyName}}</strong>
+              </div>
+            </div>
+          </section>
+      </div>
+  </md-content>
+
+</div>

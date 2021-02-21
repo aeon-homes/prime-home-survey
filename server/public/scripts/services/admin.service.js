@@ -29,6 +29,14 @@ myApp.service('AdminService', ['$http', '$mdToast', function ($http, $mdToast) {
     list: []
   }
 
+  self.labPropertyList = {
+    list: []
+  }
+
+  self.fullLabPropertyList = {
+    list: []
+  }
+
   // Used for the selected Property on the admin-properties page
   self.selectedEditProperty = {
     list: []
@@ -70,7 +78,6 @@ myApp.service('AdminService', ['$http', '$mdToast', function ($http, $mdToast) {
         if (a.type < b.type) return -1
         return 0
       })
-
     } catch (error) {
       console.error(error)
     }
@@ -827,6 +834,31 @@ myApp.service('AdminService', ['$http', '$mdToast', function ($http, $mdToast) {
     })
   }
 
+  self.getLabProperties = () => $http({
+    method: 'GET',
+    url: '/computerLab/properties',
+    headers: { 'Cache-Control': 'no-cache' }
+  }).then((response) => {
+    self.labPropertyList.list = response.data.map((dbRow) => dbRow.name)      
+  })
+
+  self.getAllLabProperties = () => $http({
+    method: 'GET',
+    url: '/computerLab/properties',
+    headers: { 'Cache-Control': 'no-cache' },
+    params: { all: true }
+  }).then((response) => {
+    self.fullLabPropertyList.list = response.data.map((dbRow) => dbRow.name)      
+  })
+
+  self.deleteLabProperty = (propertyName) => $http.delete(`/computerLab/properties?name=${propertyName}`)
+
+  self.addLabProperty = (propertyName) => $http({
+    method: 'POST',
+    url: '/computerLab/properties',
+    data: { name: propertyName }
+  })
+
   // GET request for all users (username, active, and role status) from the users table
   self.getUsers = function () {
     $http({
@@ -917,6 +949,8 @@ myApp.service('AdminService', ['$http', '$mdToast', function ($http, $mdToast) {
   //--------------------------------------
 
   self.getProperties() // build propertyList immediately
+  self.getLabProperties()
+  self.getAllLabProperties()
   self.getSurveyStatus()
 }])
 
